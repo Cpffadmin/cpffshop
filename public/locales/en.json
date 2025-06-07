@@ -1,0 +1,1044 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "loadingProducts": "Loading products...",
+    "error": "An error occurred",
+    "success": "Success!",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "submit": "Submit",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "actions": "Actions",
+    "allBrands": "All Brands",
+    "allCategories": "All Categories",
+    "minPrice": "Min Price",
+    "maxPrice": "Max Price",
+    "viewAllResults": "View all {count} results",
+    "noResults": "No results found",
+    "searchPlaceholder": "Search...",
+    "switchLanguage": "Switch to {lang}",
+    "english": "English",
+    "chinese": "Chinese",
+    "personalInfo": "Personal Information",
+    "fullName": "Full Name",
+    "email": "Email",
+    "role": "Role",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "changePassword": "Change Password",
+    "changingPassword": "Changing Password...",
+    "clickToUpdate": "Click to update",
+    "externalLoginNote": "Note: If you use external login providers, password changes may not apply",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes",
+    "deletingAccount": "Deleting Account...",
+    "closeAccount": "Close Account",
+    "deleteConfirm": "Are you sure you want to delete your account? This action cannot be undone.",
+    "sortOptions": {
+      "price_asc": "Price: Low to High",
+      "price_desc": "Price: High to Low",
+      "newest": "Newest First",
+      "oldest": "Oldest First"
+    },
+    "noRatingsYet": "No ratings yet",
+    "pagination": "Page {{current}} of {{total}}",
+    "yes": "Yes",
+    "no": "No",
+    "addToCart": "Add to Cart",
+    "pageNotFound": "Page Not Found",
+    "pageNotFoundDesc": "The page you are looking for does not exist.",
+    "backToHome": "Back to Home",
+    "noDescription": "No description available",
+    "previous": "Previous",
+    "next": "Next",
+    "back": "Back",
+    "all": "All Orders",
+    "city": "City",
+    "postalCode": "Postal Code",
+    "streetAddress": "Street Address",
+    "country": "Country",
+    "total": "Total",
+    "createdAt": "Created At",
+    "quantity": "Quantity",
+    "price": "Price",
+    "productNotAvailable": "Product details not available",
+    "remove": "Remove",
+    "addedToCart": "Added to cart",
+    "removedFromWishlist": "Removed from wishlist",
+    "addedToWishlist": "Added to wishlist",
+    "bestSellingProducts": "Best-Selling Products",
+    "readMore": "Read More",
+    "confirm": "Confirm",
+    "optional": "optional",
+    "confirmCancel": "Are you sure you want to cancel? Any information you've entered will be lost.",
+    "cancelPayment": "Cancel Payment",
+    "confirmCancelTitle": "Confirm Cancellation",
+    "confirmCancelButton": "Yes, Cancel",
+    "keepEditing": "No, Keep Editing",
+    "formNotSaved": "You have unsaved changes. Are you sure you want to leave?"
+  },
+  "navigation": {
+    "home": "Home",
+    "products": "Products",
+    "categories": "Categories",
+    "brands": "Brands",
+    "about": "About",
+    "contact": "Contact",
+    "blog": "Blog",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "account": "Account",
+    "orders": "Orders",
+    "wishlist": "Wishlist",
+    "cart": "Cart",
+    "admin": "Admin",
+    "close": "Close",
+    "adminPanel": "Admin Panel",
+    "profile": "Profile",
+    "logistics": "Logistics",
+    "translations": "Translations",
+    "privacyPolicy": "Privacy Policy",
+    "settings": "Settings"
+  },
+  "product": {
+    "brand": {
+      "label": "Brand"
+    },
+    "category": {
+      "label": "Category"
+    },
+    "manufactury_country": {
+      "label": "Manufacturing Country"
+    },
+    "color": {
+      "label": "Color"
+    },
+    "productOfTheMonth": {
+      "title": "Product of the Month",
+      "viewProduct": "View Product",
+      "managementTitle": "Product of the Month Management",
+      "management": {
+        "selectProduct": "Select Product",
+        "description": "Description",
+        "features": "Features",
+        "addFeature": "Add Feature",
+        "removeFeature": "Remove",
+        "feature": "Feature",
+        "icon": "Icon (emoji or url)",
+        "iconPlaceholder": "Enter icon (emoji or url)",
+        "title": "Title",
+        "titlePlaceholder": "Enter title",
+        "descriptionPlaceholder": "Enter description",
+        "save": "Save",
+        "saving": "Saving...",
+        "success": "Product of the month updated successfully",
+        "error": "Failed to update product of the month"
+      }
+    },
+    "addToCart": "Add to Cart",
+    "price": "Price",
+    "description": "Description",
+    "specifications": "Specifications",
+    "reviews": "Reviews",
+    "relatedProducts": "Related Products",
+    "outOfStock": "Out of Stock",
+    "inStock": "In Stock",
+    "quantity": "Quantity",
+    "details": "Product Details",
+    "stock": "Stock",
+    "featured": "Featured Product",
+    "listedDate": "Listed Date",
+    "products": "Products",
+    "addProduct": "Add Product",
+    "viewAllProducts": "View All Products",
+    "admin": {
+      "title": "Products Management",
+      "description": "Manage your product inventory and listings",
+      "create": {
+        "title": "Add New Product"
+      },
+      "status": {
+        "active": "Active Products",
+        "draft": "Draft Products"
+      },
+      "table": {
+        "title": "Table View",
+        "image": "Image",
+        "name": "Name",
+        "brand": "Brand",
+        "price": "Price",
+        "actions": "Actions",
+        "noProducts": "No products found"
+      },
+      "grid": {
+        "title": "Grid View"
+      },
+      "actions": {
+        "edit": "Edit Product",
+        "delete": "Delete Product"
+      },
+      "delete": {
+        "confirm": "Are you sure you want to delete this product?",
+        "success": "Product deleted successfully",
+        "error": "Failed to delete product"
+      },
+      "error": "Failed to fetch products",
+      "deliverySettings": "Delivery Settings"
+    }
+  },
+  "orders": {
+    "viewAllOrders": "View All Orders",
+    "yourOrders": "Your Orders",
+    "placedOn": "Placed on:",
+    "status": "Status:",
+    "total": "Total:",
+    "viewDetails": "View Details",
+    "noOrders": "You have no orders yet.",
+    "loading": "Loading orders, please wait...",
+    "tryAgain": "Try again",
+    "failedToFetch": "Failed to fetch orders",
+    "orderNumber": "Order #{{id}}",
+    "statusTypes": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    }
+  },
+  "logistics": {
+    "manageVehicles": "Manage Vehicles",
+    "addVehicle": "Add Vehicle",
+    "vehicleDetails": "Vehicle Details",
+    "driverInfo": "Driver Information",
+    "vehicleStatus": "Vehicle Status",
+    "assignedLocation": "Assigned Location",
+    "registrationNumber": "Registration Number",
+    "owner": "Owner",
+    "makeYear": "Make Year",
+    "make": "Make",
+    "model": "Model",
+    "chassisNo": "Chassis Number",
+    "weight": "Weight",
+    "cylinderCapacity": "Cylinder Capacity",
+    "bodyType": "Body Type",
+    "status": "Status",
+    "driverName": "Driver Name",
+    "licenseNo": "License Number",
+    "contactNo": "Contact Number",
+    "email": "Email",
+    "assignmentInfo": "Assignment Information",
+    "initialStatus": "Initial Status",
+    "creating": "Creating...",
+    "createVehicle": "Create Vehicle",
+    "viewDetails": "View Details",
+    "editVehicle": "Edit Vehicle",
+    "loading": "Loading...",
+    "pageTitle": "Logistics Management",
+    "pageDescription": "View and manage all logistics vehicles: update status, assign orders, and track deliveries.",
+    "createPage": {
+      "title": "Add New Vehicle",
+      "description": "Add a new vehicle to your logistics fleet with complete details."
+    },
+    "statusTypes": {
+      "available": "Available",
+      "onDelivery": "On Delivery",
+      "maintenance": "Maintenance",
+      "outOfService": "Out of Service"
+    },
+    "locations": {
+      "hongKong": "Hong Kong",
+      "kowloon": "Kowloon",
+      "newTerritories": "New Territories"
+    },
+    "admin": {
+      "title": "Logistics Management",
+      "description": "Manage your delivery vehicles and tracking",
+      "create": {
+        "title": "Add New Vehicle",
+        "description": "Add a new vehicle to your logistics fleet with complete details."
+      },
+      "status": {
+        "active": "Active Vehicles",
+        "inactive": "Inactive Vehicles"
+      },
+      "table": {
+        "title": "Table View",
+        "image": "Image",
+        "name": "Vehicle Name",
+        "type": "Vehicle Type",
+        "status": "Status",
+        "capacity": "Capacity",
+        "actions": "Actions",
+        "noVehicles": "No vehicles found"
+      },
+      "grid": {
+        "title": "Grid View"
+      },
+      "actions": {
+        "edit": "Edit Vehicle",
+        "delete": "Delete Vehicle"
+      },
+      "delete": {
+        "confirm": "Are you sure you want to delete this vehicle?",
+        "success": "Vehicle deleted successfully",
+        "error": "Failed to delete vehicle"
+      },
+      "error": "Failed to fetch vehicles"
+    },
+    "createSuccess": "Vehicle added successfully",
+    "createError": "Failed to add vehicle",
+    "placeholders": {
+      "registrationNumber": "e.g., AB123456",
+      "owner": "Vehicle owner",
+      "makeYear": "e.g., 2023",
+      "make": "e.g., Toyota",
+      "model": "e.g., Hiace",
+      "chassisNo": "Vehicle chassis number",
+      "weight": "Vehicle weight in kg",
+      "cylinderCapacity": "Engine capacity in cc",
+      "bodyType": "Select body type",
+      "driverName": "Driver's full name",
+      "licenseNo": "Driver's license number",
+      "contactNo": "Driver's contact number",
+      "email": "Driver's email address",
+      "location": "Select location",
+      "status": "Select status"
+    },
+    "bodyTypes": {
+      "van": "Van",
+      "truck": "Truck",
+      "lorry": "Lorry",
+      "motorcycle": "Motorcycle"
+    },
+    "details": {
+      "updateStatus": "Update Status",
+      "makeAndModel": "Make & Model",
+      "loadingVehicle": "Loading vehicle details...",
+      "viewInfo": "View detailed information about the logistics vehicle and its assignments.",
+      "vehicleInfo": "Vehicle Information",
+      "updateButton": "Edit Vehicle",
+      "loadingAuth": "Loading..."
+    },
+    "nextMaintenance": "Next Maintenance",
+    "noMaintenanceRecords": "No maintenance records found",
+    "assignedOrders": "Assigned Orders",
+    "deliveryDate": "Delivery Date",
+    "notes": "Notes",
+    "vehicleNotFound": "Vehicle not found",
+    "confirmStatusUpdate": "Confirm Status Update",
+    "confirmStatusUpdateDesc": "Are you sure you want to update the delivery status to",
+    "deliveredNote": "Note: This will mark the order as delivered and complete the delivery process.",
+    "failedNote": "Note: This will mark the order as failed and cancel the delivery process."
+  },
+  "admin": {
+    "usersAndRoles": "Users & Roles",
+    "manageRoles": "Manage Roles",
+    "contentManagement": "Content Management",
+    "categories": "Categories",
+    "brands": "Brands",
+    "specifications": "Specifications",
+    "newsletter": "Newsletter",
+    "subscribers": "Subscribers",
+    "settings": "Settings",
+    "storeSettings": "Store Settings",
+    "heroSection": "Hero Section",
+    "translations": "Translations",
+    "debug": "Debug",
+    "privacyPolicy": "Privacy Policy",
+    "dashboard": {
+      "title": "Admin Dashboard",
+      "description": "Manage your store, orders, and settings",
+      "sections": {
+        "products": {
+          "title": "Products",
+          "description": "Manage your product inventory",
+          "viewAll": "View All Products",
+          "addNew": "Add New Product"
+        },
+        "orders": {
+          "title": "Orders",
+          "description": "View and manage customer orders",
+          "viewAll": "View All Orders"
+        },
+        "logistics": {
+          "title": "Logistics",
+          "description": "Manage delivery vehicles and tracking",
+          "viewAll": "View All Vehicles",
+          "addNew": "Add New Vehicle"
+        },
+        "contentManagement": {
+          "title": "Content Management",
+          "description": "Manage website content and appearance",
+          "storeSettings": "Store Settings",
+          "heroSection": "Hero Section",
+          "blogPosts": "Blog Posts",
+          "guaranteeSection": "Guarantee Section",
+          "featuresSection": "Features Section"
+        },
+        "usersAndRoles": {
+          "title": "Users & Roles",
+          "description": "Manage user permissions and roles",
+          "manageRoles": "Manage Roles"
+        }
+      }
+    },
+    "orderManagement": "Orders Management",
+    "orderManagementDescription": "Manage and track all customer orders",
+    "order": {
+      "title": "Orders Management",
+      "description": "Manage and track all customer orders",
+      "search": "Search orders...",
+      "filter": {
+        "title": "Filter Orders",
+        "status": "Order Status",
+        "dateRange": "Date Range",
+        "customer": "Customer"
+      },
+      "table": {
+        "title": "Table View",
+        "orderId": "Order ID",
+        "customer": "Customer",
+        "date": "Order Date",
+        "total": "Total",
+        "status": "Status",
+        "actions": "Actions",
+        "noOrders": "No orders found"
+      },
+      "grid": {
+        "title": "Grid View"
+      },
+      "status": {
+        "pending": "Pending",
+        "processing": "Processing",
+        "shipped": "Shipped",
+        "delivered": "Delivered",
+        "cancelled": "Cancelled"
+      },
+      "actions": {
+        "view": "View Details",
+        "edit": "Edit Order",
+        "delete": "Delete Order",
+        "print": "Print Invoice",
+        "markAsDelivered": "Mark as Delivered",
+        "markAsDeliveredSuccess": "Order marked as delivered successfully",
+        "markAsDeliveredError": "Failed to mark order as delivered"
+      },
+      "delete": {
+        "confirm": "Are you sure you want to delete this order? This action cannot be undone.",
+        "success": "Order deleted successfully",
+        "error": "Failed to delete order"
+      },
+      "payment": {
+        "confirmSuccess": "Payment confirmed and order is now processing",
+        "confirmError": "Failed to confirm payment",
+        "rejectPrompt": "Please enter reason for rejection:",
+        "rejectSuccess": "Payment proof rejected",
+        "rejectError": "Failed to reject payment"
+      },
+      "error": "Failed to fetch orders"
+    },
+    "roles": {
+      "title": "User Roles Management",
+      "description": "Manage user roles and permissions across the system",
+      "availableRoles": "Available Roles",
+      "createUser": "Create New User",
+      "createUserButton": "Create New User",
+      "table": {
+        "name": "Name",
+        "email": "Email",
+        "currentRole": "Current Role",
+        "assignNewRole": "Assign New Role",
+        "roleStatus": "Role Status",
+        "actions": "Actions"
+      },
+      "roles": {
+        "admin": "Admin",
+        "accounting": "Accounting",
+        "logistics": "Logistics",
+        "user": "Regular User"
+      },
+      "roleDescriptions": {
+        "admin": "Full system access",
+        "accounting": "Access to financial features",
+        "logistics": "Access to inventory and shipping",
+        "user": "Basic user access"
+      },
+      "status": {
+        "systemAdmin": "System Admin",
+        "regularAccess": "Regular Access"
+      },
+      "actions": {
+        "applyRole": "Apply Role",
+        "makeAdmin": "Make Admin",
+        "removeAdmin": "Remove Admin",
+        "deleteUser": "Delete User",
+        "selectNewRole": "Select new role"
+      },
+      "createUser": {
+        "title": "Create New User",
+        "name": "Name",
+        "email": "Email",
+        "password": "Password",
+        "role": "Role",
+        "makeAdmin": "Make Admin",
+        "cancel": "Cancel",
+        "create": "Create User"
+      },
+      "messages": {
+        "roleUpdated": "Role updated successfully",
+        "adminStatusUpdated": "Admin status updated successfully",
+        "userCreated": "User created successfully",
+        "userDeleted": "User deleted successfully",
+        "cannotChangeOwnRole": "You cannot change your own role",
+        "deleteConfirm": "Are you sure you want to delete this user?",
+        "failedToFetch": "Failed to fetch users",
+        "failedToUpdateRole": "Failed to update role",
+        "failedToUpdateAdmin": "Failed to update admin status",
+        "failedToCreateUser": "Failed to create user",
+        "failedToDeleteUser": "Failed to delete user"
+      }
+    },
+    "gallery": {
+      "title": "Gallery Management",
+      "addImages": "Add Images",
+      "saveChanges": "Save Changes",
+      "uploadSuccess": "Images uploaded successfully",
+      "removeConfirm": "Are you sure you want to remove this image?",
+      "removeSuccess": "Image removed successfully",
+      "saveSuccess": "Gallery updated successfully",
+      "saveError": "Failed to update gallery"
+    },
+    "deliverySettings": "Delivery Settings",
+    "logistics": {
+      "title": "Logistics Details",
+      "orderId": "Order ID",
+      "status": "Status",
+      "trackingNumber": "Tracking Number",
+      "carrier": "Carrier",
+      "estimatedDelivery": "Estimated Delivery",
+      "shippingAddress": "Shipping Address",
+      "customer": "Customer",
+      "email": "Email",
+      "phone": "Phone",
+      "actions": {
+        "update": "Update",
+        "cancel": "Cancel"
+      },
+      "statuses": {
+        "pending": "Pending",
+        "processing": "Processing",
+        "shipped": "Shipped",
+        "delivered": "Delivered",
+        "cancelled": "Cancelled"
+      }
+    }
+  },
+  "specifications": {
+    "title": "Specifications",
+    "description": "Manage product specifications for each category",
+    "list": {
+      "empty": "No specifications found",
+      "items": "items",
+      "categoryHeader": "Category",
+      "specificationsCount": "Specifications",
+      "actionsHeader": "Actions",
+      "manageButton": "Manage",
+      "backButton": "Back",
+      "addButton": "Add Specification",
+      "saveButton": "Save Specifications",
+      "savingButton": "Saving...",
+      "updateTranslations": "Update All Translations"
+    },
+    "form": {
+      "label": "Label",
+      "type": "Type",
+      "typeOptions": {
+        "text": "Text",
+        "number": "Number",
+        "select": "Select"
+      },
+      "options": "Options",
+      "description": "Description",
+      "required": "Required",
+      "remove": "Remove",
+      "placeholder": {
+        "label": "Enter specification label",
+        "options": "Enter options separated by commas",
+        "description": "Enter specification description"
+      }
+    },
+    "validation": {
+      "categoryRequired": "Please select a category",
+      "labelRequired": "Specification labels are required in all languages"
+    },
+    "success": {
+      "save": "Specifications saved successfully"
+    },
+    "error": {
+      "load": "Failed to load specifications",
+      "save": "Failed to save specifications"
+    }
+  },
+  "categories": {
+    "title": "Categories",
+    "description": "Manage product categories",
+    "emptyCategory": "This category has no products yet",
+    "create": {
+      "button": "Create New Category",
+      "title": "Create Category",
+      "description": "Add a new product category",
+      "success": "Category created successfully",
+      "error": "Failed to create category"
+    },
+    "update": {
+      "title": "Edit Category",
+      "success": "Category updated successfully",
+      "error": "Failed to update category"
+    },
+    "delete": {
+      "confirm": "Are you sure you want to delete this category?",
+      "success": "Category deleted successfully",
+      "error": "Failed to delete category"
+    },
+    "validation": {
+      "nameRequired": "Category name is required in all languages"
+    },
+    "list": {
+      "empty": "No categories found",
+      "nameHeader": "Name",
+      "descriptionHeader": "Description",
+      "actionsHeader": "Actions"
+    },
+    "form": {
+      "name": "Category Name",
+      "description": "Category Description",
+      "namePlaceholder": {
+        "en": "Enter category name in English",
+        "zh": "Enter category name in Chinese"
+      },
+      "descriptionPlaceholder": {
+        "en": "Enter category description in English",
+        "zh": "Enter category description in Chinese"
+      }
+    },
+    "edit": {
+      "title": "Edit Category",
+      "description": "Update category information"
+    }
+  },
+  "blog": {
+    "featuredArticle": "Featured Article",
+    "discoverStory": "Discover our featured story",
+    "readMore": "Read More",
+    "allPosts": "All Posts",
+    "exploreArticles": "Explore our articles",
+    "posts": {
+      "pageTitle": "Blog Posts",
+      "description": "Manage your blog posts and content",
+      "create": "Create New Post",
+      "search": "Search posts...",
+      "noPosts": "No posts found",
+      "title": "Title",
+      "author": "Author",
+      "status": "Status",
+      "published": "Published Date",
+      "publishedAt": "Published At",
+      "statusTypes": {
+        "draft": "Draft",
+        "published": "Published"
+      },
+      "settings": {
+        "title": "Blog Settings",
+        "description": "Configure your blog settings",
+        "general": "General Settings",
+        "seo": "SEO Settings",
+        "social": "Social Media",
+        "comments": "Comments",
+        "save": "Save Settings",
+        "saving": "Saving Settings...",
+        "success": "Settings saved successfully",
+        "error": "Failed to save settings"
+      },
+      "edit": {
+        "title": "Edit Blog Post",
+        "description": "Update your blog post content and settings",
+        "titleLabel": "Post Title",
+        "titlePlaceholder": "Enter post title",
+        "contentLabel": "Post Content",
+        "contentPlaceholder": "Write your post content here...",
+        "excerptLabel": "Excerpt",
+        "excerptPlaceholder": "Enter a brief excerpt of your post",
+        "featuredImageLabel": "Featured Image",
+        "featuredImagePlaceholder": "Upload or select a featured image",
+        "categoryLabel": "Category",
+        "categoryPlaceholder": "Select a category",
+        "tagsLabel": "Tags",
+        "tagsPlaceholder": "Add tags",
+        "seoTitle": "SEO Settings",
+        "seoTitleLabel": "SEO Title",
+        "seoTitlePlaceholder": "Enter SEO title",
+        "seoDescriptionLabel": "SEO Description",
+        "seoDescriptionPlaceholder": "Enter SEO description",
+        "seoKeywordsLabel": "SEO Keywords",
+        "seoKeywordsPlaceholder": "Enter SEO keywords",
+        "statusLabel": "Post Status",
+        "featuredLabel": "Featured Post",
+        "saving": "Saving...",
+        "saved": "Changes saved successfully",
+        "error": "Failed to save changes",
+        "deleteConfirm": "Are you sure you want to delete this post?",
+        "deleted": "Post deleted successfully",
+        "deleteError": "Failed to delete post"
+      }
+    }
+  },
+  "footer": {
+    "slogan": "Your premium watch destination",
+    "quickLinks": "Quick Links",
+    "customerService": "Customer Service",
+    "stayUpdated": "Stay Updated",
+    "newsletterText": "Subscribe to our newsletter for the latest updates",
+    "emailPlaceholder": "Enter your email",
+    "allRightsReserved": "All rights reserved",
+    "faq": "FAQ",
+    "shippingReturns": "Shipping & Returns",
+    "warranty": "Warranty",
+    "privacyPolicy": "Privacy Policy",
+    "brandName": "EcommWatch",
+    "socialLinks": {
+      "facebook": "https://facebook.com/yourwatchbrand",
+      "twitter": "https://twitter.com/yourwatchbrand",
+      "instagram": "https://instagram.com/yourwatchbrand",
+      "linkedin": "https://linkedin.com/company/yourwatchbrand"
+    }
+  },
+  "settings": {
+    "title": "Store Settings",
+    "description": "Manage your store information, contact details, business hours, and policies.",
+    "tabs": {
+      "general": "General Settings",
+      "newsletter": "Newsletter Management",
+      "about": "About Page",
+      "contact": "Contact Page"
+    },
+    "general": {
+      "storeInfo": {
+        "title": "Store Information",
+        "storeName": "Store Name",
+        "slogan": "Store Slogan",
+        "storeLogo": "Store Logo",
+        "changeLogo": "Change Logo",
+        "copyright": "Copyright"
+      },
+      "contactInfo": {
+        "title": "Contact Information",
+        "email": "Email",
+        "phone": "Phone",
+        "street": "Street",
+        "city": "City",
+        "postalCode": "Postal Code",
+        "country": "Country"
+      },
+      "businessHours": {
+        "title": "Business Hours",
+        "weekdays": "Weekdays",
+        "weekends": "Weekends"
+      },
+      "socialMedia": {
+        "title": "Social Media",
+        "facebook": "Facebook",
+        "instagram": "Instagram",
+        "twitter": "Twitter"
+      },
+      "shippingInfo": {
+        "title": "Shipping Information",
+        "standardDays": "Standard Shipping Days",
+        "expressDays": "Express Shipping Days",
+        "sectionTitle": "Shipping Information Section",
+        "standardShippingTitle": "Standard Shipping",
+        "expressShippingTitle": "Express Shipping",
+        "showOnContactPage": "Show Shipping Information on Contact Page"
+      },
+      "returnPolicy": {
+        "title": "Return Policy",
+        "daysToReturn": "Days to Return",
+        "conditions": "Return Conditions",
+        "sectionTitle": "Return Policy Section",
+        "showOnContactPage": "Show Return Policy on Contact Page"
+      }
+    },
+    "newsletter": {
+      "title": "Newsletter Title",
+      "subtitle": "Newsletter Subtitle",
+      "bannerImage": "Newsletter Banner Image",
+      "changeBanner": "Change Banner",
+      "buttonText": "Subscribe Button Text",
+      "disclaimer": "Disclaimer Text",
+      "emailPlaceholder": "Enter your email"
+    },
+    "about": {
+      "aboutPageSection": {
+        "title": "About Page Information",
+        "subtitle": "Subtitle",
+        "bannerImage": "Banner Image",
+        "changeBanner": "Change Banner"
+      },
+      "storySection": {
+        "title": "Story Section",
+        "content": "Content",
+        "storyImage": "Story Image",
+        "changeImage": "Change Image"
+      },
+      "valuesSection": {
+        "title": "Values Section",
+        "values": "Values",
+        "description": "Description",
+        "iconName": "Icon name",
+        "addValue": "Add Value"
+      },
+      "teamSection": {
+        "title": "Team Section",
+        "teamMembers": "Team Members",
+        "name": "Name",
+        "role": "Role",
+        "description": "Description",
+        "change": "Change",
+        "addTeamMember": "Add Team Member"
+      }
+    },
+    "contact": {
+      "contactPageSection": {
+        "title": "Contact Page Information",
+        "subtitle": "Subtitle",
+        "bannerImage": "Banner Image",
+        "changeBanner": "Change Banner"
+      },
+      "contactInfo": {
+        "title": "Contact Information",
+        "officeLocations": "Office Locations",
+        "locationName": "Location Name",
+        "address": "Address",
+        "phoneNumber": "Phone Number",
+        "emailAddress": "Email Address",
+        "latitude": "Latitude",
+        "longitude": "Longitude",
+        "getCoordinates": "Get Coordinates from Address",
+        "delete": "Delete",
+        "addOfficeLocation": "Add Office Location"
+      },
+      "supportChannels": {
+        "title": "Support Channels",
+        "supportChannelsImage": "Support Channels Image",
+        "changeImage": "Change Image",
+        "channels": "Channels",
+        "description": "Description",
+        "iconName": "Icon name",
+        "addChannel": "Add Channel"
+      },
+      "faqSection": {
+        "title": "FAQ Section",
+        "questions": "Questions",
+        "question": "Question",
+        "answer": "Answer",
+        "addFAQ": "Add FAQ"
+      }
+    },
+    "buttons": {
+      "saving": "Saving...",
+      "saveChanges": "Save Changes"
+    },
+    "personalInfo": "Personal Information",
+    "personalInfoDescription": "Manage your personal details and account information.",
+    "securitySettings": "Security Settings",
+    "securityDescription": "Manage your security preferences and account protection.",
+    "notificationSettings": "Notification Settings",
+    "notificationSettingsDescription": "Manage your notification preferences.",
+    "emailNotifications": "Email Notifications",
+    "emailNotificationsDescription": "Receive updates and alerts via email.",
+    "pushNotifications": "Push Notifications",
+    "pushNotificationsDescription": "Receive real-time updates on your device.",
+    "deleteAccount": "Delete Account",
+    "deleteAccountWarning": "Warning: Deleting your account is permanent and cannot be undone."
+  },
+  "newsletter": {
+    "title": "Subscribe to Our Newsletter",
+    "description": "Stay updated with our latest products and exclusive offers",
+    "buttonText": "Subscribe Now",
+    "disclaimer": "By subscribing, you agree to receive marketing emails from us. You can unsubscribe at any time.",
+    "emailPlaceholder": "Enter your email address",
+    "successMessage": "Thank you for subscribing!",
+    "errorMessage": "Failed to subscribe. Please try again.",
+    "bannerAlt": "Newsletter subscription banner",
+    "admin": {
+      "title": "Newsletter Management",
+      "description": "Manage newsletter subscribers and their preferences",
+      "searchPlaceholder": "Search subscribers...",
+      "loading": "Loading subscribers...",
+      "table": {
+        "email": "Email",
+        "source": "Source",
+        "status": "Status",
+        "subscribedAt": "Subscribed At",
+        "lastEmail": "Last Email",
+        "actions": "Actions"
+      },
+      "actions": {
+        "delete": "Delete",
+        "deleteConfirm": "Are you sure you want to delete this subscriber?"
+      }
+    }
+  },
+  "privacy": {
+    "tabs": {
+      "general": "General",
+      "sections": "Sections",
+      "contact": "Contact"
+    },
+    "title": "Title",
+    "titlePlaceholder": "Enter privacy policy title",
+    "subtitle": "Subtitle",
+    "subtitlePlaceholder": "Enter privacy policy subtitle",
+    "sectionTitle": "Section Title",
+    "sectionTitlePlaceholder": "Enter section title",
+    "sectionContent": "Section Content",
+    "sectionContentPlaceholder": "Enter section content",
+    "addSection": "Add Section",
+    "removeSection": "Remove Section",
+    "sectionAdded": "Section added successfully",
+    "sectionRemoved": "Section removed successfully",
+    "contactEmail": "Contact Email",
+    "contactEmailPlaceholder": "Enter contact email",
+    "contactPhone": "Contact Phone",
+    "contactPhonePlaceholder": "Enter contact phone",
+    "contactAddress": "Contact Address",
+    "contactAddressPlaceholder": "Enter contact address",
+    "fetchError": "Failed to load privacy policy settings",
+    "saved": "Privacy policy settings saved successfully",
+    "saveError": "Failed to save privacy policy settings",
+    "page": {
+      "title": "Privacy Policy",
+      "lastUpdated": "Last Updated",
+      "contactUs": "Contact Us",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "effectiveDate": "Effective Date",
+      "introduction": "Introduction",
+      "readCarefully": "Please read this Privacy Policy carefully to understand how we collect, use, protect, and handle your personal information.",
+      "questions": "If you have any questions about our Privacy Policy, please contact us at:",
+      "noSections": "No privacy policy sections available."
+    }
+  },
+  "search": {
+    "title": "Search Products",
+    "placeholder": "Search for products...",
+    "searching": "Searching...",
+    "noResults": "No products found",
+    "showAllResults": "Show all results"
+  },
+  "wishlist": {
+    "empty": "Your wishlist is empty.",
+    "failedToLoad": "Failed to load wishlist.",
+    "yourWishlist": "Your Wishlist",
+    "addToWishlist": "Add to Wishlist",
+    "removeFromWishlist": "Remove from Wishlist",
+    "loginRequired": "Please login to use wishlist",
+    "updateFailed": "Failed to update wishlist"
+  },
+  "guarantee": {
+    "managementTitle": "Guarantee Section Management",
+    "item": "Guarantee Item",
+    "icon": "Guarantee Icon",
+    "selectIcon": "Select Icon",
+    "title": "Guarantee Title",
+    "titlePlaceholder": "Enter guarantee title",
+    "description": "Guarantee Description",
+    "descriptionPlaceholder": "Enter guarantee description",
+    "addItem": "Add Guarantee Item"
+  },
+  "features": {
+    "managementTitle": "Features Section Management",
+    "item": "Feature Item",
+    "icon": "Feature Icon",
+    "selectIcon": "Select Icon",
+    "title": "Feature Title",
+    "titlePlaceholder": "Enter feature title",
+    "description": "Feature Description",
+    "descriptionPlaceholder": "Enter feature description",
+    "addItem": "Add Feature Item",
+    "default": {
+      "items": [
+        {
+          "title": "SATISFIED OR REFUNDED",
+          "description": "Free Returns in the next 30 days"
+        },
+        {
+          "title": "BASED IN SWITZERLAND",
+          "description": "From an old workshop in Luzern, Switzerland"
+        },
+        {
+          "title": "PREMIUM QUALITY",
+          "description": "904L Stainless steel | Sapphire crystal"
+        }
+      ]
+    }
+  },
+  "checkout": {
+    "title": "Checkout",
+    "cartItems": "Cart Items",
+    "emptyCart": "Your cart is empty",
+    "deliveryOptions": "Delivery Options",
+    "freeDelivery": "Free Delivery",
+    "paymentMethod": "Payment Method",
+    "onlinePayment": "Pay Online",
+    "offlinePayment": "Pay Offline",
+    "orderSummary": "Order Summary",
+    "subtotal": "Subtotal",
+    "delivery": "Delivery",
+    "free": "Free",
+    "total": "Total",
+    "processing": "Processing...",
+    "secureCheckout": "Secure Checkout",
+    "bankDetailsNotAvailable": "Bank account details not available",
+    "stripeInitError": "Stripe failed to initialize",
+    "fillRequiredFields": "Please fill in all required fields",
+    "noCheckoutUrl": "No checkout URL received",
+    "checkoutError": "An error occurred during checkout. Please try again",
+    "shippingInformation": "Shipping Information",
+    "name": "Full Name",
+    "city": "City",
+    "postalCode": "Postal Code",
+    "streetAddress": "Street Address",
+    "country": "Country",
+    "deliveryType": "Delivery Type",
+    "payOnline": "Pay Online",
+    "paymentProof": "Payment Proof",
+    "paymentReference": "Payment Reference",
+    "bankAccountDetails": "Bank Account Details",
+    "uploadFile": "Upload File",
+    "reuploadFile": "Re-upload File",
+    "submitting": "Submitting...",
+    "submitPaymentProof": "Submit Payment Proof",
+    "securePayment": "Secure Payment",
+    "thankYou": "Thanks for your order!",
+    "orderConfirmation": "We will email you when your order will be sent.",
+    "confirmCancel": "You have filled some information. Are you sure you want to cancel? All entered information will be lost.",
+    "cancelPayment": "Cancel Payment"
+  },
+  "auth": {
+    "login": "Login",
+    "signup": "Sign Up",
+    "logout": "Logout",
+    "loginRequired": "Login Required",
+    "loginToAddToCart": "Please login or create an account to add items to your cart",
+    "createAccount": "Create Account"
+  }
+}

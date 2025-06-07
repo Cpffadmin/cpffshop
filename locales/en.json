@@ -1,0 +1,178 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "yes": "Yes",
+    "no": "No",
+    "addToCart": "Add to Cart",
+    "loadingProducts": "Loading products...",
+    "noDescription": "No description available",
+    "noBrand": "No brand",
+    "notFound": "Not found",
+    "allCategories": "All Categories"
+  },
+  "currentLang": "en",
+  "navigation": {
+    "shop": "Shop",
+    "home": "Home",
+    "products": "Products",
+    "blog": "Blog",
+    "about": "About Us",
+    "contact": "Contact",
+    "adminPanel": "Admin Panel",
+    "orders": "Orders",
+    "close": "Close"
+  },
+  "products": {
+    "list": "Products",
+    "category": {
+      "label": "Category"
+    },
+    "details": {
+      "title": "Product Details",
+      "name": "Name",
+      "description": "Description",
+      "price": "Price",
+      "stock": "Stock",
+      "brand": "Brand",
+      "category": "Category",
+      "stockRestricted": "Stock information restricted",
+      "featuredStatus": "Featured Status",
+      "isFeatured": "Featured",
+      "notFeatured": "Not Featured",
+      "listedDate": "Listed Date",
+      "sku": "SKU",
+      "unitsAvailable": "units available",
+      "bracelet": "Bracelet",
+      "movement": "Movement",
+      "thickness": "Thickness",
+      "glass": "Glass",
+      "luminova": "Luminova",
+      "casematerial": "Case Material",
+      "crown": "Crown",
+      "bandsize": "Band Size",
+      "lugs": "Lugs",
+      "water": "Water Resistance"
+    },
+    "create": {
+      "title": "Create Product",
+      "name": "Product Name",
+      "description": "Description",
+      "price": "Price",
+      "stock": "Stock",
+      "brand": "Brand",
+      "category": "Category",
+      "images": "Product Images",
+      "upload": "Click to upload or drag and drop",
+      "uploadFormat": "PNG, JPG, JPEG or WEBP (max. 10MB)"
+    },
+    "edit": {
+      "title": "Edit Product",
+      "save": "Save Changes",
+      "cancel": "Cancel"
+    },
+    "status": {
+      "inStock": "In Stock",
+      "outOfStock": "Out of Stock",
+      "condition": {
+        "good": "Good",
+        "excellent": "Excellent",
+        "fair": "Fair",
+        "poor": "Poor"
+      }
+    },
+    "reviews": {
+      "title": "Customer Reviews",
+      "rating": "Rating",
+      "yourReview": "Your Review",
+      "basedOn": "Based on {{count}} reviews",
+      "outOf": "/ 5.0"
+    }
+  },
+  "product": {
+    "status": {
+      "featured": "Featured",
+      "notFeatured": "Not Featured",
+      "inStock": "In Stock",
+      "outOfStock": "Out of Stock",
+      "condition": {
+        "good": "Good",
+        "excellent": "Excellent",
+        "fair": "Fair",
+        "poor": "Poor"
+      }
+    },
+    "details": {
+      "listedDate": "Listed Date",
+      "sku": "SKU",
+      "unitsAvailable": "units available",
+      "bracelet": "Bracelet",
+      "movement": "Movement",
+      "thickness": "Thickness",
+      "glass": "Glass",
+      "luminova": "Luminova",
+      "casematerial": "Case Material",
+      "crown": "Crown",
+      "bandsize": "Band Size",
+      "lugs": "Lugs",
+      "water": "Water Resistance"
+    },
+    "reviews": {
+      "title": "Customer Reviews",
+      "rating": "Rating",
+      "yourReview": "Your Review",
+      "basedOn": "Based on {{count}} reviews",
+      "outOf": "/ 5.0"
+    }
+  },
+  "brands": {
+    "title": "Brand Management",
+    "list": {
+      "description": "Manage your product brands",
+      "empty": "No brands found",
+      "sync": "Sync Brands",
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete",
+        "confirmDelete": "Are you sure you want to delete this brand?"
+      }
+    },
+    "create": {
+      "title": "Add Brand",
+      "name": "Brand Name",
+      "displayName": "Display Name",
+      "description": "Description",
+      "logo": "Brand Logo",
+      "submit": "Create Brand",
+      "success": "Brand created successfully",
+      "error": "Failed to create brand"
+    },
+    "edit": {
+      "title": "Edit Brand",
+      "save": "Save Changes",
+      "cancel": "Cancel",
+      "success": "Brand updated successfully",
+      "error": "Failed to update brand"
+    },
+    "name": {
+      "en": "Brand name in English",
+      "zh-TW": "Brand name in Chinese"
+    },
+    "description": {
+      "en": "Brand description in English",
+      "zh-TW": "Brand description in Chinese"
+    }
+  },
+  "settings": {
+    "general": {
+      "storeInfo": {
+        "title": "Store Information",
+        "storeName": "Store Name",
+        "slogan": "Store Slogan",
+        "storeLogo": "Store Logo",
+        "changeLogo": "Change Logo"
+      }
+    }
+  }
+}

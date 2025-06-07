@@ -1,0 +1,97 @@
+.navbar {
+  @apply sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60;
+}
+
+.navbarContainer {
+  @apply container-custom flex h-16 items-center;
+}
+
+.logo {
+  @apply mr-6 flex items-center space-x-2;
+}
+
+.nav {
+  @apply hidden md:flex md:flex-1 items-center justify-between;
+}
+
+.navLinks {
+  @apply flex items-center space-x-6 text-sm font-medium;
+}
+
+.mobileMenu {
+  @apply flex md:hidden;
+}
+
+.navbar-search-container {
+  @apply relative flex items-center;
+}
+
+.search-input-wrapper {
+  @apply relative flex items-center w-full;
+}
+
+.navbar-search {
+  @apply h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-all duration-300 file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+.navbar-search-icon {
+  @apply absolute right-3 h-4 w-4 text-muted-foreground cursor-pointer hover:text-foreground transition-colors;
+}
+
+.search-results {
+  @apply absolute top-full left-0 w-full max-h-96 overflow-y-auto bg-background border border-border rounded-md shadow-lg mt-1 z-50;
+}
+
+.search-result-item {
+  @apply flex items-center gap-3 p-3 hover:bg-accent cursor-pointer transition-colors;
+}
+
+.search-result-image {
+  @apply w-12 h-12 object-cover rounded;
+}
+
+.search-result-info {
+  @apply flex-1;
+}
+
+.search-result-info h3 {
+  @apply text-sm font-medium text-foreground;
+}
+
+.search-result-info p {
+  @apply text-sm text-muted-foreground;
+}
+
+@media (max-width: 1350px) {
+  .navbar-search {
+    @apply w-0 opacity-0 pointer-events-none;
+  }
+
+  .navbar-search-icon {
+    @apply static h-5 w-5;
+  }
+
+  .search-results {
+    @apply hidden;
+  }
+}
+
+/* Animations */
+.fadeIn {
+  animation: fadeIn var(--transition-normal) ease-in;
+}
+
+.slideDown {
+  animation: slideDown var(--transition-normal) ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

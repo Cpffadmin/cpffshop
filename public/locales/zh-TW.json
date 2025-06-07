@@ -1,0 +1,1062 @@
+{
+  "common": {
+    "loading": "載入中...",
+    "loadingProducts": "載入商品中...",
+    "error": "發生錯誤",
+    "success": "成功！",
+    "save": "儲存",
+    "cancel": "取消",
+    "delete": "刪除",
+    "edit": "編輯",
+    "create": "建立",
+    "submit": "提交",
+    "search": "搜尋",
+    "filter": "篩選",
+    "sort": "排序",
+    "actions": "操作",
+    "allBrands": "所有品牌",
+    "allCategories": "所有類別",
+    "minPrice": "最低價格",
+    "maxPrice": "最高價格",
+    "viewAllResults": "查看所有 {count} 個結果",
+    "noResults": "找不到結果",
+    "searchPlaceholder": "搜尋...",
+    "switchLanguage": "切換至 {lang}",
+    "english": "英文",
+    "chinese": "中文",
+    "personalInfo": "個人資料",
+    "fullName": "姓名",
+    "email": "電子郵件",
+    "role": "角色",
+    "currentPassword": "目前密碼",
+    "newPassword": "新密碼",
+    "confirmPassword": "確認密碼",
+    "changePassword": "更改密碼",
+    "changingPassword": "更改密碼中...",
+    "clickToUpdate": "點擊更新",
+    "externalLoginNote": "注意：如果您使用外部登入提供者，密碼變更可能不適用",
+    "saving": "儲存中...",
+    "saveChanges": "儲存變更",
+    "deletingAccount": "刪除帳戶中...",
+    "closeAccount": "關閉帳戶",
+    "deleteConfirm": "您確定要刪除您的帳戶嗎？此操作無法復原。",
+    "sortOptions": {
+      "price_asc": "價格：低到高",
+      "price_desc": "價格：高到低",
+      "newest": "最新優先",
+      "oldest": "最舊優先"
+    },
+    "noRatingsYet": "尚無評分",
+    "pagination": "第 {{current}} 頁，共 {{total}} 頁",
+    "yes": "是",
+    "no": "否",
+    "addToCart": "加入購物車",
+    "pageNotFound": "找不到頁面",
+    "pageNotFoundDesc": "您要尋找的頁面不存在。",
+    "backToHome": "返回首頁",
+    "noDescription": "暫無描述",
+    "previous": "上一頁",
+    "next": "下一頁",
+    "back": "返回",
+    "all": "所有訂單",
+    "city": "城市",
+    "postalCode": "郵遞區號",
+    "streetAddress": "街道地址",
+    "country": "國家",
+    "total": "總金額",
+    "createdAt": "建立時間",
+    "quantity": "數量",
+    "price": "價格",
+    "productNotAvailable": "商品詳情無法取得",
+    "remove": "移除",
+    "addedToCart": "已加入購物車",
+    "removedFromWishlist": "已從願望清單移除",
+    "addedToWishlist": "已加入願望清單",
+    "bestSellingProducts": "暢銷商品",
+    "readMore": "閱讀更多",
+    "confirm": "確認",
+    "optional": "選填",
+    "confirmCancel": "確定要取消嗎？已輸入的資料將會遺失。",
+    "cancelPayment": "取消付款",
+    "confirmCancelTitle": "確認取消",
+    "confirmCancelButton": "是的，取消",
+    "keepEditing": "否，繼續編輯",
+    "formNotSaved": "您有未儲存的變更。確定要離開嗎？"
+  },
+  "navigation": {
+    "home": "首頁",
+    "products": "商品",
+    "categories": "類別",
+    "brands": "品牌",
+    "about": "關於",
+    "contact": "聯絡我們",
+    "blog": "部落格",
+    "login": "登入",
+    "register": "註冊",
+    "logout": "登出",
+    "account": "帳戶",
+    "orders": "訂單",
+    "wishlist": "願望清單",
+    "cart": "購物車",
+    "admin": "管理",
+    "close": "關閉",
+    "adminPanel": "管理面板",
+    "profile": "個人資料",
+    "logistics": "物流",
+    "translations": "翻譯",
+    "privacyPolicy": "隱私權政策",
+    "settings": "設定"
+  },
+  "product": {
+    "brand": {
+      "label": "品牌"
+    },
+    "category": {
+      "label": "類別"
+    },
+    "manufactury_country": {
+      "label": "製造國家"
+    },
+    "color": {
+      "label": "顏色"
+    },
+    "productOfTheMonth": {
+      "title": "本月精選商品",
+      "viewProduct": "查看商品",
+      "managementTitle": "本月精選商品管理",
+      "management": {
+        "selectProduct": "選擇商品",
+        "description": "描述",
+        "features": "特色",
+        "addFeature": "新增特色",
+        "removeFeature": "移除",
+        "feature": "特色",
+        "icon": "圖示（表情符號或網址）",
+        "iconPlaceholder": "輸入圖示（表情符號或網址）",
+        "title": "標題",
+        "titlePlaceholder": "輸入標題",
+        "descriptionPlaceholder": "輸入描述",
+        "save": "儲存",
+        "saving": "儲存中...",
+        "success": "本月精選商品更新成功",
+        "error": "更新本月精選商品失敗"
+      }
+    },
+    "addToCart": "加入購物車",
+    "price": "價格",
+    "description": "描述",
+    "specifications": "規格",
+    "reviews": "評論",
+    "relatedProducts": "相關商品",
+    "outOfStock": "缺貨中",
+    "inStock": "庫存中",
+    "quantity": "數量",
+    "details": "商品詳情",
+    "stock": "庫存",
+    "featured": "精選商品",
+    "listedDate": "上架日期",
+    "products": "商品",
+    "addProduct": "新增商品",
+    "viewAllProducts": "查看所有商品",
+    "admin": {
+      "title": "商品管理",
+      "description": "管理您的商品庫存和列表",
+      "create": {
+        "title": "新增商品"
+      },
+      "status": {
+        "active": "已上架商品",
+        "draft": "草稿商品"
+      },
+      "table": {
+        "title": "表格檢視",
+        "image": "圖片",
+        "name": "名稱",
+        "brand": "品牌",
+        "price": "價格",
+        "actions": "操作",
+        "noProducts": "找不到商品"
+      },
+      "grid": {
+        "title": "網格檢視"
+      },
+      "actions": {
+        "edit": "編輯商品",
+        "delete": "刪除商品"
+      },
+      "delete": {
+        "confirm": "確定要刪除此商品嗎？",
+        "success": "商品已成功刪除",
+        "error": "刪除商品失敗"
+      },
+      "error": "載入商品失敗",
+      "deliverySettings": "運送設定"
+    }
+  },
+  "orders": {
+    "viewAllOrders": "查看所有訂單",
+    "yourOrders": "您的訂單",
+    "placedOn": "下單日期：",
+    "status": "狀態：",
+    "total": "總金額：",
+    "viewDetails": "查看詳情",
+    "noOrders": "您尚未有任何訂單。",
+    "loading": "訂單載入中，請稍候...",
+    "tryAgain": "重試",
+    "failedToFetch": "載入訂單失敗",
+    "orderNumber": "訂單編號 #{{id}}",
+    "statusTypes": {
+      "pending": "待處理",
+      "processing": "處理中",
+      "shipped": "已出貨",
+      "delivered": "已送達",
+      "cancelled": "已取消"
+    }
+  },
+  "logistics": {
+    "manageVehicles": "管理車輛",
+    "addVehicle": "新增車輛",
+    "vehicleDetails": "車輛詳情",
+    "driverInfo": "司機資訊",
+    "vehicleStatus": "車輛狀態",
+    "assignedLocation": "指派地點",
+    "registrationNumber": "車牌號碼",
+    "owner": "車主",
+    "makeYear": "製造年份",
+    "make": "品牌",
+    "model": "型號",
+    "chassisNo": "底盤號碼",
+    "weight": "重量",
+    "cylinderCapacity": "汽缸容量",
+    "bodyType": "車身類型",
+    "status": "狀態",
+    "driverName": "司機姓名",
+    "licenseNo": "駕駛執照號碼",
+    "contactNo": "聯絡電話",
+    "email": "電子郵件",
+    "assignmentInfo": "指派資訊",
+    "initialStatus": "初始狀態",
+    "creating": "建立中...",
+    "createVehicle": "建立車輛",
+    "viewDetails": "查看詳情",
+    "editVehicle": "編輯車輛",
+    "loading": "載入中...",
+    "pageTitle": "物流管理",
+    "pageDescription": "查看和管理所有物流車輛：更新狀態、指派訂單和追蹤配送。",
+    "createPage": {
+      "title": "新增車輛",
+      "description": "為您的物流車隊添加新車輛，包含完整詳細資訊。"
+    },
+    "statusTypes": {
+      "available": "可用",
+      "onDelivery": "配送中",
+      "maintenance": "維修中",
+      "outOfService": "停用"
+    },
+    "locations": {
+      "hongKong": "香港",
+      "kowloon": "九龍",
+      "newTerritories": "新界"
+    },
+    "admin": {
+      "title": "物流管理",
+      "description": "管理您的配送車輛和追蹤",
+      "create": {
+        "title": "新增車輛",
+        "description": "為您的物流車隊添加新車輛，包含完整詳細資訊。"
+      },
+      "status": {
+        "active": "使用中車輛",
+        "inactive": "停用中車輛"
+      },
+      "table": {
+        "title": "表格檢視",
+        "image": "圖片",
+        "name": "車輛名稱",
+        "type": "車輛類型",
+        "status": "狀態",
+        "capacity": "載運量",
+        "actions": "操作",
+        "noVehicles": "找不到車輛"
+      },
+      "grid": {
+        "title": "網格檢視"
+      },
+      "actions": {
+        "edit": "編輯車輛",
+        "delete": "刪除車輛"
+      },
+      "delete": {
+        "confirm": "確定要刪除此車輛嗎？",
+        "success": "車輛已成功刪除",
+        "error": "刪除車輛失敗"
+      },
+      "error": "載入車輛失敗"
+    },
+    "createSuccess": "車輛新增成功",
+    "createError": "新增車輛失敗",
+    "placeholders": {
+      "registrationNumber": "例如：AB123456",
+      "owner": "車輛擁有者",
+      "makeYear": "例如：2023",
+      "make": "例如：豐田",
+      "model": "例如：海獅",
+      "chassisNo": "車輛底盤號碼",
+      "weight": "車輛重量（公斤）",
+      "cylinderCapacity": "引擎容量（cc）",
+      "bodyType": "選擇車身類型",
+      "driverName": "司機全名",
+      "licenseNo": "駕駛執照號碼",
+      "contactNo": "司機聯絡電話",
+      "email": "司機電子郵件",
+      "location": "選擇地點",
+      "status": "選擇狀態"
+    },
+    "bodyTypes": {
+      "van": "客貨車",
+      "truck": "貨車",
+      "lorry": "重型貨車",
+      "motorcycle": "電單車"
+    },
+    "details": {
+      "updateStatus": "更新狀態",
+      "makeAndModel": "品牌和型號",
+      "loadingVehicle": "載入車輛詳情中...",
+      "viewInfo": "查看物流車輛的詳細資訊和指派狀況。",
+      "vehicleInfo": "車輛資訊",
+      "updateButton": "編輯車輛",
+      "loadingAuth": "載入中..."
+    },
+    "nextMaintenance": "下次保養",
+    "noMaintenanceRecords": "尚無保養記錄",
+    "assignedOrders": "已指派訂單",
+    "deliveryDate": "送貨日期",
+    "notes": "備註",
+    "vehicleNotFound": "找不到車輛",
+    "confirmStatusUpdate": "確認狀態更新",
+    "confirmStatusUpdateDesc": "您確定要將送貨狀態更新為",
+    "deliveredNote": "注意：這將把訂單標記為已送達並完成送貨流程。",
+    "failedNote": "注意：這將把訂單標記為失敗並取消送貨流程。"
+  },
+  "admin": {
+    "usersAndRoles": "使用者與角色",
+    "manageRoles": "管理角色",
+    "contentManagement": "內容管理",
+    "categories": "類別",
+    "brands": "品牌",
+    "specifications": "規格",
+    "newsletter": "電子報",
+    "subscribers": "訂閱者",
+    "settings": "設定",
+    "storeSettings": "商店設定",
+    "heroSection": "首頁橫幅",
+    "translations": "翻譯",
+    "debug": "除錯",
+    "privacyPolicy": "隱私權政策",
+    "dashboard": {
+      "title": "管理面板",
+      "description": "管理您的商店、訂單和設定",
+      "sections": {
+        "products": {
+          "title": "商品",
+          "description": "管理您的商品庫存",
+          "viewAll": "查看所有商品",
+          "addNew": "新增商品"
+        },
+        "orders": {
+          "title": "訂單",
+          "description": "查看和管理客戶訂單",
+          "viewAll": "查看所有訂單"
+        },
+        "logistics": {
+          "title": "物流",
+          "description": "管理配送車輛和追蹤",
+          "viewAll": "查看所有車輛",
+          "addNew": "新增車輛"
+        },
+        "contentManagement": {
+          "title": "內容管理",
+          "description": "管理網站內容和外觀",
+          "storeSettings": "商店設定",
+          "heroSection": "首頁橫幅",
+          "blogPosts": "部落格文章",
+          "guaranteeSection": "保障區塊",
+          "featuresSection": "特色區塊"
+        },
+        "usersAndRoles": {
+          "title": "用戶與角色",
+          "description": "管理用戶權限和角色",
+          "manageRoles": "管理角色"
+        }
+      }
+    },
+    "orderManagement": "訂單管理",
+    "orderManagementDescription": "管理和追蹤所有客戶訂單",
+    "order": {
+      "title": "訂單管理",
+      "description": "管理和追蹤所有客戶訂單",
+      "search": "搜尋訂單...",
+      "filter": {
+        "title": "篩選訂單",
+        "status": "訂單狀態",
+        "dateRange": "日期範圍",
+        "customer": "客戶"
+      },
+      "table": {
+        "title": "表格檢視",
+        "orderId": "訂單編號",
+        "customer": "客戶",
+        "date": "訂單日期",
+        "total": "總金額",
+        "status": "狀態",
+        "actions": "操作",
+        "noOrders": "找不到訂單"
+      },
+      "grid": {
+        "title": "網格檢視"
+      },
+      "status": {
+        "pending": "待處理",
+        "processing": "處理中",
+        "shipped": "已出貨",
+        "delivered": "已送達",
+        "cancelled": "已取消"
+      },
+      "actions": {
+        "view": "查看詳情",
+        "edit": "編輯訂單",
+        "delete": "刪除訂單",
+        "print": "列印發票",
+        "markAsDelivered": "標記為已送達"
+      },
+      "delete": {
+        "confirm": "確定要刪除此訂單嗎？",
+        "success": "訂單已成功刪除",
+        "error": "刪除訂單失敗"
+      },
+      "error": "載入訂單失敗"
+    },
+    "roles": {
+      "title": "用戶角色管理",
+      "description": "管理系統中的用戶角色和權限",
+      "availableRoles": "可用角色",
+      "createUserButton": "新增用戶",
+      "table": {
+        "name": "姓名",
+        "email": "電子郵件",
+        "currentRole": "目前角色",
+        "assignNewRole": "指派新角色",
+        "roleStatus": "角色狀態",
+        "actions": "操作"
+      },
+      "roles": {
+        "admin": "管理員",
+        "accounting": "會計",
+        "logistics": "物流",
+        "user": "一般用戶"
+      },
+      "roleDescriptions": {
+        "admin": "完整系統存取權限",
+        "accounting": "財務功能存取權限",
+        "logistics": "庫存和運送存取權限",
+        "user": "基本用戶存取權限"
+      },
+      "status": {
+        "systemAdmin": "系統管理員",
+        "regularAccess": "一般存取權限"
+      },
+      "actions": {
+        "applyRole": "套用角色",
+        "makeAdmin": "設為管理員",
+        "removeAdmin": "移除管理員",
+        "deleteUser": "刪除用戶",
+        "selectNewRole": "選擇新角色"
+      },
+      "messages": {
+        "roleUpdated": "角色更新成功",
+        "adminStatusUpdated": "管理員狀態更新成功",
+        "userCreated": "用戶建立成功",
+        "userDeleted": "用戶刪除成功",
+        "cannotChangeOwnRole": "您無法變更自己的角色",
+        "deleteConfirm": "確定要刪除此用戶嗎？",
+        "failedToFetch": "載入用戶失敗",
+        "failedToUpdateRole": "更新角色失敗",
+        "failedToUpdateAdmin": "更新管理員狀態失敗",
+        "failedToCreateUser": "建立用戶失敗",
+        "failedToDeleteUser": "刪除用戶失敗"
+      }
+    },
+    "gallery": {
+      "title": "圖庫管理",
+      "addImages": "新增圖片",
+      "saveChanges": "儲存變更",
+      "uploadSuccess": "圖片上傳成功",
+      "removeConfirm": "確定要移除此圖片嗎？",
+      "removeSuccess": "圖片已成功移除",
+      "saveSuccess": "圖庫更新成功",
+      "saveError": "圖庫更新失敗"
+    },
+    "deliverySettings": "運送設定",
+    "logistics": {
+      "title": "物流詳情",
+      "orderId": "訂單編號",
+      "status": "狀態",
+      "trackingNumber": "追蹤號碼",
+      "carrier": "物流公司",
+      "estimatedDelivery": "預計送達時間",
+      "shippingAddress": "運送地址",
+      "customer": "客戶",
+      "email": "電子郵件",
+      "phone": "電話",
+      "actions": {
+        "update": "更新",
+        "cancel": "取消"
+      },
+      "statuses": {
+        "pending": "待處理",
+        "processing": "處理中",
+        "shipped": "已出貨",
+        "delivered": "已送達",
+        "cancelled": "已取消"
+      }
+    }
+  },
+  "categories": {
+    "title": "商品分類",
+    "description": "管理商品分類",
+    "emptyCategory": "此分類目前沒有商品",
+    "create": {
+      "button": "新增分類",
+      "title": "新增分類",
+      "description": "新增一個商品分類",
+      "success": "成功新增分類",
+      "error": "新增分類失敗"
+    },
+    "update": {
+      "title": "編輯分類",
+      "success": "成功更新分類",
+      "error": "更新分類失敗"
+    },
+    "delete": {
+      "confirm": "確定要刪除此分類嗎？",
+      "success": "成功刪除分類",
+      "error": "刪除分類失敗"
+    },
+    "validation": {
+      "nameRequired": "所有語言的分類名稱都必須填寫"
+    },
+    "list": {
+      "empty": "尚未建立任何分類",
+      "nameHeader": "名稱",
+      "descriptionHeader": "描述",
+      "actionsHeader": "操作"
+    },
+    "form": {
+      "name": "分類名稱",
+      "description": "分類描述",
+      "namePlaceholder": {
+        "en": "請以英文輸入分類名稱",
+        "zh": "請以中文輸入分類名稱"
+      },
+      "descriptionPlaceholder": {
+        "en": "請以英文輸入分類描述",
+        "zh": "請以中文輸入分類描述"
+      }
+    },
+    "edit": {
+      "title": "編輯分類",
+      "description": "更新分類資訊"
+    }
+  },
+  "blog": {
+    "featuredArticle": "精選文章",
+    "discoverStory": "探索我們精選的故事",
+    "readMore": "閱讀更多",
+    "allPosts": "所有文章",
+    "exploreArticles": "探索我們的文章",
+    "posts": {
+      "pageTitle": "部落格文章",
+      "description": "管理您的部落格文章和內容",
+      "create": "新增文章",
+      "search": "搜尋文章...",
+      "noPosts": "找不到文章",
+      "title": "標題",
+      "author": "作者",
+      "status": "狀態",
+      "published": "發布日期",
+      "publishedAt": "發布時間",
+      "statusTypes": {
+        "draft": "草稿",
+        "published": "已發布"
+      },
+      "settings": {
+        "title": "部落格設定",
+        "description": "設定您的部落格選項",
+        "general": "一般設定",
+        "seo": "SEO 設定",
+        "social": "社群媒體",
+        "comments": "留言功能",
+        "save": "儲存設定",
+        "saving": "儲存設定中...",
+        "success": "設定已成功儲存",
+        "error": "儲存設定失敗"
+      },
+      "edit": {
+        "title": "編輯文章",
+        "description": "更新您的文章內容和設定",
+        "titleLabel": "文章標題",
+        "titlePlaceholder": "請輸入文章標題",
+        "contentLabel": "文章內容",
+        "contentPlaceholder": "在此撰寫文章內容...",
+        "excerptLabel": "摘要",
+        "excerptPlaceholder": "請輸入文章摘要",
+        "featuredImageLabel": "特色圖片",
+        "featuredImagePlaceholder": "上傳或選擇特色圖片",
+        "categoryLabel": "分類",
+        "categoryPlaceholder": "選擇分類",
+        "tagsLabel": "標籤",
+        "tagsPlaceholder": "新增標籤",
+        "seoTitle": "SEO 設定",
+        "seoTitleLabel": "SEO 標題",
+        "seoTitlePlaceholder": "請輸入 SEO 標題",
+        "seoDescriptionLabel": "SEO 描述",
+        "seoDescriptionPlaceholder": "請輸入 SEO 描述",
+        "seoKeywordsLabel": "SEO 關鍵字",
+        "seoKeywordsPlaceholder": "請輸入 SEO 關鍵字",
+        "statusLabel": "文章狀態",
+        "featuredLabel": "精選文章",
+        "saving": "儲存中...",
+        "saved": "變更已成功儲存",
+        "error": "儲存變更失敗",
+        "deleteConfirm": "確定要刪除此文章嗎？",
+        "deleted": "文章已成功刪除",
+        "deleteError": "刪除文章失敗"
+      }
+    }
+  },
+  "footer": {
+    "slogan": "您的高級手錶目的地",
+    "quickLinks": "快速連結",
+    "customerService": "客戶服務",
+    "stayUpdated": "保持更新",
+    "newsletterText": "訂閱我們的電子報以獲取最新資訊",
+    "emailPlaceholder": "輸入您的電子郵件",
+    "allRightsReserved": "版權所有",
+    "faq": "常見問題",
+    "shippingReturns": "運送與退貨",
+    "warranty": "保固",
+    "privacyPolicy": "隱私權政策",
+    "brandName": "EcommWatch",
+    "socialLinks": {
+      "facebook": "https://facebook.com/yourwatchbrand",
+      "twitter": "https://twitter.com/yourwatchbrand",
+      "instagram": "https://instagram.com/yourwatchbrand",
+      "linkedin": "https://linkedin.com/company/yourwatchbrand"
+    }
+  },
+  "settings": {
+    "title": "商店設定",
+    "description": "管理您的商店資訊、聯絡方式、營業時間和政策。",
+    "tabs": {
+      "general": "一般設定",
+      "newsletter": "電子報管理",
+      "about": "關於頁面",
+      "contact": "聯絡頁面"
+    },
+    "general": {
+      "storeInfo": {
+        "title": "商店資訊",
+        "storeName": "商店名稱",
+        "slogan": "商店標語",
+        "storeLogo": "商店標誌",
+        "changeLogo": "更換標誌",
+        "copyright": "版權聲明"
+      },
+      "contactInfo": {
+        "title": "聯絡資訊",
+        "email": "電子郵件",
+        "phone": "電話",
+        "street": "街道",
+        "city": "城市",
+        "postalCode": "郵遞區號",
+        "country": "國家"
+      },
+      "businessHours": {
+        "title": "營業時間",
+        "weekdays": "平日",
+        "weekends": "週末"
+      },
+      "socialMedia": {
+        "title": "社群媒體",
+        "facebook": "Facebook",
+        "instagram": "Instagram",
+        "twitter": "Twitter"
+      },
+      "shippingInfo": {
+        "title": "運送資訊",
+        "standardDays": "標準運送天數",
+        "expressDays": "快速運送天數",
+        "sectionTitle": "運送資訊設定",
+        "standardShippingTitle": "標準運送",
+        "expressShippingTitle": "快速運送",
+        "showOnContactPage": "在聯絡頁面顯示運送資訊"
+      },
+      "returnPolicy": {
+        "title": "退貨政策",
+        "daysToReturn": "可退貨天數",
+        "conditions": "退貨條件",
+        "sectionTitle": "退貨政策設定",
+        "showOnContactPage": "在聯絡頁面顯示退貨政策"
+      }
+    },
+    "newsletter": {
+      "title": "電子報標題",
+      "subtitle": "電子報副標題",
+      "bannerImage": "電子報橫幅圖片",
+      "changeBanner": "更換橫幅",
+      "buttonText": "訂閱按鈕文字",
+      "disclaimer": "免責聲明文字",
+      "emailPlaceholder": "輸入您的電子郵件"
+    },
+    "about": {
+      "aboutPageSection": {
+        "title": "關於頁面資訊",
+        "subtitle": "副標題",
+        "bannerImage": "橫幅圖片",
+        "changeBanner": "更換橫幅"
+      },
+      "storySection": {
+        "title": "故事區塊",
+        "content": "內容",
+        "storyImage": "故事圖片",
+        "changeImage": "更換圖片"
+      },
+      "valuesSection": {
+        "title": "價值觀區塊",
+        "values": "價值觀",
+        "description": "描述",
+        "iconName": "圖示名稱",
+        "addValue": "新增價值觀"
+      },
+      "teamSection": {
+        "title": "團隊區塊",
+        "teamMembers": "團隊成員",
+        "name": "姓名",
+        "role": "職位",
+        "description": "描述",
+        "change": "更換",
+        "addTeamMember": "新增團隊成員"
+      }
+    },
+    "contact": {
+      "contactPageSection": {
+        "title": "聯絡頁面資訊",
+        "subtitle": "副標題",
+        "bannerImage": "橫幅圖片",
+        "changeBanner": "更換橫幅"
+      },
+      "contactInfo": {
+        "title": "聯絡資訊",
+        "officeLocations": "辦公室位置",
+        "locationName": "位置名稱",
+        "address": "地址",
+        "phoneNumber": "電話號碼",
+        "emailAddress": "電子郵件地址",
+        "latitude": "緯度",
+        "longitude": "經度",
+        "getCoordinates": "從地址獲取座標",
+        "delete": "刪除",
+        "addOfficeLocation": "新增辦公室位置"
+      },
+      "supportChannels": {
+        "title": "支援管道",
+        "supportChannelsImage": "支援管道圖片",
+        "changeImage": "更換圖片",
+        "channels": "管道",
+        "description": "描述",
+        "iconName": "圖示名稱",
+        "addChannel": "新增管道"
+      },
+      "faqSection": {
+        "title": "常見問題區塊",
+        "questions": "問題",
+        "question": "問題",
+        "answer": "答案",
+        "addFAQ": "新增常見問題"
+      }
+    },
+    "buttons": {
+      "saving": "儲存中...",
+      "saveChanges": "儲存變更"
+    },
+    "messages": {
+      "logoUploaded": "標誌上傳成功",
+      "logoUploadFailed": "標誌上傳失敗",
+      "bannerUploaded": "橫幅上傳成功",
+      "bannerUploadFailed": "橫幅上傳失敗",
+      "imageUploaded": "圖片上傳成功",
+      "imageUploadFailed": "圖片上傳失敗",
+      "coordinatesUpdated": "位置座標更新成功",
+      "coordinatesUpdateFailed": "位置座標更新失敗",
+      "mapsNotLoaded": "Google 地圖尚未載入，請重新整理頁面後再試。"
+    },
+    "personalInfo": "個人資料",
+    "personalInfoDescription": "管理您的個人詳細資料和帳戶資訊。",
+    "securitySettings": "安全設定",
+    "securityDescription": "管理您的安全偏好與帳戶保護。",
+    "notificationSettings": "通知設定",
+    "notificationSettingsDescription": "管理您的通知偏好設定。",
+    "emailNotifications": "電子郵件通知",
+    "emailNotificationsDescription": "透過電子郵件接收更新和提醒。",
+    "pushNotifications": "推播通知",
+    "pushNotificationsDescription": "在您的裝置上即時接收更新。",
+    "deleteAccount": "刪除帳戶",
+    "deleteAccountWarning": "警告：刪除帳戶為永久性操作，無法復原。"
+  },
+  "newsletter": {
+    "title": "訂閱我們的電子報",
+    "description": "獲取最新產品和獨家優惠資訊",
+    "buttonText": "立即訂閱",
+    "disclaimer": "訂閱即表示您同意接收我們的營銷郵件。您可以隨時取消訂閱。",
+    "emailPlaceholder": "輸入您的電子郵件地址",
+    "successMessage": "感謝您的訂閱！",
+    "errorMessage": "訂閱失敗，請重試。",
+    "bannerAlt": "電子報訂閱橫幅",
+    "admin": {
+      "title": "電子報管理",
+      "description": "管理電子報訂閱者及其偏好設定",
+      "searchPlaceholder": "搜尋訂閱者...",
+      "loading": "載入訂閱者中...",
+      "table": {
+        "email": "電子郵件",
+        "source": "來源",
+        "status": "狀態",
+        "subscribedAt": "訂閱時間",
+        "lastEmail": "最後發送",
+        "actions": "操作"
+      },
+      "actions": {
+        "delete": "刪除",
+        "deleteConfirm": "確定要刪除此訂閱者嗎？"
+      }
+    }
+  },
+  "privacy": {
+    "tabs": {
+      "general": "一般設定",
+      "sections": "章節",
+      "contact": "聯絡資訊"
+    },
+    "title": "標題",
+    "titlePlaceholder": "請輸入隱私權政策標題",
+    "subtitle": "副標題",
+    "subtitlePlaceholder": "請輸入隱私權政策副標題",
+    "sectionTitle": "章節標題",
+    "sectionTitlePlaceholder": "請輸入章節標題",
+    "sectionContent": "章節內容",
+    "sectionContentPlaceholder": "請輸入章節內容",
+    "addSection": "新增章節",
+    "removeSection": "移除章節",
+    "sectionAdded": "章節新增成功",
+    "sectionRemoved": "章節移除成功",
+    "contactEmail": "聯絡電子郵件",
+    "contactEmailPlaceholder": "請輸入聯絡電子郵件",
+    "contactPhone": "聯絡電話",
+    "contactPhonePlaceholder": "請輸入聯絡電話",
+    "contactAddress": "聯絡地址",
+    "contactAddressPlaceholder": "請輸入聯絡地址",
+    "fetchError": "載入隱私權政策設定失敗",
+    "saved": "隱私權政策設定儲存成功",
+    "saveError": "儲存隱私權政策設定失敗",
+    "page": {
+      "title": "隱私權政策",
+      "lastUpdated": "最後更新",
+      "contactUs": "聯絡我們",
+      "email": "電子郵件",
+      "phone": "電話",
+      "address": "地址",
+      "effectiveDate": "生效日期",
+      "introduction": "簡介",
+      "readCarefully": "請仔細閱讀本隱私權政策，以了解我們如何收集、使用、保護和處理您的個人資訊。",
+      "questions": "如果您對我們的隱私權政策有任何問題，請聯絡我們：",
+      "noSections": "目前沒有隱私權政策內容。"
+    }
+  },
+  "search": {
+    "title": "搜尋商品",
+    "placeholder": "搜尋商品...",
+    "searching": "搜尋中...",
+    "noResults": "找不到商品"
+  },
+  "specifications": {
+    "title": "規格",
+    "description": "管理每個分類的商品規格",
+    "list": {
+      "empty": "找不到規格",
+      "items": "項",
+      "categoryHeader": "分類",
+      "specificationsCount": "規格",
+      "actionsHeader": "操作",
+      "manageButton": "管理",
+      "backButton": "返回",
+      "addButton": "新增規格",
+      "saveButton": "儲存規格",
+      "savingButton": "儲存中...",
+      "updateTranslations": "更新所有翻譯"
+    },
+    "form": {
+      "label": "標籤",
+      "type": "類型",
+      "typeOptions": {
+        "text": "文字",
+        "number": "數字",
+        "select": "選擇"
+      },
+      "options": "選項",
+      "description": "描述",
+      "required": "必填",
+      "remove": "移除",
+      "placeholder": {
+        "label": "輸入規格標籤",
+        "options": "輸入選項，以逗號分隔",
+        "description": "輸入規格描述"
+      }
+    },
+    "validation": {
+      "categoryRequired": "請選擇分類",
+      "labelRequired": "所有語言都必須填寫規格標籤"
+    },
+    "success": {
+      "save": "規格已成功儲存"
+    },
+    "error": {
+      "load": "載入規格失敗",
+      "save": "儲存規格失敗"
+    }
+  },
+  "wishlist": {
+    "empty": "您的願望清單是空的。",
+    "failedToLoad": "載入願望清單失敗。",
+    "yourWishlist": "您的願望清單",
+    "addToWishlist": "加入願望清單",
+    "removeFromWishlist": "從願望清單移除",
+    "loginRequired": "請先登入以使用願望清單",
+    "updateFailed": "更新願望清單失敗"
+  },
+  "guarantee": {
+    "managementTitle": "保障區塊管理",
+    "item": "保障項目",
+    "icon": "保障圖示",
+    "selectIcon": "選擇圖示",
+    "title": "保障標題",
+    "titlePlaceholder": "輸入保障標題",
+    "description": "保障描述",
+    "descriptionPlaceholder": "輸入保障描述",
+    "addItem": "新增保障項目"
+  },
+  "features": {
+    "managementTitle": "特色區塊管理",
+    "item": "特色項目",
+    "icon": "特色圖示",
+    "selectIcon": "選擇圖示",
+    "title": "特色標題",
+    "titlePlaceholder": "輸入特色標題",
+    "description": "特色描述",
+    "descriptionPlaceholder": "輸入特色描述",
+    "addItem": "新增特色項目",
+    "default": {
+      "items": [
+        {
+          "title": "滿意保證退款",
+          "description": "30天內免費退換"
+        },
+        {
+          "title": "瑞士製造",
+          "description": "來自瑞士盧塞恩的傳統工坊"
+        },
+        {
+          "title": "優質品質",
+          "description": "904L不鏽鋼 | 藍寶石水晶"
+        }
+      ]
+    }
+  },
+  "checkout": {
+    "title": "結帳",
+    "cartItems": "購物車商品",
+    "emptyCart": "您的購物車是空的",
+    "deliveryOptions": "運送選項",
+    "freeDelivery": "免運費",
+    "paymentMethod": "付款方式",
+    "onlinePayment": "線上付款",
+    "offlinePayment": "離線付款",
+    "orderSummary": "訂單摘要",
+    "subtotal": "小計",
+    "delivery": "運費",
+    "free": "免費",
+    "total": "總計",
+    "processing": "處理中...",
+    "secureCheckout": "安全結帳",
+    "bankDetailsNotAvailable": "銀行帳戶詳情不可用",
+    "stripeInitError": "Stripe 初始化失敗",
+    "fillRequiredFields": "請填寫所有必填欄位",
+    "noCheckoutUrl": "未收到結帳網址",
+    "checkoutError": "結帳過程中發生錯誤，請重試",
+    "shippingInformation": "運送資訊",
+    "name": "姓名",
+    "city": "城市",
+    "postalCode": "郵遞區號",
+    "streetAddress": "街道地址",
+    "country": "國家",
+    "deliveryType": "運送方式",
+    "payOnline": "線上付款",
+    "paymentProof": "付款證明",
+    "paymentReference": "付款參考號碼",
+    "bankAccountDetails": "銀行帳戶詳情",
+    "uploadFile": "上傳檔案",
+    "reuploadFile": "重新上傳檔案",
+    "submitting": "提交中...",
+    "submitPaymentProof": "提交付款證明",
+    "securePayment": "安全付款",
+    "thankYou": "感謝您的訂購！",
+    "orderConfirmation": "我們會在訂單發送時通知您。",
+    "success": {
+      "orderConfirmed": "訂單確認！",
+      "paymentReceived": "我們已收到您的付款。感謝您的購買！",
+      "paymentVerifying": "我們已收到您的訂單和付款證明。我們將驗證您的付款並盡快與您聯繫。",
+      "verifyingOrder": "正在驗證您的訂單...",
+      "goToOrders": "查看訂單",
+      "goToProfile": "前往個人資料",
+      "redirectMessage": "您將被重新導向至個人資料頁面",
+      "redirectInSeconds": "5秒後...",
+      "redirectAfterVerification": "付款驗證後。",
+      "orderDetails": {
+        "orderId": "訂單編號",
+        "name": "姓名",
+        "email": "電子郵件",
+        "status": "狀態",
+        "total": "總金額",
+        "paymentReference": "付款參考號碼"
+      },
+      "error": {
+        "noOrderId": "找不到訂單編號",
+        "verificationFailed": "無法驗證訂單狀態"
+      }
+    },
+    "confirmCancel": "您已填寫了一些資訊。確定要取消嗎？所有已輸入的資訊將會遺失。",
+    "canceled": {
+      "title": "取消付款",
+      "message": "您的付款已取消。如有任何問題，請聯繫我們的客服團隊。",
+      "returnToCart": "返回購物車",
+      "continueShopping": "繼續購物"
+    }
+  },
+  "auth": {
+    "login": "登入",
+    "signup": "註冊",
+    "logout": "登出",
+    "loginRequired": "需要登入",
+    "loginToAddToCart": "請登入或註冊帳號以將商品加入購物車",
+    "createAccount": "建立帳號"
+  }
+}

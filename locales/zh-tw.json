@@ -1,0 +1,133 @@
+{
+  "common": {
+    "loading": "載入中...",
+    "error": "錯誤",
+    "success": "成功",
+    "yes": "是",
+    "no": "否",
+    "addToCart": "加入購物車",
+    "loadingProducts": "載入商品中...",
+    "noDescription": "無描述",
+    "noBrand": "無品牌",
+    "notFound": "找不到",
+    "allCategories": "所有類別"
+  },
+  "navigation": {
+    "shop": "商店",
+    "home": "首頁",
+    "products": "商品",
+    "blog": "部落格",
+    "about": "關於我們",
+    "contact": "聯絡我們",
+    "adminPanel": "管理面板",
+    "orders": "訂單",
+    "close": "關閉"
+  },
+  "products": {
+    "list": "商品",
+    "category": {
+      "label": "類別"
+    },
+    "details": {
+      "title": "商品詳情",
+      "name": "名稱",
+      "description": "描述",
+      "price": "價格",
+      "stock": "庫存",
+      "brand": "品牌",
+      "category": "類別",
+      "stockRestricted": "庫存資訊受限",
+      "featuredStatus": "精選狀態",
+      "isFeatured": "精選商品",
+      "notFeatured": "非精選商品",
+      "listedDate": "上架日期",
+      "sku": "商品編號",
+      "unitsAvailable": "件庫存",
+      "bracelet": "錶帶",
+      "movement": "機芯",
+      "thickness": "厚度",
+      "glass": "鏡面",
+      "luminova": "夜光",
+      "casematerial": "錶殼材質",
+      "crown": "錶冠",
+      "bandsize": "錶帶尺寸",
+      "lugs": "錶耳",
+      "water": "防水"
+    },
+    "create": {
+      "title": "建立商品",
+      "name": "商品名稱",
+      "description": "描述",
+      "price": "價格",
+      "stock": "庫存",
+      "brand": "品牌",
+      "category": "類別",
+      "images": "商品圖片",
+      "upload": "點擊上傳或拖放",
+      "uploadFormat": "PNG、JPG、JPEG 或 WEBP（最大 10MB）"
+    },
+    "edit": {
+      "title": "編輯商品",
+      "save": "儲存變更",
+      "cancel": "取消"
+    },
+    "status": {
+      "inStock": "有庫存",
+      "outOfStock": "缺貨中",
+      "condition": {
+        "good": "良好",
+        "excellent": "優良",
+        "fair": "普通",
+        "poor": "差"
+      }
+    },
+    "reviews": {
+      "title": "顧客評價",
+      "rating": "評分",
+      "yourReview": "您的評價",
+      "basedOn": "基於 {{count}} 則評價",
+      "outOf": "/ 5.0"
+    }
+  },
+  "brands": {
+    "title": "品牌管理",
+    "list": {
+      "description": "管理您的商品品牌",
+      "empty": "找不到品牌",
+      "sync": "同步品牌",
+      "actions": {
+        "edit": "編輯",
+        "delete": "刪除",
+        "confirmDelete": "確定要刪除這個品牌嗎？"
+      }
+    },
+    "create": {
+      "title": "新增品牌",
+      "name": "品牌名稱",
+      "displayName": "顯示名稱",
+      "description": "描述",
+      "logo": "品牌標誌",
+      "submit": "建立品牌",
+      "success": "品牌建立成功",
+      "error": "建立品牌失敗"
+    },
+    "edit": {
+      "title": "編輯品牌",
+      "save": "儲存變更",
+      "cancel": "取消",
+      "success": "品牌更新成功",
+      "error": "更新品牌失敗"
+    }
+  },
+  "settings": {
+    "general": {
+      "storeInfo": {
+        "title": "商店資訊",
+        "storeName": "商店名稱",
+        "slogan": "商店標語",
+        "storeLogo": "商店標誌",
+        "changeLogo": "更換標誌"
+      }
+    }
+  }
+}
