@@ -29,11 +29,11 @@ export async function GET() {
     }
 
     // Try to get brands from the new model first
-    let brands = await Brand.find().sort({ order: 1 });
+    let brands = await Brand.find({ deletedAt: null }).sort({ order: 1 });
 
     // If no brands found in new model, try the beta model
     if (!brands || brands.length === 0) {
-      brands = await BrandBeta.find().sort({ order: 1 });
+      brands = await BrandBeta.find({ deletedAt: null }).sort({ order: 1 });
     }
 
     const syncStatus = await BrandSyncManager.verifySyncStatus();
@@ -82,7 +82,7 @@ export async function POST(request: Request) {
 
     if (action === "create") {
       const existingBrand = await Brand.findOne({
-        $or: [{ name: brandData.name }, { displayName: brandData.displayName }],
+        name: brandData.name,
       });
 
       if (existingBrand) {
@@ -148,17 +148,47 @@ export async function PATCH(request: Request) {
       );
     }
 
-    // Ensure displayNames and descriptions are properly structured
+    // If this is a status update, only update isActive
+    if (
+      typeof updateData.isActive === "boolean" &&
+      Object.keys(updateData).length === 1
+    ) {
+      let brand = await Brand.findByIdAndUpdate(
+        id,
+        { isActive: updateData.isActive },
+        { new: true }
+      );
+
+      if (!brand) {
+        brand = await BrandBeta.findByIdAndUpdate(
+          id,
+          { isActive: updateData.isActive },
+          { new: true }
+        );
+      }
+
+      if (!brand) {
+        return NextResponse.json({ error: "Brand not found" }, { status: 404 });
+      }
+
+      return NextResponse.json({ brand });
+    }
+
+    // For other updates, ensure displayNames and descriptions are properly structured
     const sanitizedUpdateData = {
       ...updateData,
-      displayNames: {
-        en: updateData.displayNames?.en || "",
-        "zh-TW": updateData.displayNames?.["zh-TW"] || "",
-      },
-      descriptions: {
-        en: updateData.descriptions?.en || "",
-        "zh-TW": updateData.descriptions?.["zh-TW"] || "",
-      },
+      displayNames: updateData.displayNames
+        ? {
+            en: updateData.displayNames?.en || "",
+            "zh-TW": updateData.displayNames?.["zh-TW"] || "",
+          }
+        : undefined,
+      descriptions: updateData.descriptions
+        ? {
+            en: updateData.descriptions?.en || "",
+            "zh-TW": updateData.descriptions?.["zh-TW"] || "",
+          }
+        : undefined,
     };
 
     // Try to update in both models
@@ -213,40 +243,31 @@ export async function DELETE(request: Request) {
       );
     }
 
-    // Try to find brand in both models
-    let brand = await Brand.findById(id);
+    // Implement soft delete
+    let brand = await Brand.findByIdAndUpdate(
+      id,
+      {
+        deletedAt: new Date(),
+        isActive: false,
+      },
+      { new: true }
+    );
+
+    // If not found in Brand model, try BrandBeta
     if (!brand) {
-      brand = await BrandBeta.findById(id);
+      brand = await BrandBeta.findByIdAndUpdate(
+        id,
+        {
+          deletedAt: new Date(),
+          isActive: false,
+        },
+        { new: true }
+      );
     }
 
     if (!brand) {
       return NextResponse.json({ error: "Brand not found" }, { status: 404 });
     }
-
-    if (brand.isDefault && brand.name.toLowerCase() !== "all brands") {
-      return NextResponse.json(
-        { error: "Cannot delete default brand" },
-        { status: 400 }
-      );
-    }
-
-    // Delete from both models if exists
-    await Promise.all([
-      Brand.findByIdAndDelete(id),
-      BrandBeta.findByIdAndDelete(id),
-    ]);
-
-    // Reorder remaining brands in both models
-    const reorderBrands = async (Model: Model<IBrand>) => {
-      const remainingBrands = await Model.find().sort({ order: 1 });
-      await Promise.all(
-        remainingBrands.map((brand, index) =>
-          Model.findByIdAndUpdate(brand._id, { order: index })
-        )
-      );
-    };
-
-    await Promise.all([reorderBrands(Brand), reorderBrands(BrandBeta)]);
 
     return NextResponse.json({ message: "Brand deleted successfully" });
   } catch (error) {

@@ -380,10 +380,25 @@ export default function BrandsPage() {
                           currentLang={language === "en" ? "en" : "zh-TW"}
                         />
                       </h3>
-                      <Switch
-                        checked={brand.isActive}
-                        onCheckedChange={() => toggleBrandStatus(brand)}
-                      />
+                      <div className="flex items-center gap-2">
+                        <Switch
+                          checked={brand.isActive}
+                          onCheckedChange={() => toggleBrandStatus(brand)}
+                        />
+                        <span
+                          className={`text-sm ${
+                            brand.isActive ? "text-green-600" : "text-gray-500"
+                          }`}
+                        >
+                          {brand.isActive
+                            ? language === "en"
+                              ? "Active"
+                              : "啟用"
+                            : language === "en"
+                            ? "Inactive"
+                            : "停用"}
+                        </span>
+                      </div>
                     </div>
                     <div className="flex justify-end gap-2">
                       <Button
@@ -436,10 +451,27 @@ export default function BrandsPage() {
                       </TableCell>
                       <TableCell>{brand.name}</TableCell>
                       <TableCell>
-                        <Switch
-                          checked={brand.isActive}
-                          onCheckedChange={() => toggleBrandStatus(brand)}
-                        />
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            checked={brand.isActive}
+                            onCheckedChange={() => toggleBrandStatus(brand)}
+                          />
+                          <span
+                            className={`text-sm ${
+                              brand.isActive
+                                ? "text-green-600"
+                                : "text-gray-500"
+                            }`}
+                          >
+                            {brand.isActive
+                              ? language === "en"
+                                ? "Active"
+                                : "啟用"
+                              : language === "en"
+                              ? "Inactive"
+                              : "停用"}
+                          </span>
+                        </div>
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">

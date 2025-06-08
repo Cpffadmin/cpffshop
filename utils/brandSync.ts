@@ -6,128 +6,49 @@ interface BrandTranslation {
   "zh-TW": string;
 }
 
-const DEFAULT_BRANDS: Record<string, BrandTranslation> = {
-  Rolex: {
-    en: "Rolex",
-    "zh-TW": "勞力士",
-  },
-  "Patek Philippe": {
-    en: "Patek Philippe",
-    "zh-TW": "百達翡麗",
-  },
-  "Audemars Piguet": {
-    en: "Audemars Piguet",
-    "zh-TW": "愛彼",
-  },
-  "Richard Mille": {
-    en: "Richard Mille",
-    "zh-TW": "理查德·米勒",
-  },
-  Omega: {
-    en: "Omega",
-    "zh-TW": "歐米茄",
-  },
-  IWC: {
-    en: "IWC",
-    "zh-TW": "萬國錶",
-  },
-  Cartier: {
-    en: "Cartier",
-    "zh-TW": "卡地亞",
-  },
-  Tudor: {
-    en: "Tudor",
-    "zh-TW": "帝舵",
-  },
-};
-
 export class BrandSyncManager {
   // Convert brand name to slug
   private static createSlug(name: string): string {
     return name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
   }
 
-  // Create a single brand
-  private static async createBrand(
-    brandName: string,
-    translations: BrandTranslation,
-    order: number
-  ) {
+  // Update a single brand's language codes
+  private static async updateBrandLanguages(brand: any) {
     try {
-      const existingBrand = await Brand.findOne({
-        legacyBrandName: brandName,
-      });
-
-      if (existingBrand) {
-        // Update existing brand with correct language codes
-        await Brand.findByIdAndUpdate(existingBrand._id, {
+      if (brand.displayNames?.zh && !brand.displayNames["zh-TW"]) {
+        await Brand.findByIdAndUpdate(brand._id, {
           displayNames: {
-            en: translations.en,
-            "zh-TW": translations["zh-TW"],
+            en: brand.displayNames.en || "",
+            "zh-TW": brand.displayNames.zh || "",
           },
           descriptions: {
-            en: existingBrand.descriptions?.en || "",
-            "zh-TW":
-              existingBrand.descriptions?.["zh-TW"] ||
-              existingBrand.descriptions?.zh ||
-              "",
+            en: brand.descriptions?.en || "",
+            "zh-TW": brand.descriptions?.zh || "",
           },
         });
-        return existingBrand;
+        return true;
       }
-
-      return await Brand.create({
-        name: brandName,
-        slug: this.createSlug(brandName),
-        displayNames: {
-          en: translations.en,
-          "zh-TW": translations["zh-TW"],
-        },
-        descriptions: {
-          en: "",
-          "zh-TW": "",
-        },
-        isActive: true,
-        order,
-        legacyBrandName: brandName,
-      });
+      return false;
     } catch (error) {
-      console.error(`Error creating brand ${brandName}:`, error);
-      throw error;
+      console.error(`Error updating brand ${brand.name}:`, error);
+      return false;
     }
   }
 
-  // Sync all default brands
+  // Sync all brands' language codes
   static async syncDefaultBrands() {
     try {
-      // First, update any existing brands with wrong language codes
+      // Update any existing brands with wrong language codes
       const existingBrands = await Brand.find({});
-      for (const brand of existingBrands) {
-        if (brand.displayNames?.zh && !brand.displayNames["zh-TW"]) {
-          await Brand.findByIdAndUpdate(brand._id, {
-            displayNames: {
-              en: brand.displayNames.en,
-              "zh-TW": brand.displayNames.zh,
-            },
-            descriptions: {
-              en: brand.descriptions?.en || "",
-              "zh-TW": brand.descriptions?.zh || "",
-            },
-          });
-        }
-      }
-
-      // Then sync all default brands
-      const results = await Promise.all(
-        Object.entries(DEFAULT_BRANDS).map(([brandName, translations], index) =>
-          this.createBrand(brandName, translations, index)
-        )
+      const updateResults = await Promise.all(
+        existingBrands.map((brand) => this.updateBrandLanguages(brand))
       );
 
-      console.log(`Successfully synced ${results.length} brands`);
-      return results;
+      const updatedCount = updateResults.filter(Boolean).length;
+      console.log(`Successfully updated ${updatedCount} brands`);
+      return existingBrands;
     } catch (error) {
-      console.error("Error syncing default brands:", error);
+      console.error("Error syncing brands:", error);
       throw error;
     }
   }
@@ -136,7 +57,7 @@ export class BrandSyncManager {
   static async getBrandMapping(): Promise<Record<string, string>> {
     const brands = await Brand.find({});
     return brands.reduce((acc, brand) => {
-      acc[brand.legacyBrandName] = brand._id.toString();
+      acc[brand.legacyBrandName || brand.name] = brand._id.toString();
       return acc;
     }, {} as Record<string, string>);
   }
@@ -144,14 +65,14 @@ export class BrandSyncManager {
   // Verify sync status
   static async verifySyncStatus() {
     const brands = await Brand.find({});
-    const missingBrands = Object.keys(DEFAULT_BRANDS).filter(
-      (brandName) => !brands.some((b) => b.legacyBrandName === brandName)
+    const brandsWithOldCodes = brands.filter(
+      (brand) => brand.displayNames?.zh && !brand.displayNames["zh-TW"]
     );
 
     return {
       totalBrands: brands.length,
-      missingBrands,
-      isSynced: missingBrands.length === 0,
+      needsUpdate: brandsWithOldCodes.length > 0,
+      brandsToUpdate: brandsWithOldCodes.length,
     };
   }
 }

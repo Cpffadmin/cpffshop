@@ -17,6 +17,7 @@ const brandSchema = new mongoose.Schema({
   products: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
+  deletedAt: { type: Date, default: null },
 });
 
 export interface IBrand extends mongoose.Document {
@@ -37,6 +38,7 @@ export interface IBrand extends mongoose.Document {
   products: mongoose.Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
+  deletedAt: Date | null;
 }
 
 const Brand =

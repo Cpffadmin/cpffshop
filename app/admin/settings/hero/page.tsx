@@ -69,6 +69,7 @@ export default function HeroSettingsPage() {
     addHeroSection,
     removeHeroSection,
     reorderSections,
+    setActiveSection,
   } = useHero();
 
   // Local state for unsaved changes
@@ -346,46 +347,68 @@ export default function HeroSettingsPage() {
                   <div className="space-y-6 border rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-semibold">Media Settings</h3>
-                      <div className="flex items-center gap-4">
-                        <Label
-                          htmlFor={`media-type-${section._id}`}
-                          className={
-                            section.media.mediaType === "video"
-                              ? "text-primary font-medium"
-                              : "text-muted-foreground"
-                          }
-                        >
-                          Display Video
-                        </Label>
-                        <Switch
-                          id={`media-type-${section._id}`}
-                          checked={section.media.mediaType === "video"}
-                          onCheckedChange={(checked) => {
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => {
                             const updatedMedia = {
                               videoUrl: section.media.videoUrl,
                               posterUrl: section.media.posterUrl,
-                              mediaType: checked
-                                ? ("video" as const)
-                                : ("image" as const),
+                              mediaType: "video" as const,
                             };
                             handleLocalUpdate(section._id, {
                               media: updatedMedia,
                             });
-                            updateHeroSection(section._id, {
+                          }}
+                          className={`px-4 py-2 rounded-lg transition-colors ${
+                            section.media.mediaType === "video"
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-gray-100 text-muted-foreground hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
+                          }`}
+                        >
+                          Display Video
+                        </button>
+                        <button
+                          onClick={() => {
+                            const updatedMedia = {
+                              videoUrl: section.media.videoUrl,
+                              posterUrl: section.media.posterUrl,
+                              mediaType: "image" as const,
+                            };
+                            handleLocalUpdate(section._id, {
                               media: updatedMedia,
                             });
                           }}
-                        />
-                        <Label
-                          htmlFor={`media-type-${section._id}`}
-                          className={
+                          className={`px-4 py-2 rounded-lg transition-colors ${
                             section.media.mediaType === "image"
-                              ? "text-primary font-medium"
-                              : "text-muted-foreground"
-                          }
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-gray-100 text-muted-foreground hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
+                          }`}
                         >
                           Display Poster
-                        </Label>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-900 mb-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-lg font-semibold mb-1">
+                            Active Status
+                          </h3>
+                          <p className="text-sm text-muted-foreground">
+                            Enable this section to display on homepage
+                          </p>
+                        </div>
+                        <Switch
+                          id={`active-${section._id}`}
+                          checked={section.isActive}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setActiveSection(section._id);
+                            }
+                          }}
+                          className="scale-110 data-[state=checked]:bg-primary"
+                        />
                       </div>
                     </div>
 
