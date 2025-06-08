@@ -214,19 +214,19 @@ const Footer = () => {
                     currentLang={language}
                   />
                 </p>
-                <form onSubmit={handleSubmit} className="flex">
+                <form onSubmit={handleSubmit} className="flex w-full max-w-md">
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder={t("footer.emailPlaceholder")}
-                    className="flex-grow px-4 py-2 bg-gray-700 text-white rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="flex-1 min-w-0 px-4 py-2 bg-gray-700 text-white rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                     required
                   />
                   <button
                     type="submit"
                     disabled={isSubscribing}
-                    className="bg-blue-500 hover:bg-blue-600 text-gray-900 font-bold py-2 px-4 rounded-r-md transition duration-300 disabled:opacity-50"
+                    className="flex-shrink-0 bg-blue-500 hover:bg-blue-600 text-gray-900 font-bold py-2 px-4 rounded-r-md transition duration-300 disabled:opacity-50"
                   >
                     <HiOutlineMail className="w-6 h-6" />
                   </button>
