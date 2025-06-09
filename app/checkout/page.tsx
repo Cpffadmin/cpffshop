@@ -298,7 +298,6 @@ const Cart = () => {
 
       if (response.data.success) {
         toast.success(t("checkout.success.paymentVerifying"));
-        clearCart();
         window.location.href = `/checkout/success?orderId=${response.data.orderId}`;
       } else {
         throw new Error(response.data.message || t("checkout.checkoutError"));

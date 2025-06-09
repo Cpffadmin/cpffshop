@@ -23,6 +23,7 @@ import { CldUploadButton } from "next-cloudinary";
 import { useCloudinary } from "@/components/providers/CloudinaryProvider";
 import { toast } from "react-hot-toast";
 import { Button } from "@/components/ui/button";
+import useCartStore from "@/store/cartStore";
 
 interface PageParams {
   params: {
@@ -40,6 +41,7 @@ export default function OrderDetails({ params }: PageParams) {
   const { data: session } = useSession();
   const { t } = useTranslation();
   const { cloudName, uploadPreset } = useCloudinary();
+  const clearCart = useCartStore((state) => state.clearCart);
 
   // Function to format order ID to 12-digit format
   const formatOrderId = (id: string) => {
@@ -82,6 +84,13 @@ export default function OrderDetails({ params }: PageParams) {
   useEffect(() => {
     getOrder();
   }, [getOrder]);
+
+  useEffect(() => {
+    if (order?.paid) {
+      // Clear cart if order is paid
+      clearCart();
+    }
+  }, [order, clearCart]);
 
   const handlePaymentProofUpload = async (result: any) => {
     if (

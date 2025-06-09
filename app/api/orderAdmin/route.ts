@@ -64,7 +64,10 @@ export async function PUT(req: Request) {
 
     let updateFields: any = {};
     if (confirmPayment) {
-      updateFields = { paid: true, status: "processing" };
+      updateFields = {
+        paid: true,
+        status: "processing", // This will trigger cart clearing on client
+      };
 
       // Get the order to update stock
       const order = await Order.findById(orderId).populate({

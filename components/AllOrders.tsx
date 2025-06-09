@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import useCartStore from "@/store/cartStore";
 
 interface SessionUser {
   user?: {
@@ -131,6 +132,7 @@ const Orders = ({ filterStatus }: Props) => {
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
   const [selectedOrderId, setSelectedOrderId] = useState("");
+  const clearCart = useCartStore((state) => state.clearCart);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -231,6 +233,25 @@ const Orders = ({ filterStatus }: Props) => {
       setSelectedOrderId("");
     } catch (err) {
       toast.error(t("admin.order.payment.rejectError"));
+    }
+  };
+
+  const handleConfirmPayment = async (orderId: string) => {
+    try {
+      await axios.put("/api/orderAdmin", {
+        orderId: orderId,
+        confirmPayment: true,
+      });
+      toast.success(t("admin.order.payment.confirmSuccess"));
+      setOrders(
+        orders.map((o) =>
+          o._id === orderId ? { ...o, paid: true, status: "processing" } : o
+        )
+      );
+      // Clear cart after confirming payment
+      clearCart();
+    } catch (err) {
+      toast.error(t("admin.order.payment.confirmError"));
     }
   };
 
@@ -475,32 +496,7 @@ const Orders = ({ filterStatus }: Props) => {
                         {order.paid === false && order.paymentProofUrl && (
                           <>
                             <button
-                              onClick={async () => {
-                                try {
-                                  await axios.put("/api/orderAdmin", {
-                                    orderId: order._id,
-                                    confirmPayment: true,
-                                  });
-                                  toast.success(
-                                    t("admin.order.payment.confirmSuccess")
-                                  );
-                                  setOrders(
-                                    orders.map((o) =>
-                                      o._id === order._id
-                                        ? {
-                                            ...o,
-                                            paid: true,
-                                            status: "processing",
-                                          }
-                                        : o
-                                    )
-                                  );
-                                } catch (err) {
-                                  toast.error(
-                                    t("admin.order.payment.confirmError")
-                                  );
-                                }
-                              }}
+                              onClick={() => handleConfirmPayment(order._id)}
                               className="flex items-center space-x-1 bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded"
                             >
                               <CheckCircle className="w-4 h-4" />

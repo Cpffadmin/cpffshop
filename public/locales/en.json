@@ -1031,7 +1031,30 @@
     "thankYou": "Thanks for your order!",
     "orderConfirmation": "We will email you when your order will be sent.",
     "confirmCancel": "You have filled some information. Are you sure you want to cancel? All entered information will be lost.",
-    "cancelPayment": "Cancel Payment"
+    "cancelPayment": "Cancel Payment",
+    "success": {
+      "orderConfirmed": "Order Confirmed!",
+      "paymentReceived": "We have received your payment. Thank you for your purchase!",
+      "paymentVerifying": "We have received your order and payment proof. We will verify your payment and get back to you shortly.",
+      "verifyingOrder": "Verifying your order...",
+      "goToOrders": "View Orders",
+      "goToProfile": "Go to Profile",
+      "redirectMessage": "You will be redirected to your profile page",
+      "redirectInSeconds": "in 5 seconds...",
+      "redirectAfterVerification": "after payment verification.",
+      "orderDetails": {
+        "orderId": "Order ID",
+        "name": "Name",
+        "email": "Email",
+        "status": "Status",
+        "total": "Total",
+        "paymentReference": "Payment Reference"
+      },
+      "error": {
+        "noOrderId": "No order ID found",
+        "verificationFailed": "Could not verify order status"
+      }
+    }
   },
   "auth": {
     "login": "Login",

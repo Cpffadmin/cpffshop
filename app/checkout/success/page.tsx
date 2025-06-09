@@ -16,6 +16,18 @@ function SuccessContent() {
   const [error, setError] = useState<string | null>(null);
   const [order, setOrder] = useState<any>(null);
   const clearCart = useCartStore((state) => state.clearCart);
+  const items = useCartStore((state) => state.items);
+
+  // Effect to handle initial cart clearing
+  useEffect(() => {
+    console.log("Initial cart state:", items);
+    const shouldClearCart = localStorage.getItem("should-clear-cart");
+    if (shouldClearCart === "true") {
+      console.log("Clearing cart from initial effect");
+      clearCart();
+      localStorage.removeItem("should-clear-cart");
+    }
+  }, [clearCart, items]);
 
   useEffect(() => {
     const orderId = searchParams?.get ? searchParams.get("orderId") : null;
@@ -29,14 +41,25 @@ function SuccessContent() {
       try {
         const response = await axios.get(`/api/orders/${orderId}`);
         setOrder(response.data);
-        // Only clear cart if paid (online), for offline it's already cleared on submit
-        if (response.data.paid) {
-          clearCart();
+        console.log("Order data received:", response.data);
+
+        if (response.data.paid || response.data.status === "processing") {
+          console.log("Order is paid or processing, clearing cart");
+          localStorage.setItem("should-clear-cart", "true");
+          await clearCart();
+
+          // Double check if cart is cleared
+          if (items.length > 0) {
+            console.log("Cart still has items, forcing clear");
+            await clearCart();
+          }
+
           setTimeout(() => {
             router.push("/profile");
           }, 5000);
         }
-      } catch {
+      } catch (error) {
+        console.error("Error fetching order:", error);
         setError(t("checkout.success.error.verificationFailed"));
       } finally {
         setIsLoading(false);
@@ -44,7 +67,12 @@ function SuccessContent() {
     };
 
     fetchOrder();
-  }, [router, searchParams, clearCart, t]);
+  }, [router, searchParams, clearCart, t, items]);
+
+  // Effect to monitor cart state
+  useEffect(() => {
+    console.log("Current cart items:", items);
+  }, [items]);
 
   if (isLoading) {
     return (
