@@ -186,7 +186,7 @@ export default function VehicleAssignment({
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-        {t("logistics.vehicleAssignment")}
+        {t("logistics.vehicleAssignment.title")}
       </h3>
 
       {assignedVehicle ? (
@@ -198,11 +198,13 @@ export default function VehicleAssignment({
                 {assignedVehicle.registrationNo}
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Driver: {assignedVehicle.driver.name}
+                {t("logistics.vehicleAssignment.driverName")}:{" "}
+                {assignedVehicle.driver.name}
               </p>
               {deliveryDate && (
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Scheduled Delivery: {format(deliveryDate, "PPP")}
+                  {t("logistics.vehicleAssignment.scheduledDelivery")}:{" "}
+                  {format(deliveryDate, "PPP")}
                 </p>
               )}
             </div>
@@ -214,13 +216,23 @@ export default function VehicleAssignment({
           <div className="flex gap-2">
             <Select onValueChange={handleStatusUpdate}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Update status" />
+                <SelectValue
+                  placeholder={t("logistics.vehicleAssignment.updateStatus")}
+                />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Pending">Pending</SelectItem>
-                <SelectItem value="In Transit">In Transit</SelectItem>
-                <SelectItem value="Delivered">Delivered</SelectItem>
-                <SelectItem value="Failed">Failed</SelectItem>
+                <SelectItem value="Pending">
+                  {t("logistics.vehicleAssignment.status.pending")}
+                </SelectItem>
+                <SelectItem value="In Transit">
+                  {t("logistics.vehicleAssignment.status.inTransit")}
+                </SelectItem>
+                <SelectItem value="Delivered">
+                  {t("logistics.vehicleAssignment.status.delivered")}
+                </SelectItem>
+                <SelectItem value="Failed">
+                  {t("logistics.vehicleAssignment.status.failed")}
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -234,7 +246,9 @@ export default function VehicleAssignment({
                 onValueChange={setSelectedVehicle}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a vehicle" />
+                  <SelectValue
+                    placeholder={t("logistics.vehicleAssignment.selectVehicle")}
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {availableVehicles.map((vehicle) => (
@@ -261,7 +275,7 @@ export default function VehicleAssignment({
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {deliveryDate
                       ? format(deliveryDate, "PPP")
-                      : "Pick delivery date"}
+                      : t("logistics.vehicleAssignment.pickDeliveryDate")}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -279,13 +293,15 @@ export default function VehicleAssignment({
                 onClick={handleAssign}
                 disabled={loading || !selectedVehicle || !deliveryDate}
               >
-                {loading ? "Assigning..." : "Assign Vehicle"}
+                {loading
+                  ? t("logistics.vehicleAssignment.assigningVehicle")
+                  : t("logistics.vehicleAssignment.assignVehicle")}
               </Button>
             </div>
           </div>
           {availableVehicles.length === 0 && (
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              No vehicles currently available
+              {t("logistics.vehicleAssignment.noVehicles")}
             </p>
           )}
         </div>

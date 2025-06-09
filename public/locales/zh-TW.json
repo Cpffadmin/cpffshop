@@ -336,7 +336,24 @@
     "confirmStatusUpdate": "確認狀態更新",
     "confirmStatusUpdateDesc": "您確定要將送貨狀態更新為",
     "deliveredNote": "注意：這將把訂單標記為已送達並完成送貨流程。",
-    "failedNote": "注意：這將把訂單標記為失敗並取消送貨流程。"
+    "failedNote": "注意：這將把訂單標記為失敗並取消送貨流程。",
+    "vehicleAssignment": {
+      "title": "車輛指派",
+      "selectVehicle": "選擇車輛",
+      "noVehicles": "目前沒有可用車輛",
+      "assignVehicle": "指派車輛",
+      "assigningVehicle": "指派中...",
+      "updateStatus": "更新狀態",
+      "pickDeliveryDate": "選擇送貨日期",
+      "scheduledDelivery": "預定送貨日期",
+      "driverName": "司機",
+      "status": {
+        "pending": "待處理",
+        "inTransit": "運送中",
+        "delivered": "已送達",
+        "failed": "失敗"
+      }
+    }
   },
   "admin": {
     "usersAndRoles": "使用者與角色",
@@ -393,7 +410,7 @@
     "orderManagement": "訂單管理",
     "orderManagementDescription": "管理和追蹤所有客戶訂單",
     "order": {
-      "title": "訂單管理",
+      "title": "訂單",
       "description": "管理和追蹤所有客戶訂單",
       "search": "搜尋訂單...",
       "filter": {
@@ -427,12 +444,21 @@
         "edit": "編輯訂單",
         "delete": "刪除訂單",
         "print": "列印發票",
-        "markAsDelivered": "標記為已送達"
+        "markAsDelivered": "標記為已送達",
+        "markAsDeliveredSuccess": "訂單已成功標記為已送達",
+        "markAsDeliveredError": "標記訂單為已送達失敗"
       },
       "delete": {
-        "confirm": "確定要刪除此訂單嗎？",
+        "confirm": "確定要刪除此訂單嗎？此操作無法復原。",
         "success": "訂單已成功刪除",
         "error": "刪除訂單失敗"
+      },
+      "payment": {
+        "confirmSuccess": "付款已確認，訂單現在處於處理中狀態",
+        "confirmError": "確認付款失敗",
+        "rejectPrompt": "請輸入拒絕原因：",
+        "rejectSuccess": "付款證明已拒絕",
+        "rejectError": "拒絕付款失敗"
       },
       "error": "載入訂單失敗"
     },

@@ -336,7 +336,24 @@
     "confirmStatusUpdate": "Confirm Status Update",
     "confirmStatusUpdateDesc": "Are you sure you want to update the delivery status to",
     "deliveredNote": "Note: This will mark the order as delivered and complete the delivery process.",
-    "failedNote": "Note: This will mark the order as failed and cancel the delivery process."
+    "failedNote": "Note: This will mark the order as failed and cancel the delivery process.",
+    "vehicleAssignment": {
+      "title": "Vehicle Assignment",
+      "selectVehicle": "Select a vehicle",
+      "noVehicles": "No vehicles currently available",
+      "assignVehicle": "Assign Vehicle",
+      "assigningVehicle": "Assigning...",
+      "updateStatus": "Update status",
+      "pickDeliveryDate": "Pick delivery date",
+      "scheduledDelivery": "Scheduled Delivery",
+      "driverName": "Driver",
+      "status": {
+        "pending": "Pending",
+        "inTransit": "In Transit",
+        "delivered": "Delivered",
+        "failed": "Failed"
+      }
+    }
   },
   "admin": {
     "usersAndRoles": "Users & Roles",
@@ -390,10 +407,10 @@
         }
       }
     },
-    "orderManagement": "Orders Management",
+    "orderManagement": "Order Management",
     "orderManagementDescription": "Manage and track all customer orders",
     "order": {
-      "title": "Orders Management",
+      "title": "Orders",
       "description": "Manage and track all customer orders",
       "search": "Search orders...",
       "filter": {
