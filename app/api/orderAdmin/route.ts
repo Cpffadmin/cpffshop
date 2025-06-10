@@ -115,7 +115,18 @@ export async function PUT(req: Request) {
     // Send email notifications
     try {
       if (confirmPayment) {
-        await sendEmail({
+        console.log(
+          "Starting payment confirmation email process for order:",
+          orderId
+        );
+        console.log("Order details:", {
+          email: updatedOrder.email,
+          name: updatedOrder.name,
+          orderId: updatedOrder._id,
+          status: updatedOrder.status,
+        });
+
+        const emailResult = await sendEmail({
           to: updatedOrder.email,
           subject: "Payment Confirmed - Order Processing",
           text: `Dear ${updatedOrder.name},\n\nYour payment for order #${updatedOrder._id} has been confirmed. We are now processing your order.\n\nThank you for your purchase!`,
@@ -128,8 +139,33 @@ export async function PUT(req: Request) {
             <p><a href="${process.env.NEXT_PUBLIC_APP_URL}/profile?tab=orders">Track Your Order</a></p>
           `,
         });
+
+        console.log("Email sending result:", {
+          success: emailResult.success,
+          error: emailResult.error,
+          timestamp: emailResult.timestamp,
+        });
+
+        if (!emailResult.success) {
+          console.error(
+            `Failed to send confirmation email for order ${updatedOrder._id}:`,
+            emailResult.error
+          );
+          // Update order with email status
+          await Order.findByIdAndUpdate(updatedOrder._id, {
+            $set: { emailStatus: { sent: false, error: emailResult.error } },
+          });
+        } else {
+          console.log(
+            "Successfully sent confirmation email and updating order status"
+          );
+          // Update order with successful email status
+          await Order.findByIdAndUpdate(updatedOrder._id, {
+            $set: { emailStatus: { sent: true } },
+          });
+        }
       } else if (rejectPayment) {
-        await sendEmail({
+        const emailResult = await sendEmail({
           to: updatedOrder.email,
           subject: "Action Required: Payment Rejected",
           text: `Dear ${updatedOrder.name},\n\nYour payment proof for order #${updatedOrder._id} has been rejected.\n\nReason: ${rejectionReason}\n\nPlease submit a new payment proof through your order dashboard.\n\nIf you have any questions, please contact our support team.`,
@@ -143,10 +179,38 @@ export async function PUT(req: Request) {
             <p><a href="${process.env.NEXT_PUBLIC_APP_URL}/profile?tab=orders">Submit New Payment Proof</a></p>
           `,
         });
+
+        if (!emailResult.success) {
+          console.error(
+            `Failed to send rejection email for order ${updatedOrder._id}:`,
+            emailResult.error
+          );
+          // Update order with email status
+          await Order.findByIdAndUpdate(updatedOrder._id, {
+            $set: { emailStatus: { sent: false, error: emailResult.error } },
+          });
+        } else {
+          // Update order with successful email status
+          await Order.findByIdAndUpdate(updatedOrder._id, {
+            $set: { emailStatus: { sent: true } },
+          });
+        }
       }
-    } catch (emailError) {
-      console.error("Failed to send email notification:", emailError);
-      // Don't return error here, as the order update was successful
+    } catch (error) {
+      console.error("Failed to send email notification:", error);
+      // Update order with email error status
+      try {
+        await Order.findByIdAndUpdate(updatedOrder._id, {
+          $set: {
+            emailStatus: {
+              sent: false,
+              error: error instanceof Error ? error.message : "Unknown error",
+            },
+          },
+        });
+      } catch (updateError) {
+        console.error("Failed to update order email status:", updateError);
+      }
     }
 
     return NextResponse.json({

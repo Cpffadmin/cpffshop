@@ -65,6 +65,18 @@ const orderSchema = new mongoose.Schema(
     rejectionReason: {
       type: String,
     },
+    emailStatus: {
+      sent: {
+        type: Boolean,
+        default: false,
+      },
+      messageId: String,
+      error: String,
+      timestamp: {
+        type: Date,
+        default: Date.now,
+      },
+    },
   },
   {
     timestamps: true,
