@@ -56,15 +56,15 @@ export default function ProfilePage() {
     role: "user",
     phone: "",
     address: {
-      roomFlat: { en: "", "zh-TW": "" },
+      room: { en: "", "zh-TW": "" },
       floor: { en: "", "zh-TW": "" },
-      blockNumber: { en: "", "zh-TW": "" },
-      blockName: { en: "", "zh-TW": "" },
-      buildingName: { en: "", "zh-TW": "" },
-      streetNumber: { en: "", "zh-TW": "" },
-      streetName: { en: "", "zh-TW": "" },
-      district: { en: "", "zh-TW": "" },
-      location: { en: "", "zh-TW": "" },
+      building: { en: "", "zh-TW": "" },
+      street: { en: "", "zh-TW": "" },
+      city: { en: "", "zh-TW": "" },
+      state: { en: "", "zh-TW": "" },
+      country: { en: "", "zh-TW": "" },
+      postalCode: { en: "", "zh-TW": "" },
+      formattedAddress: { en: "", "zh-TW": "" },
     },
   });
 
@@ -92,27 +92,66 @@ export default function ProfilePage() {
   const LOCATIONS = ["Hong Kong Island", "Kowloon", "New Territories"];
 
   useEffect(() => {
-    if (session?.user) {
-      setProfile({
-        name: session.user.name || "",
-        email: session.user.email || "",
-        admin: session.user.admin || false,
-        role: session.user.role || "user",
-        phone: session.user.phone || "",
-        address: session.user.address || {
-          roomFlat: { en: "", "zh-TW": "" },
-          floor: { en: "", "zh-TW": "" },
-          blockNumber: { en: "", "zh-TW": "" },
-          blockName: { en: "", "zh-TW": "" },
-          buildingName: { en: "", "zh-TW": "" },
-          streetNumber: { en: "", "zh-TW": "" },
-          streetName: { en: "", "zh-TW": "" },
-          district: { en: "", "zh-TW": "" },
-          location: { en: "", "zh-TW": "" },
-        },
-      });
-    }
-  }, [session]);
+    const fetchUserData = async () => {
+      if (session?.user) {
+        try {
+          console.log("Fetching user data...");
+          const response = await axios.get("/api/userData");
+          console.log("User data received:", response.data);
+          const userData = response.data;
+
+          const newProfile = {
+            name: userData.name || session.user.name || "",
+            email: userData.email || session.user.email || "",
+            admin: userData.admin || session.user.admin || false,
+            role: userData.role || session.user.role || "user",
+            phone: userData.phone || session.user.phone || "",
+            address: userData.address || {
+              room: { en: "", "zh-TW": "" },
+              floor: { en: "", "zh-TW": "" },
+              building: { en: "", "zh-TW": "" },
+              street: { en: "", "zh-TW": "" },
+              city: { en: "", "zh-TW": "" },
+              state: { en: "", "zh-TW": "" },
+              country: { en: "", "zh-TW": "" },
+              postalCode: { en: "", "zh-TW": "" },
+              formattedAddress: { en: "", "zh-TW": "" },
+            },
+          };
+          console.log("Setting profile to:", newProfile);
+          setProfile(newProfile);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          if (error instanceof Error && "response" in error) {
+            const axiosError = error as { response?: { data: unknown } };
+            console.error("Error details:", axiosError.response?.data);
+          }
+          toast.error(t("common.error"));
+          // Fallback to session data if API fails
+          setProfile({
+            name: session.user.name || "",
+            email: session.user.email || "",
+            admin: session.user.admin || false,
+            role: session.user.role || "user",
+            phone: session.user.phone || "",
+            address: {
+              room: { en: "", "zh-TW": "" },
+              floor: { en: "", "zh-TW": "" },
+              building: { en: "", "zh-TW": "" },
+              street: { en: "", "zh-TW": "" },
+              city: { en: "", "zh-TW": "" },
+              state: { en: "", "zh-TW": "" },
+              country: { en: "", "zh-TW": "" },
+              postalCode: { en: "", "zh-TW": "" },
+              formattedAddress: { en: "", "zh-TW": "" },
+            },
+          });
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [session, t]);
 
   const handleEdit = () => setIsEditing(true);
 
@@ -164,10 +203,7 @@ export default function ProfilePage() {
       ...prev,
       address: {
         ...prev.address,
-        [field]:
-          field === "district" || field === "location"
-            ? { en: value, "zh-TW": value }
-            : value,
+        [field]: value,
       },
     }));
   };
@@ -259,124 +295,55 @@ export default function ProfilePage() {
               <>
                 <div className="space-y-4">
                   <MultiLangInput
-                    label={t("common.roomFlat")}
-                    value={profile.address.roomFlat}
-                    onChange={(value) => handleAddressChange("roomFlat", value)}
-                    placeholder={{
-                      en: "Enter Room/Flat in English",
-                      "zh-TW": "輸入房間/單位",
-                    }}
+                    label={t("common.room")}
+                    value={profile.address.room}
+                    onChange={(value) => handleAddressChange("room", value)}
+                    placeholder={{ en: "Room number", "zh-TW": "室號" }}
                   />
                   <MultiLangInput
                     label={t("common.floor")}
                     value={profile.address.floor}
                     onChange={(value) => handleAddressChange("floor", value)}
-                    placeholder={{
-                      en: "Enter Floor in English",
-                      "zh-TW": "輸入樓層",
-                    }}
+                    placeholder={{ en: "Floor", "zh-TW": "樓層" }}
                   />
                   <MultiLangInput
-                    label={t("common.blockNumber")}
-                    value={profile.address.blockNumber}
-                    onChange={(value) =>
-                      handleAddressChange("blockNumber", value)
-                    }
-                    placeholder={{
-                      en: "Enter Block Number in English",
-                      "zh-TW": "輸入座數",
-                    }}
+                    label={t("common.building")}
+                    value={profile.address.building}
+                    onChange={(value) => handleAddressChange("building", value)}
+                    placeholder={{ en: "Building name", "zh-TW": "大廈名稱" }}
                   />
                   <MultiLangInput
-                    label={t("common.blockName")}
-                    value={profile.address.blockName}
-                    onChange={(value) =>
-                      handleAddressChange("blockName", value)
-                    }
-                    placeholder={{
-                      en: "Enter Block Name in English",
-                      "zh-TW": "輸入座名",
-                    }}
-                  />
-                </div>
-                <div className="space-y-4">
-                  <MultiLangInput
-                    label={t("common.buildingName")}
-                    value={profile.address.buildingName}
-                    onChange={(value) =>
-                      handleAddressChange("buildingName", value)
-                    }
-                    placeholder={{
-                      en: "Enter Building Name in English",
-                      "zh-TW": "輸入大廈名稱",
-                    }}
+                    label={t("common.street")}
+                    value={profile.address.street}
+                    onChange={(value) => handleAddressChange("street", value)}
+                    placeholder={{ en: "Street address", "zh-TW": "街道地址" }}
                   />
                   <MultiLangInput
-                    label={t("common.streetNumber")}
-                    value={profile.address.streetNumber}
-                    onChange={(value) =>
-                      handleAddressChange("streetNumber", value)
-                    }
-                    placeholder={{
-                      en: "Enter Street Number in English",
-                      "zh-TW": "輸入街道號碼",
-                    }}
+                    label={t("common.city")}
+                    value={profile.address.city}
+                    onChange={(value) => handleAddressChange("city", value)}
+                    placeholder={{ en: "City", "zh-TW": "城市" }}
                   />
                   <MultiLangInput
-                    label={t("common.streetName")}
-                    value={profile.address.streetName}
-                    onChange={(value) =>
-                      handleAddressChange("streetName", value)
-                    }
-                    placeholder={{
-                      en: "Enter Street Name in English",
-                      "zh-TW": "輸入街道名稱",
-                    }}
+                    label={t("common.state")}
+                    value={profile.address.state}
+                    onChange={(value) => handleAddressChange("state", value)}
+                    placeholder={{ en: "State/Region", "zh-TW": "州/地區" }}
                   />
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      {t("common.district")}
-                    </label>
-                    <Select
-                      value={profile.address.district?.en || ""}
-                      onValueChange={(value) =>
-                        handleAddressChange("district", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder={t("common.selectDistrict")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {HK_DISTRICTS.map((district) => (
-                          <SelectItem key={district} value={district}>
-                            {district}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      {t("common.location")}
-                    </label>
-                    <Select
-                      value={profile.address.location?.en || ""}
-                      onValueChange={(value) =>
-                        handleAddressChange("location", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder={t("common.selectLocation")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {LOCATIONS.map((location) => (
-                          <SelectItem key={location} value={location}>
-                            {location}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <MultiLangInput
+                    label={t("common.country")}
+                    value={profile.address.country}
+                    onChange={(value) => handleAddressChange("country", value)}
+                    placeholder={{ en: "Country", "zh-TW": "國家" }}
+                  />
+                  <MultiLangInput
+                    label={t("common.postalCode")}
+                    value={profile.address.postalCode}
+                    onChange={(value) =>
+                      handleAddressChange("postalCode", value)
+                    }
+                    placeholder={{ en: "Postal code", "zh-TW": "郵遞區號" }}
+                  />
                 </div>
               </>
             ) : (
@@ -389,44 +356,43 @@ export default function ProfilePage() {
                         {
                           formatAddress({
                             room: {
-                              en: profile.address.roomFlat?.en,
-                              "zh-TW": profile.address.roomFlat?.["zh-TW"],
+                              en: profile.address.room?.en,
+                              "zh-TW": profile.address.room?.["zh-TW"],
                             },
                             floor: {
                               en: profile.address.floor?.en,
                               "zh-TW": profile.address.floor?.["zh-TW"],
                             },
                             building: {
-                              en: `${profile.address.blockNumber?.en || ""} ${
-                                profile.address.blockName?.en || ""
-                              } ${
-                                profile.address.buildingName?.en || ""
+                              en: `${
+                                profile.address.building?.en || ""
                               }`.trim(),
                               "zh-TW": `${
-                                profile.address.buildingName?.["zh-TW"] || ""
-                              } ${profile.address.blockName?.["zh-TW"] || ""} ${
-                                profile.address.blockNumber?.["zh-TW"] || ""
+                                profile.address.building?.["zh-TW"] || ""
                               }`.trim(),
                             },
                             street: {
-                              en: `${profile.address.streetNumber?.en || ""} ${
-                                profile.address.streetName?.en || ""
-                              }`.trim(),
+                              en: `${profile.address.street?.en || ""}`.trim(),
                               "zh-TW": `${
-                                profile.address.streetName?.["zh-TW"] || ""
-                              } ${
-                                profile.address.streetNumber?.["zh-TW"] || ""
+                                profile.address.street?.["zh-TW"] || ""
                               }`.trim(),
-                            },
-                            district: {
-                              en: profile.address.district?.en || "",
-                              "zh-TW":
-                                profile.address.district?.["zh-TW"] || "",
                             },
                             city: {
-                              en: profile.address.location?.en || "",
+                              en: profile.address.city?.en || "",
+                              "zh-TW": profile.address.city?.["zh-TW"] || "",
+                            },
+                            state: {
+                              en: profile.address.state?.en || "",
+                              "zh-TW": profile.address.state?.["zh-TW"] || "",
+                            },
+                            country: {
+                              en: profile.address.country?.en || "",
+                              "zh-TW": profile.address.country?.["zh-TW"] || "",
+                            },
+                            postalCode: {
+                              en: profile.address.postalCode?.en || "",
                               "zh-TW":
-                                profile.address.location?.["zh-TW"] || "",
+                                profile.address.postalCode?.["zh-TW"] || "",
                             },
                           })[language]
                         }

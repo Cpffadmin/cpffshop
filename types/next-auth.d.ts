@@ -12,15 +12,14 @@ declare module "next-auth" {
     notificationPreferences: Record<string, boolean>;
     phone?: string;
     address?: {
-      roomFlat: { en: string; "zh-TW": string };
+      room: { en: string; "zh-TW": string };
       floor: { en: string; "zh-TW": string };
-      blockNumber: { en: string; "zh-TW": string };
-      blockName: { en: string; "zh-TW": string };
-      buildingName: { en: string; "zh-TW": string };
-      streetNumber: { en: string; "zh-TW": string };
-      streetName: { en: string; "zh-TW": string };
-      district: { en: string; "zh-TW": string };
-      location: { en: string; "zh-TW": string };
+      building: { en: string; "zh-TW": string };
+      street: { en: string; "zh-TW": string };
+      city: { en: string; "zh-TW": string };
+      state: { en: string; "zh-TW": string };
+      country: { en: string; "zh-TW": string };
+      postalCode: { en: string; "zh-TW": string };
       formattedAddress?: { en: string; "zh-TW": string };
     };
   }
@@ -37,15 +36,14 @@ declare module "next-auth" {
       notificationPreferences: Record<string, boolean>;
       phone?: string;
       address?: {
-        roomFlat: { en: string; "zh-TW": string };
+        room: { en: string; "zh-TW": string };
         floor: { en: string; "zh-TW": string };
-        blockNumber: { en: string; "zh-TW": string };
-        blockName: { en: string; "zh-TW": string };
-        buildingName: { en: string; "zh-TW": string };
-        streetNumber: { en: string; "zh-TW": string };
-        streetName: { en: string; "zh-TW": string };
-        district: { en: string; "zh-TW": string };
-        location: { en: string; "zh-TW": string };
+        building: { en: string; "zh-TW": string };
+        street: { en: string; "zh-TW": string };
+        city: { en: string; "zh-TW": string };
+        state: { en: string; "zh-TW": string };
+        country: { en: string; "zh-TW": string };
+        postalCode: { en: string; "zh-TW": string };
         formattedAddress?: { en: string; "zh-TW": string };
       };
     };

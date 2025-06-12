@@ -38,15 +38,29 @@ export async function GET() {
           name: userName,
           profileImage: session.user.image || "/profile.jpg",
         });
-        // Select without password after creation
-        user = await User.findById(user._id).select("-password");
       } catch (error) {
         console.error("Error creating new user:", error);
         throw new Error("Failed to create user");
       }
     }
 
-    return user;
+    // Convert to plain object and ensure address structure
+    const userObj = user.toObject();
+    if (!userObj.address) {
+      userObj.address = {
+        room: { en: "", "zh-TW": "" },
+        floor: { en: "", "zh-TW": "" },
+        building: { en: "", "zh-TW": "" },
+        street: { en: "", "zh-TW": "" },
+        city: { en: "", "zh-TW": "" },
+        state: { en: "", "zh-TW": "" },
+        country: { en: "", "zh-TW": "" },
+        postalCode: { en: "", "zh-TW": "" },
+        formattedAddress: { en: "", "zh-TW": "" },
+      };
+    }
+
+    return userObj;
   });
 }
 
