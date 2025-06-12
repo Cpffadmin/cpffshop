@@ -24,8 +24,9 @@ interface UserDocument extends mongoose.Document {
     buildingName: { en: string; "zh-TW": string };
     streetNumber: { en: string; "zh-TW": string };
     streetName: { en: string; "zh-TW": string };
-    district: string;
-    location: string;
+    district: { en: string; "zh-TW": string };
+    location: { en: string; "zh-TW": string };
+    formattedAddress?: { en: string; "zh-TW": string };
   };
 }
 
@@ -49,8 +50,9 @@ declare module "next-auth" {
         buildingName: { en: string; "zh-TW": string };
         streetNumber: { en: string; "zh-TW": string };
         streetName: { en: string; "zh-TW": string };
-        district: string;
-        location: string;
+        district: { en: string; "zh-TW": string };
+        location: { en: string; "zh-TW": string };
+        formattedAddress?: { en: string; "zh-TW": string };
       };
     };
   }
@@ -69,8 +71,9 @@ declare module "next-auth" {
       buildingName: { en: string; "zh-TW": string };
       streetNumber: { en: string; "zh-TW": string };
       streetName: { en: string; "zh-TW": string };
-      district: string;
-      location: string;
+      district: { en: string; "zh-TW": string };
+      location: { en: string; "zh-TW": string };
+      formattedAddress?: { en: string; "zh-TW": string };
     };
   }
 }

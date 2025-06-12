@@ -419,12 +419,14 @@ export default function ProfilePage() {
                               }`.trim(),
                             },
                             district: {
-                              en: profile.address.district,
-                              "zh-TW": profile.address.district,
+                              en: profile.address.district?.en || "",
+                              "zh-TW":
+                                profile.address.district?.["zh-TW"] || "",
                             },
                             city: {
-                              en: profile.address.location,
-                              "zh-TW": profile.address.location,
+                              en: profile.address.location?.en || "",
+                              "zh-TW":
+                                profile.address.location?.["zh-TW"] || "",
                             },
                           })[language]
                         }

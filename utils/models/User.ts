@@ -141,7 +141,6 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true,
     },
     password: {
       type: String,
@@ -197,7 +196,7 @@ const userSchema = new mongoose.Schema(
 );
 
 // Ensure indexes for better query performance
-userSchema.index({ email: 1 }, { unique: true });
+userSchema.index({ email: 1 });
 userSchema.index({ role: 1 });
 userSchema.index({ "address.formattedAddress.en": 1 });
 userSchema.index({ "address.formattedAddress.zh-TW": 1 });
