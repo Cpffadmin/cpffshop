@@ -96,46 +96,31 @@ export async function POST(req: Request) {
     }
 
     // Get user with populated wishlist
-    let user = await User.findOne({ email: session.user.email }).populate(
-      "wishlist"
-    );
-    if (!user) {
-      const userName = getUserNameFromSession(session);
-      user = await User.create({
-        email: session.user.email,
-        name: userName,
-        profileImage: session.user.image || "/profile.jpg",
-        wishlist: [],
-      });
-      user = await User.findById(user._id).populate("wishlist");
-    }
+    const user = await User.findOne({ email: session.user.email }).populate("wishlist");
 
     // Check if product exists in wishlist
     const productObjectId = new Types.ObjectId(productId);
-    const isInWishlist = user.wishlist.some((item: any) =>
+    const isInWishlist = user?.wishlist?.some((item: any) => 
       item._id.equals(productObjectId)
     );
 
-    // Toggle wishlist status
-    if (!isInWishlist) {
-      // Add to wishlist
-      user.wishlist.push(productId);
-    } else {
-      // Remove from wishlist
-      user.wishlist = user.wishlist.filter(
-        (item: any) => !item._id.equals(productObjectId)
-      );
+    // Update only the wishlist field
+    const updatedUser = await User.findOneAndUpdate(
+      { email: session.user.email },
+      isInWishlist
+        ? { $pull: { wishlist: productId } }
+        : { $addToSet: { wishlist: productId } },
+      { new: true }
+    ).populate("wishlist");
+
+    if (!updatedUser) {
+      throw new Error("Failed to update wishlist");
     }
 
-    await user.save();
-
-    // Get updated wishlist with populated data
+    // Get language for localization
     const lang = req?.headers?.get("accept-language")?.split(",")[0] || "en";
-    const updatedUser = await User.findOne({
-      email: session.user.email,
-    }).populate("wishlist");
 
-    const items = (updatedUser?.wishlist || []).map((product: any) => {
+    const items = (updatedUser.wishlist || []).map((product: any) => {
       const localizedName =
         product.displayNames?.[lang] ||
         product.displayNames?.["zh-TW"] ||

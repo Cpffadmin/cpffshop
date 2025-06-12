@@ -58,11 +58,13 @@ const addressSchema = new mongoose.Schema(
         type: String,
         enum: [...HK_DISTRICTS, ""],
         default: "",
+        required: false,
       },
       "zh-TW": {
         type: String,
         enum: [...HK_DISTRICTS, ""],
         default: "",
+        required: false,
       },
     },
     location: {
@@ -70,11 +72,13 @@ const addressSchema = new mongoose.Schema(
         type: String,
         enum: [...HK_LOCATIONS, ""],
         default: "",
+        required: false,
       },
       "zh-TW": {
         type: String,
         enum: [...HK_LOCATIONS, ""],
         default: "",
+        required: false,
       },
     },
     formattedAddress: multilingualStringSchema,
@@ -91,31 +95,50 @@ const addressSchema = new mongoose.Schema(
 addressSchema.pre("save", function (next) {
   if (this.isModified()) {
     try {
-      const addressData = {
-        room: { en: this.roomFlat?.en, "zh-TW": this.roomFlat?.["zh-TW"] },
-        floor: { en: this.floor?.en, "zh-TW": this.floor?.["zh-TW"] },
-        building: {
-          en: this.buildingName?.en,
-          "zh-TW": this.buildingName?.["zh-TW"],
-        },
-        street: {
-          en: this.streetName?.en,
-          "zh-TW": this.streetName?.["zh-TW"],
-        },
-        district: { en: this.district?.en, "zh-TW": this.district?.["zh-TW"] },
-        city: { en: this.blockName?.en, "zh-TW": this.blockName?.["zh-TW"] },
-        state: {
-          en: this.blockNumber?.en,
-          "zh-TW": this.blockNumber?.["zh-TW"],
-        },
-        country: { en: this.blockName?.en, "zh-TW": this.blockName?.["zh-TW"] },
-        postalCode: {
-          en: this.streetNumber?.en,
-          "zh-TW": this.streetNumber?.["zh-TW"],
-        },
-      };
-      const formatted = formatAddress(addressData);
-      this.formattedAddress = formatted;
+      // Only format address if we have actual address data
+      if (
+        this.roomFlat?.en ||
+        this.floor?.en ||
+        this.blockNumber?.en ||
+        this.blockName?.en ||
+        this.buildingName?.en ||
+        this.streetNumber?.en ||
+        this.streetName?.en ||
+        this.district?.en ||
+        this.location?.en
+      ) {
+        const addressData = {
+          room: { en: this.roomFlat?.en, "zh-TW": this.roomFlat?.["zh-TW"] },
+          floor: { en: this.floor?.en, "zh-TW": this.floor?.["zh-TW"] },
+          building: {
+            en: this.buildingName?.en,
+            "zh-TW": this.buildingName?.["zh-TW"],
+          },
+          street: {
+            en: this.streetName?.en,
+            "zh-TW": this.streetName?.["zh-TW"],
+          },
+          district: {
+            en: this.district?.en,
+            "zh-TW": this.district?.["zh-TW"],
+          },
+          city: { en: this.blockName?.en, "zh-TW": this.blockName?.["zh-TW"] },
+          state: {
+            en: this.blockNumber?.en,
+            "zh-TW": this.blockNumber?.["zh-TW"],
+          },
+          country: {
+            en: this.blockName?.en,
+            "zh-TW": this.blockName?.["zh-TW"],
+          },
+          postalCode: {
+            en: this.streetNumber?.en,
+            "zh-TW": this.streetNumber?.["zh-TW"],
+          },
+        };
+        const formatted = formatAddress(addressData);
+        this.formattedAddress = formatted;
+      }
       next();
     } catch (error) {
       if (error instanceof Error) {
