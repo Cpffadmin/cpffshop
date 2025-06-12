@@ -2,4 +2,5 @@ app/admin/blog/[action]/page.tsx
 app/api/blog/posts/route.ts
 app/api/review/**/*.ts
 app/api/updateNotificationreference/route.ts
-app/api/userData/route.ts 
+app/api/userData/route.ts
+.next/types/app/admin/blog/[action]/page.ts 

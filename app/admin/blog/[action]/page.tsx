@@ -1,5 +1,6 @@
 "use client";
 
+import { Metadata } from "next";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -63,13 +64,15 @@ interface CloudinaryResult extends Omit<CloudinaryUploadWidgetResults, "info"> {
   info: CloudinaryUploadInfo;
 }
 
-export default function BlogPostPage({
+interface BlogPostPageProps {
+  params: { action: string };
+  searchParams: { id?: string | undefined };
+}
+
+const BlogPostPage: React.FC<BlogPostPageProps> = ({
   params,
   searchParams,
-}: {
-  params: { action: string };
-  searchParams: { id?: string };
-}) {
+}) => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const { refreshFeaturedPost } = useBlog();
@@ -652,4 +655,6 @@ export default function BlogPostPage({
       </div>
     </div>
   );
-}
+};
+
+export default BlogPostPage;

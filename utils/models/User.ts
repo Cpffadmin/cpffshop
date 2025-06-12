@@ -46,50 +46,38 @@ const HK_LOCATIONS = [
 const addressSchema = new mongoose.Schema(
   {
     // Smallest unit (en: first, zh-TW: last)
-    room: multilingualStringSchema,
+    roomFlat: multilingualStringSchema,
     floor: multilingualStringSchema,
-
-    // Building information
-    building: multilingualStringSchema,
-
-    // Street level
-    street: multilingualStringSchema,
+    blockNumber: multilingualStringSchema,
+    blockName: multilingualStringSchema,
+    buildingName: multilingualStringSchema,
+    streetNumber: multilingualStringSchema,
+    streetName: multilingualStringSchema,
     district: {
       en: {
         type: String,
-        enum: HK_DISTRICTS,
+        enum: [...HK_DISTRICTS, ""],
+        default: "",
       },
       "zh-TW": {
         type: String,
-        enum: HK_DISTRICTS,
+        enum: [...HK_DISTRICTS, ""],
+        default: "",
       },
     },
-
-    // Larger administrative regions
-    city: multilingualStringSchema,
-    state: multilingualStringSchema,
-    country: multilingualStringSchema,
-
-    // Additional info
-    postalCode: multilingualStringSchema,
-
-    // Location (Hong Kong specific)
     location: {
       en: {
         type: String,
-        enum: HK_LOCATIONS,
+        enum: [...HK_LOCATIONS, ""],
+        default: "",
       },
       "zh-TW": {
         type: String,
-        enum: HK_LOCATIONS,
+        enum: [...HK_LOCATIONS, ""],
+        default: "",
       },
     },
-
-    // Store the complete formatted address strings
-    formattedAddress: {
-      en: String,
-      "zh-TW": String,
-    },
+    formattedAddress: multilingualStringSchema,
   },
   {
     _id: false,
@@ -104,17 +92,26 @@ addressSchema.pre("save", function (next) {
   if (this.isModified()) {
     try {
       const addressData = {
-        room: { en: this.room?.en, "zh-TW": this.room?.["zh-TW"] },
+        room: { en: this.roomFlat?.en, "zh-TW": this.roomFlat?.["zh-TW"] },
         floor: { en: this.floor?.en, "zh-TW": this.floor?.["zh-TW"] },
-        building: { en: this.building?.en, "zh-TW": this.building?.["zh-TW"] },
-        street: { en: this.street?.en, "zh-TW": this.street?.["zh-TW"] },
+        building: {
+          en: this.buildingName?.en,
+          "zh-TW": this.buildingName?.["zh-TW"],
+        },
+        street: {
+          en: this.streetName?.en,
+          "zh-TW": this.streetName?.["zh-TW"],
+        },
         district: { en: this.district?.en, "zh-TW": this.district?.["zh-TW"] },
-        city: { en: this.city?.en, "zh-TW": this.city?.["zh-TW"] },
-        state: { en: this.state?.en, "zh-TW": this.state?.["zh-TW"] },
-        country: { en: this.country?.en, "zh-TW": this.country?.["zh-TW"] },
+        city: { en: this.blockName?.en, "zh-TW": this.blockName?.["zh-TW"] },
+        state: {
+          en: this.blockNumber?.en,
+          "zh-TW": this.blockNumber?.["zh-TW"],
+        },
+        country: { en: this.blockName?.en, "zh-TW": this.blockName?.["zh-TW"] },
         postalCode: {
-          en: this.postalCode?.en,
-          "zh-TW": this.postalCode?.["zh-TW"],
+          en: this.streetNumber?.en,
+          "zh-TW": this.streetNumber?.["zh-TW"],
         },
       };
       const formatted = formatAddress(addressData);
