@@ -40,6 +40,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatAddress } from "@/utils/formatAddress";
+import { useWishlist } from "@/lib/hooks/useWishlist";
+import { WishlistButton } from "@/components/ui/WishlistButton";
 
 export default function ProfilePage() {
   const { data: session, update } = useSession();
@@ -61,8 +63,8 @@ export default function ProfilePage() {
       buildingName: { en: "", "zh-TW": "" },
       streetNumber: { en: "", "zh-TW": "" },
       streetName: { en: "", "zh-TW": "" },
-      district: "",
-      location: "",
+      district: { en: "", "zh-TW": "" },
+      location: { en: "", "zh-TW": "" },
     },
   });
 
@@ -105,8 +107,8 @@ export default function ProfilePage() {
           buildingName: { en: "", "zh-TW": "" },
           streetNumber: { en: "", "zh-TW": "" },
           streetName: { en: "", "zh-TW": "" },
-          district: "",
-          location: "",
+          district: { en: "", "zh-TW": "" },
+          location: { en: "", "zh-TW": "" },
         },
       });
     }
@@ -162,7 +164,10 @@ export default function ProfilePage() {
       ...prev,
       address: {
         ...prev.address,
-        [field]: value,
+        [field]:
+          field === "district" || field === "location"
+            ? { en: value, "zh-TW": value }
+            : value,
       },
     }));
   };
@@ -333,7 +338,7 @@ export default function ProfilePage() {
                       {t("common.district")}
                     </label>
                     <Select
-                      value={profile.address.district}
+                      value={profile.address.district?.en || ""}
                       onValueChange={(value) =>
                         handleAddressChange("district", value)
                       }
@@ -355,7 +360,7 @@ export default function ProfilePage() {
                       {t("common.location")}
                     </label>
                     <Select
-                      value={profile.address.location}
+                      value={profile.address.location?.en || ""}
                       onValueChange={(value) =>
                         handleAddressChange("location", value)
                       }

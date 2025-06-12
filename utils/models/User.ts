@@ -13,6 +13,35 @@ const multilingualStringSchema = new mongoose.Schema(
   { _id: false }
 );
 
+// Hong Kong districts enum
+const HK_DISTRICTS = [
+  "Central and Western",
+  "Eastern",
+  "Southern",
+  "Wan Chai",
+  "Kowloon City",
+  "Kwun Tong",
+  "Sham Shui Po",
+  "Wong Tai Sin",
+  "Yau Tsim Mong",
+  "Islands",
+  "Kwai Tsing",
+  "North",
+  "Sai Kung",
+  "Sha Tin",
+  "Tai Po",
+  "Tsuen Wan",
+  "Tuen Mun",
+  "Yuen Long",
+] as const;
+
+// Hong Kong locations enum
+const HK_LOCATIONS = [
+  "Hong Kong Island",
+  "Kowloon",
+  "New Territories",
+] as const;
+
 // Address schema structured to support both English and Chinese ordering
 const addressSchema = new mongoose.Schema(
   {
@@ -25,7 +54,16 @@ const addressSchema = new mongoose.Schema(
 
     // Street level
     street: multilingualStringSchema,
-    district: multilingualStringSchema,
+    district: {
+      en: {
+        type: String,
+        enum: HK_DISTRICTS,
+      },
+      "zh-TW": {
+        type: String,
+        enum: HK_DISTRICTS,
+      },
+    },
 
     // Larger administrative regions
     city: multilingualStringSchema,
@@ -35,36 +73,63 @@ const addressSchema = new mongoose.Schema(
     // Additional info
     postalCode: multilingualStringSchema,
 
+    // Location (Hong Kong specific)
+    location: {
+      en: {
+        type: String,
+        enum: HK_LOCATIONS,
+      },
+      "zh-TW": {
+        type: String,
+        enum: HK_LOCATIONS,
+      },
+    },
+
     // Store the complete formatted address strings
     formattedAddress: {
       en: String,
       "zh-TW": String,
     },
   },
-  { _id: false }
+  {
+    _id: false,
+    timestamps: true,
+    toJSON: { getters: true },
+    toObject: { getters: true },
+  }
 );
 
 // Pre-save middleware to format addresses
 addressSchema.pre("save", function (next) {
   if (this.isModified()) {
-    const addressData = {
-      room: { en: this.room?.en, "zh-TW": this.room?.["zh-TW"] },
-      floor: { en: this.floor?.en, "zh-TW": this.floor?.["zh-TW"] },
-      building: { en: this.building?.en, "zh-TW": this.building?.["zh-TW"] },
-      street: { en: this.street?.en, "zh-TW": this.street?.["zh-TW"] },
-      district: { en: this.district?.en, "zh-TW": this.district?.["zh-TW"] },
-      city: { en: this.city?.en, "zh-TW": this.city?.["zh-TW"] },
-      state: { en: this.state?.en, "zh-TW": this.state?.["zh-TW"] },
-      country: { en: this.country?.en, "zh-TW": this.country?.["zh-TW"] },
-      postalCode: {
-        en: this.postalCode?.en,
-        "zh-TW": this.postalCode?.["zh-TW"],
-      },
-    };
-    const formatted = formatAddress(addressData);
-    this.formattedAddress = formatted;
+    try {
+      const addressData = {
+        room: { en: this.room?.en, "zh-TW": this.room?.["zh-TW"] },
+        floor: { en: this.floor?.en, "zh-TW": this.floor?.["zh-TW"] },
+        building: { en: this.building?.en, "zh-TW": this.building?.["zh-TW"] },
+        street: { en: this.street?.en, "zh-TW": this.street?.["zh-TW"] },
+        district: { en: this.district?.en, "zh-TW": this.district?.["zh-TW"] },
+        city: { en: this.city?.en, "zh-TW": this.city?.["zh-TW"] },
+        state: { en: this.state?.en, "zh-TW": this.state?.["zh-TW"] },
+        country: { en: this.country?.en, "zh-TW": this.country?.["zh-TW"] },
+        postalCode: {
+          en: this.postalCode?.en,
+          "zh-TW": this.postalCode?.["zh-TW"],
+        },
+      };
+      const formatted = formatAddress(addressData);
+      this.formattedAddress = formatted;
+      next();
+    } catch (error) {
+      if (error instanceof Error) {
+        next(error);
+      } else {
+        next(new Error("Unknown error occurred while formatting address"));
+      }
+    }
+  } else {
+    next();
   }
-  next();
 });
 
 const userSchema = new mongoose.Schema(
@@ -124,8 +189,18 @@ const userSchema = new mongoose.Schema(
       default: null,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { getters: true },
+    toObject: { getters: true },
+  }
 );
+
+// Ensure indexes for better query performance
+userSchema.index({ email: 1 }, { unique: true });
+userSchema.index({ role: 1 });
+userSchema.index({ "address.formattedAddress.en": 1 });
+userSchema.index({ "address.formattedAddress.zh-TW": 1 });
 
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 
