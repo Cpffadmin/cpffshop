@@ -100,6 +100,7 @@ const Cart = ({ onClose, isMobile = false }: CartProps) => {
     <AnimatePresence>
       {/* Overlay */}
       <motion.div
+        key="cart-overlay"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -109,6 +110,7 @@ const Cart = ({ onClose, isMobile = false }: CartProps) => {
 
       {/* Cart Panel */}
       <motion.div
+        key="cart-panel"
         initial={{ x: "100%" }}
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
@@ -144,19 +146,22 @@ const Cart = ({ onClose, isMobile = false }: CartProps) => {
           </div>
 
           {!items.length ? (
-            <div className="flex-1 flex flex-col items-center justify-center">
+            <motion.div
+              key="empty-cart"
+              className="flex-1 flex flex-col items-center justify-center"
+            >
               <ShoppingCart className="h-12 w-12 text-gray-400 mb-4" />
               <p className="text-gray-600 dark:text-gray-300">
                 {t("wishlist.empty")}
               </p>
-            </div>
+            </motion.div>
           ) : (
             <>
               <div className="flex-1 overflow-y-auto space-y-4 mb-6">
                 <AnimatePresence mode="popLayout">
                   {items.map((item) => (
                     <motion.div
-                      key={`cart-item-${item._id}`}
+                      key={item._id}
                       layout
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
