@@ -4,7 +4,15 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
-import { User as UserIcon, Mail, ShieldCheck, Edit2, Save } from "lucide-react";
+import {
+  User as UserIcon,
+  Mail,
+  ShieldCheck,
+  Edit2,
+  Save,
+  MapPin,
+  Phone,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -23,10 +31,18 @@ import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
 import { useSearchParams } from "next/navigation";
 import { useTranslation } from "@/providers/language/LanguageContext";
 import { Separator } from "@/components/ui/separator";
+import { MultiLangInput } from "@/components/MultiLangInput/MultiLangInput";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function ProfilePage() {
   const { data: session, update } = useSession();
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const searchParams = useSearchParams();
   const activeTab = searchParams?.get("tab") || "profile";
   const [isEditing, setIsEditing] = useState(false);
@@ -35,7 +51,42 @@ export default function ProfilePage() {
     email: "",
     admin: false,
     role: "user",
+    phone: "",
+    address: {
+      roomFlat: { en: "", "zh-TW": "" },
+      floor: { en: "", "zh-TW": "" },
+      blockNumber: { en: "", "zh-TW": "" },
+      blockName: { en: "", "zh-TW": "" },
+      buildingName: { en: "", "zh-TW": "" },
+      streetNumber: { en: "", "zh-TW": "" },
+      streetName: { en: "", "zh-TW": "" },
+      district: "",
+      location: "",
+    },
   });
+
+  const HK_DISTRICTS = [
+    "Central and Western",
+    "Eastern",
+    "Southern",
+    "Wan Chai",
+    "Kowloon City",
+    "Kwun Tong",
+    "Sham Shui Po",
+    "Wong Tai Sin",
+    "Yau Tsim Mong",
+    "Islands",
+    "Kwai Tsing",
+    "North",
+    "Sai Kung",
+    "Sha Tin",
+    "Tai Po",
+    "Tsuen Wan",
+    "Tuen Mun",
+    "Yuen Long",
+  ];
+
+  const LOCATIONS = ["Hong Kong Island", "Kowloon", "New Territories"];
 
   useEffect(() => {
     if (session?.user) {
@@ -44,6 +95,18 @@ export default function ProfilePage() {
         email: session.user.email || "",
         admin: session.user.admin || false,
         role: session.user.role || "user",
+        phone: session.user.phone || "",
+        address: session.user.address || {
+          roomFlat: { en: "", "zh-TW": "" },
+          floor: { en: "", "zh-TW": "" },
+          blockNumber: { en: "", "zh-TW": "" },
+          blockName: { en: "", "zh-TW": "" },
+          buildingName: { en: "", "zh-TW": "" },
+          streetNumber: { en: "", "zh-TW": "" },
+          streetName: { en: "", "zh-TW": "" },
+          district: "",
+          location: "",
+        },
       });
     }
   }, [session]);
@@ -57,17 +120,27 @@ export default function ProfilePage() {
         email: profile.email,
         name: profile.name,
         newEmail: profile.email,
+        phone: profile.phone,
+        address: profile.address,
       });
 
       if (res.status === 200) {
         await update({
           ...session,
-          user: { ...session?.user, name: profile.name, email: profile.email },
+          user: {
+            ...session?.user,
+            name: profile.name,
+            email: profile.email,
+            phone: profile.phone,
+            address: profile.address,
+          },
         });
         setProfile((prevProfile) => ({
           ...prevProfile,
           name: profile.name,
           email: profile.email,
+          phone: profile.phone,
+          address: profile.address,
         }));
         toast.success(t("common.success"));
       } else {
@@ -81,6 +154,16 @@ export default function ProfilePage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
+  };
+
+  const handleAddressChange = (field: string, value: any) => {
+    setProfile((prev) => ({
+      ...prev,
+      address: {
+        ...prev.address,
+        [field]: value,
+      },
+    }));
   };
 
   const renderProfileContent = () => (
@@ -134,12 +217,196 @@ export default function ProfilePage() {
             )}
           </div>
           <div className="flex items-center space-x-4 p-4 bg-white/50 dark:bg-gray-800/50 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md">
+            <Phone className="text-[#535C91] dark:text-[#6B74A9] w-6 h-6" />
+            {isEditing ? (
+              <Input
+                name="phone"
+                value={profile.phone}
+                onChange={handleChange}
+                className="flex-grow bg-white dark:bg-gray-800 border-2 border-[#535C91] dark:border-[#6B74A9] focus:border-[#535C91] dark:focus:border-[#6B74A9] rounded-lg px-4 py-2 text-gray-900 dark:text-gray-100"
+                placeholder={t("common.phone")}
+              />
+            ) : (
+              <span className="flex-grow text-lg font-medium text-gray-700 dark:text-gray-200">
+                {profile.phone || t("common.noPhoneNumber")}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center space-x-4 p-4 bg-white/50 dark:bg-gray-800/50 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md">
             <ShieldCheck className="text-[#535C91] dark:text-[#6B74A9] w-6 h-6" />
             <span className="flex-grow text-lg font-medium text-gray-700 dark:text-gray-200">
               {t("common.role")}:{" "}
               {profile.role.charAt(0).toUpperCase() + profile.role.slice(1)}
               {profile.admin && ` (${t("navigation.admin")})`}
             </span>
+          </div>
+        </div>
+
+        <Separator className="my-4" />
+
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+            {t("common.address")}
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {isEditing ? (
+              <>
+                <div className="space-y-4">
+                  <MultiLangInput
+                    label={t("common.roomFlat")}
+                    value={profile.address.roomFlat}
+                    onChange={(value) => handleAddressChange("roomFlat", value)}
+                    placeholder={{
+                      en: "Enter Room/Flat in English",
+                      "zh-TW": "輸入房間/單位",
+                    }}
+                  />
+                  <MultiLangInput
+                    label={t("common.floor")}
+                    value={profile.address.floor}
+                    onChange={(value) => handleAddressChange("floor", value)}
+                    placeholder={{
+                      en: "Enter Floor in English",
+                      "zh-TW": "輸入樓層",
+                    }}
+                  />
+                  <MultiLangInput
+                    label={t("common.blockNumber")}
+                    value={profile.address.blockNumber}
+                    onChange={(value) =>
+                      handleAddressChange("blockNumber", value)
+                    }
+                    placeholder={{
+                      en: "Enter Block Number in English",
+                      "zh-TW": "輸入座數",
+                    }}
+                  />
+                  <MultiLangInput
+                    label={t("common.blockName")}
+                    value={profile.address.blockName}
+                    onChange={(value) =>
+                      handleAddressChange("blockName", value)
+                    }
+                    placeholder={{
+                      en: "Enter Block Name in English",
+                      "zh-TW": "輸入座名",
+                    }}
+                  />
+                </div>
+                <div className="space-y-4">
+                  <MultiLangInput
+                    label={t("common.buildingName")}
+                    value={profile.address.buildingName}
+                    onChange={(value) =>
+                      handleAddressChange("buildingName", value)
+                    }
+                    placeholder={{
+                      en: "Enter Building Name in English",
+                      "zh-TW": "輸入大廈名稱",
+                    }}
+                  />
+                  <MultiLangInput
+                    label={t("common.streetNumber")}
+                    value={profile.address.streetNumber}
+                    onChange={(value) =>
+                      handleAddressChange("streetNumber", value)
+                    }
+                    placeholder={{
+                      en: "Enter Street Number in English",
+                      "zh-TW": "輸入街道號碼",
+                    }}
+                  />
+                  <MultiLangInput
+                    label={t("common.streetName")}
+                    value={profile.address.streetName}
+                    onChange={(value) =>
+                      handleAddressChange("streetName", value)
+                    }
+                    placeholder={{
+                      en: "Enter Street Name in English",
+                      "zh-TW": "輸入街道名稱",
+                    }}
+                  />
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {t("common.district")}
+                    </label>
+                    <Select
+                      value={profile.address.district}
+                      onValueChange={(value) =>
+                        handleAddressChange("district", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t("common.selectDistrict")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {HK_DISTRICTS.map((district) => (
+                          <SelectItem key={district} value={district}>
+                            {district}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {t("common.location")}
+                    </label>
+                    <Select
+                      value={profile.address.location}
+                      onValueChange={(value) =>
+                        handleAddressChange("location", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t("common.selectLocation")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {LOCATIONS.map((location) => (
+                          <SelectItem key={location} value={location}>
+                            {location}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="col-span-2 space-y-4">
+                {profile.address && Object.keys(profile.address).length > 0 ? (
+                  <div className="flex items-start space-x-4 p-4 bg-white/50 dark:bg-gray-800/50 rounded-lg shadow-sm">
+                    <MapPin className="text-[#535C91] dark:text-[#6B74A9] w-6 h-6 mt-1" />
+                    <div className="flex-grow space-y-2">
+                      <div className="text-lg font-medium text-gray-700 dark:text-gray-200">
+                        {profile.address.roomFlat?.[language] &&
+                          `${profile.address.roomFlat[language]}, `}
+                        {profile.address.floor?.[language] &&
+                          `${profile.address.floor[language]}, `}
+                        {profile.address.blockNumber?.[language] &&
+                          `${profile.address.blockNumber[language]} `}
+                        {profile.address.blockName?.[language] &&
+                          `${profile.address.blockName[language]}, `}
+                        {profile.address.buildingName?.[language] &&
+                          `${profile.address.buildingName[language]}, `}
+                        {profile.address.streetNumber?.[language] &&
+                          `${profile.address.streetNumber[language]} `}
+                        {profile.address.streetName?.[language] &&
+                          `${profile.address.streetName[language]}, `}
+                        {profile.address.district &&
+                          `${profile.address.district}, `}
+                        {profile.address.location}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-gray-500 dark:text-gray-400 text-center p-4">
+                    {t("common.noAddress")}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </CardContent>

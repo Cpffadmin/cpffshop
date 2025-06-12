@@ -10,6 +10,18 @@ declare module "next-auth" {
     profileImage: string;
     role: "admin" | "accounting" | "logistics" | "user";
     notificationPreferences: Record<string, boolean>;
+    phone?: string;
+    address?: {
+      roomFlat: { en: string; "zh-TW": string };
+      floor: { en: string; "zh-TW": string };
+      blockNumber: { en: string; "zh-TW": string };
+      blockName: { en: string; "zh-TW": string };
+      buildingName: { en: string; "zh-TW": string };
+      streetNumber: { en: string; "zh-TW": string };
+      streetName: { en: string; "zh-TW": string };
+      district: string;
+      location: string;
+    };
   }
 
   interface Session extends DefaultSession {
@@ -22,6 +34,18 @@ declare module "next-auth" {
       profileImage: string;
       role: "admin" | "accounting" | "logistics" | "user";
       notificationPreferences: Record<string, boolean>;
+      phone?: string;
+      address?: {
+        roomFlat: { en: string; "zh-TW": string };
+        floor: { en: string; "zh-TW": string };
+        blockNumber: { en: string; "zh-TW": string };
+        blockName: { en: string; "zh-TW": string };
+        buildingName: { en: string; "zh-TW": string };
+        streetNumber: { en: string; "zh-TW": string };
+        streetName: { en: string; "zh-TW": string };
+        district: string;
+        location: string;
+      };
     };
   }
 }

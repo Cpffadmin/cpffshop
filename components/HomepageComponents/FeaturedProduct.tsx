@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Tag, Star, Box, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTranslation } from "@/providers/language/LanguageContext";
-import HeroImageFallback from "@/public/heroimage1.jpg";
+import HeroImageFallback from "@/public/watch1.jpg";
 
 interface Brand {
   _id: string;

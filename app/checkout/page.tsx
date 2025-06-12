@@ -6,7 +6,6 @@ import { useSession } from "next-auth/react";
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
 import secureCheckout from "@/public/securecheckout.png";
-import ssl from "@/public/ssl.png";
 import { toast } from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import useCartStore from "../../store/cartStore";
@@ -743,13 +742,6 @@ const Cart = () => {
                   alt={t("checkout.securePayment")}
                   width={250}
                   height={250}
-                  className="dark:opacity-90"
-                />
-                <Image
-                  src={ssl}
-                  alt={t("checkout.securePayment")}
-                  width={105}
-                  height={105}
                   className="dark:opacity-90"
                 />
               </div>

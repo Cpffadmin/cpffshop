@@ -15,6 +15,18 @@ interface UserDocument extends mongoose.Document {
   profileImage: string;
   role: "admin" | "accounting" | "logistics" | "user";
   notificationPreferences: Record<string, boolean>;
+  phone?: string;
+  address?: {
+    roomFlat: { en: string; "zh-TW": string };
+    floor: { en: string; "zh-TW": string };
+    blockNumber: { en: string; "zh-TW": string };
+    blockName: { en: string; "zh-TW": string };
+    buildingName: { en: string; "zh-TW": string };
+    streetNumber: { en: string; "zh-TW": string };
+    streetName: { en: string; "zh-TW": string };
+    district: string;
+    location: string;
+  };
 }
 
 declare module "next-auth" {
@@ -28,6 +40,18 @@ declare module "next-auth" {
       profileImage: string;
       role: "admin" | "accounting" | "logistics" | "user";
       notificationPreferences: Record<string, boolean>;
+      phone?: string;
+      address?: {
+        roomFlat: { en: string; "zh-TW": string };
+        floor: { en: string; "zh-TW": string };
+        blockNumber: { en: string; "zh-TW": string };
+        blockName: { en: string; "zh-TW": string };
+        buildingName: { en: string; "zh-TW": string };
+        streetNumber: { en: string; "zh-TW": string };
+        streetName: { en: string; "zh-TW": string };
+        district: string;
+        location: string;
+      };
     };
   }
   interface User {
@@ -36,6 +60,18 @@ declare module "next-auth" {
     profileImage: string;
     role: "admin" | "accounting" | "logistics" | "user";
     notificationPreferences: Record<string, boolean>;
+    phone?: string;
+    address?: {
+      roomFlat: { en: string; "zh-TW": string };
+      floor: { en: string; "zh-TW": string };
+      blockNumber: { en: string; "zh-TW": string };
+      blockName: { en: string; "zh-TW": string };
+      buildingName: { en: string; "zh-TW": string };
+      streetNumber: { en: string; "zh-TW": string };
+      streetName: { en: string; "zh-TW": string };
+      district: string;
+      location: string;
+    };
   }
 }
 
@@ -111,6 +147,8 @@ export const authOptions: NextAuthOptions = {
             profileImage: user.profileImage,
             role: user.role,
             notificationPreferences: user.notificationPreferences,
+            phone: user.phone,
+            address: user.address,
           };
         } catch (error) {
           console.error("Authorization error:", error);
@@ -144,6 +182,8 @@ export const authOptions: NextAuthOptions = {
             admin: false, // Default to false
             role: "user", // Default role
             notificationPreferences: {},
+            phone: user.phone,
+            address: user.address,
           });
         }
 
@@ -153,6 +193,8 @@ export const authOptions: NextAuthOptions = {
         user.role = dbUser.role;
         user.profileImage = dbUser.profileImage;
         user.notificationPreferences = dbUser.notificationPreferences;
+        user.phone = dbUser.phone;
+        user.address = dbUser.address;
 
         return true;
       } catch (error) {
@@ -174,6 +216,8 @@ export const authOptions: NextAuthOptions = {
             profileImage: user.profileImage,
             role: user.role,
             notificationPreferences: user.notificationPreferences,
+            phone: user.phone,
+            address: user.address,
           };
         }
         return token;
@@ -193,6 +237,8 @@ export const authOptions: NextAuthOptions = {
             profileImage: token.profileImage,
             role: token.role,
             notificationPreferences: token.notificationPreferences,
+            phone: token.phone,
+            address: token.address,
           },
         };
       } catch (error) {

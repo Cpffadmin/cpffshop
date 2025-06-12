@@ -81,7 +81,22 @@
     "confirmCancelTitle": "Confirm Cancellation",
     "confirmCancelButton": "Yes, Cancel",
     "keepEditing": "No, Keep Editing",
-    "formNotSaved": "You have unsaved changes. Are you sure you want to leave?"
+    "formNotSaved": "You have unsaved changes. Are you sure you want to leave?",
+    "address": "Address",
+    "roomFlat": "Room/Flat",
+    "floor": "Floor",
+    "blockNumber": "Block Number",
+    "blockName": "Block Name",
+    "buildingName": "Building Name",
+    "streetNumber": "Street Number",
+    "streetName": "Street Name",
+    "district": "District",
+    "location": "Location",
+    "selectDistrict": "Select District",
+    "selectLocation": "Select Location",
+    "noAddress": "No address provided",
+    "noPhoneNumber": "No phone number provided",
+    "phone": "Phone Number"
   },
   "navigation": {
     "home": "Home",
