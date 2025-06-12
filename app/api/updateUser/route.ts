@@ -5,11 +5,16 @@ import User from "@/utils/models/User";
 export async function PUT(req: Request) {
   try {
     await connect();
-    const { email, name, newEmail } = await req.json();
+    const { email, name, newEmail, phone, address } = await req.json();
 
     const updatedUser = await User.findOneAndUpdate(
       { email },
-      { name, email: newEmail },
+      {
+        name,
+        email: newEmail,
+        phone,
+        address,
+      },
       { new: true, runValidators: true }
     );
 
@@ -24,6 +29,8 @@ export async function PUT(req: Request) {
         email: updatedUser.email,
         admin: updatedUser.admin,
         profileImage: updatedUser.profileImage,
+        phone: updatedUser.phone,
+        address: updatedUser.address,
       },
     });
   } catch (error) {

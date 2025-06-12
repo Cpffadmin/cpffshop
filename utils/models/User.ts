@@ -1,55 +1,71 @@
 import mongoose from "mongoose";
 import Product from "./Product";
+import { formatAddress } from "../formatAddress";
 
-// Multilingual string schema
+// Multilingual string schema with comments for proper ordering
 const multilingualStringSchema = new mongoose.Schema(
   {
+    // English format: Room → Building → Street → District → City → State → Country
     en: String,
+    // Traditional Chinese format: 國家 → 州/省 → 城市 → 地區 → 街道 → 大廈 → 樓層 → 室
     "zh-TW": String,
   },
   { _id: false }
 );
 
-// Separate address schema with multilingual support
+// Address schema structured to support both English and Chinese ordering
 const addressSchema = new mongoose.Schema(
   {
-    roomFlat: multilingualStringSchema,
+    // Smallest unit (en: first, zh-TW: last)
+    room: multilingualStringSchema,
     floor: multilingualStringSchema,
-    blockNumber: multilingualStringSchema,
-    blockName: multilingualStringSchema,
-    buildingName: multilingualStringSchema,
-    streetNumber: multilingualStringSchema,
-    streetName: multilingualStringSchema,
-    district: {
-      type: String,
-      enum: [
-        "Central and Western",
-        "Eastern",
-        "Southern",
-        "Wan Chai",
-        "Kowloon City",
-        "Kwun Tong",
-        "Sham Shui Po",
-        "Wong Tai Sin",
-        "Yau Tsim Mong",
-        "Islands",
-        "Kwai Tsing",
-        "North",
-        "Sai Kung",
-        "Sha Tin",
-        "Tai Po",
-        "Tsuen Wan",
-        "Tuen Mun",
-        "Yuen Long",
-      ],
-    },
-    location: {
-      type: String,
-      enum: ["Hong Kong Island", "Kowloon", "New Territories"],
+
+    // Building information
+    building: multilingualStringSchema,
+
+    // Street level
+    street: multilingualStringSchema,
+    district: multilingualStringSchema,
+
+    // Larger administrative regions
+    city: multilingualStringSchema,
+    state: multilingualStringSchema,
+    country: multilingualStringSchema,
+
+    // Additional info
+    postalCode: multilingualStringSchema,
+
+    // Store the complete formatted address strings
+    formattedAddress: {
+      en: String,
+      "zh-TW": String,
     },
   },
   { _id: false }
 );
+
+// Pre-save middleware to format addresses
+addressSchema.pre("save", function (next) {
+  if (this.isModified()) {
+    const addressData = {
+      room: { en: this.room?.en, "zh-TW": this.room?.["zh-TW"] },
+      floor: { en: this.floor?.en, "zh-TW": this.floor?.["zh-TW"] },
+      building: { en: this.building?.en, "zh-TW": this.building?.["zh-TW"] },
+      street: { en: this.street?.en, "zh-TW": this.street?.["zh-TW"] },
+      district: { en: this.district?.en, "zh-TW": this.district?.["zh-TW"] },
+      city: { en: this.city?.en, "zh-TW": this.city?.["zh-TW"] },
+      state: { en: this.state?.en, "zh-TW": this.state?.["zh-TW"] },
+      country: { en: this.country?.en, "zh-TW": this.country?.["zh-TW"] },
+      postalCode: {
+        en: this.postalCode?.en,
+        "zh-TW": this.postalCode?.["zh-TW"],
+      },
+    };
+    const formatted = formatAddress(addressData);
+    this.formattedAddress = formatted;
+  }
+  next();
+});
 
 const userSchema = new mongoose.Schema(
   {

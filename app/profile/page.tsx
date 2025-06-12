@@ -39,6 +39,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { formatAddress } from "@/utils/formatAddress";
 
 export default function ProfilePage() {
   const { data: session, update } = useSession();
@@ -380,23 +381,48 @@ export default function ProfilePage() {
                     <MapPin className="text-[#535C91] dark:text-[#6B74A9] w-6 h-6 mt-1" />
                     <div className="flex-grow space-y-2">
                       <div className="text-lg font-medium text-gray-700 dark:text-gray-200">
-                        {profile.address.roomFlat?.[language] &&
-                          `${profile.address.roomFlat[language]}, `}
-                        {profile.address.floor?.[language] &&
-                          `${profile.address.floor[language]}, `}
-                        {profile.address.blockNumber?.[language] &&
-                          `${profile.address.blockNumber[language]} `}
-                        {profile.address.blockName?.[language] &&
-                          `${profile.address.blockName[language]}, `}
-                        {profile.address.buildingName?.[language] &&
-                          `${profile.address.buildingName[language]}, `}
-                        {profile.address.streetNumber?.[language] &&
-                          `${profile.address.streetNumber[language]} `}
-                        {profile.address.streetName?.[language] &&
-                          `${profile.address.streetName[language]}, `}
-                        {profile.address.district &&
-                          `${profile.address.district}, `}
-                        {profile.address.location}
+                        {
+                          formatAddress({
+                            room: {
+                              en: profile.address.roomFlat?.en,
+                              "zh-TW": profile.address.roomFlat?.["zh-TW"],
+                            },
+                            floor: {
+                              en: profile.address.floor?.en,
+                              "zh-TW": profile.address.floor?.["zh-TW"],
+                            },
+                            building: {
+                              en: `${profile.address.blockNumber?.en || ""} ${
+                                profile.address.blockName?.en || ""
+                              } ${
+                                profile.address.buildingName?.en || ""
+                              }`.trim(),
+                              "zh-TW": `${
+                                profile.address.buildingName?.["zh-TW"] || ""
+                              } ${profile.address.blockName?.["zh-TW"] || ""} ${
+                                profile.address.blockNumber?.["zh-TW"] || ""
+                              }`.trim(),
+                            },
+                            street: {
+                              en: `${profile.address.streetNumber?.en || ""} ${
+                                profile.address.streetName?.en || ""
+                              }`.trim(),
+                              "zh-TW": `${
+                                profile.address.streetName?.["zh-TW"] || ""
+                              } ${
+                                profile.address.streetNumber?.["zh-TW"] || ""
+                              }`.trim(),
+                            },
+                            district: {
+                              en: profile.address.district,
+                              "zh-TW": profile.address.district,
+                            },
+                            city: {
+                              en: profile.address.location,
+                              "zh-TW": profile.address.location,
+                            },
+                          })[language]
+                        }
                       </div>
                     </div>
                   </div>
