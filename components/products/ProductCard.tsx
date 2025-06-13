@@ -9,6 +9,7 @@ import { WishlistButton } from "@/components/ui/WishlistButton";
 import { useTranslation } from "@/providers/language/LanguageContext";
 import { useCart } from "@/providers/cart/CartContext";
 import { useCartUI } from "@/components/ui/CartUIContext";
+import { StarRating } from "@/components/ui/StarRating";
 
 interface ProductCardProps {
   product: Product;
@@ -81,7 +82,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <div className="flex items-center space-x-1">
             {product.averageRating && product.averageRating > 0 ? (
               <div className="flex items-center">
-                <Star className="w-4 h-4 text-primary fill-primary" />
+                <StarRating rating={product.averageRating} />
                 <span className="ml-1 text-xs sm:text-sm text-muted-foreground">
                   {product.averageRating.toFixed(1)}
                 </span>

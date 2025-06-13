@@ -190,6 +190,8 @@ export async function GET(request: NextRequest) {
             product.category?.displayNames?.[language] ||
             product.category?.name,
         },
+        averageRating: product.averageRating ?? 0,
+        numReviews: product.numReviews ?? 0,
       })),
       total,
       page,
