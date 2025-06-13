@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import useCartStore from "@/store/cartStore";
 import Image from "next/image";
 import { Trash2, ShoppingCart, Minus, Plus, X } from "lucide-react";
@@ -35,6 +35,40 @@ const Cart = ({ onClose, isMobile = false }: CartProps) => {
   console.log("Cart items:", items);
   console.log("Current language:", language);
 
+  // Memoize total price calculation - getTotalPrice already depends on items internally
+  const subtotal = useMemo(() => getTotalPrice(), [getTotalPrice]);
+
+  // Memoize handlers
+  const handleRemove = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
+      event.preventDefault();
+      event.stopPropagation();
+      removeItem(id);
+    },
+    [removeItem]
+  );
+
+  const handleQuantityChange = useCallback(
+    (
+      event: React.MouseEvent<HTMLButtonElement>,
+      id: string,
+      newQuantity: number
+    ) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (newQuantity < 1) {
+        removeItem(id);
+      } else {
+        updateItemQuantity(id, newQuantity);
+      }
+    },
+    [removeItem, updateItemQuantity]
+  );
+
+  const handleCheckout = useCallback(() => {
+    window.location.href = "/checkout";
+  }, []);
+
   useEffect(() => {
     const fetchDeliverySettings = async () => {
       try {
@@ -59,34 +93,6 @@ const Cart = ({ onClose, isMobile = false }: CartProps) => {
     }
   }, [isMobile]);
 
-  const handleRemove = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    id: string
-  ) => {
-    event.preventDefault();
-    event.stopPropagation();
-    removeItem(id);
-  };
-
-  const handleQuantityChange = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    id: string,
-    newQuantity: number
-  ) => {
-    event.preventDefault();
-    event.stopPropagation();
-    if (newQuantity < 1) {
-      removeItem(id);
-    } else {
-      updateItemQuantity(id, newQuantity);
-    }
-  };
-
-  const handleCheckout = () => {
-    window.location.href = "/checkout";
-  };
-
-  const subtotal = getTotalPrice();
   const deliveryCost = deliverySettings
     ? subtotal >= deliverySettings.freeDeliveryThreshold
       ? 0
@@ -313,4 +319,4 @@ const Cart = ({ onClose, isMobile = false }: CartProps) => {
   );
 };
 
-export default Cart;
+export default React.memo(Cart);

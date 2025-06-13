@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import useCartStore from "@/store/cartStore";
 import Cart from "@/components/ui/Cart";
 import { useCartUI } from "@/components/ui/CartUIContext";
@@ -9,15 +9,16 @@ import { BsCart3 } from "react-icons/bs";
 
 const CartIcon = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [itemCount, setItemCount] = useState(0);
   const items = useCartStore((state) => state.items);
   const getTotalItems = useCartStore((state) => state.getTotalItems);
   const { isOpen, openCart, closeCart } = useCartUI();
 
+  // Memoize item count calculation - getTotalItems already depends on items internally
+  const itemCount = useMemo(() => getTotalItems(), [getTotalItems]);
+
   useEffect(() => {
     setIsLoading(false);
-    setItemCount(getTotalItems());
-  }, [items, getTotalItems]);
+  }, []);
 
   if (isLoading) {
     return null;
@@ -38,4 +39,4 @@ const CartIcon = () => {
   );
 };
 
-export default CartIcon;
+export default React.memo(CartIcon);

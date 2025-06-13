@@ -41,6 +41,7 @@ interface Product {
   draft?: boolean;
   lastSaved?: Date;
   specifications?: Record<string, string>;
+  displayNames?: Record<string, string>;
 }
 
 export default function AdminProductsPage() {
@@ -82,6 +83,7 @@ export default function AdminProductsPage() {
             params: {
               includeDrafts: true,
               limit: 100,
+              language: language,
             },
           });
           console.log("Admin products response:", response.data);
@@ -112,7 +114,7 @@ export default function AdminProductsPage() {
 
       fetchProducts();
     }
-  }, [status, session, router, t]);
+  }, [status, session, router, t, language]);
 
   // Auto-switch to grid view on mobile
   useEffect(() => {
@@ -164,15 +166,19 @@ export default function AdminProductsPage() {
             <div className="relative aspect-square">
               <Image
                 src={product.images[0] || "/placeholder-watch.jpg"}
-                alt={product.name}
+                alt={product.displayNames?.[language] || product.name}
                 fill
                 className="object-cover"
               />
             </div>
             <CardHeader>
-              <h3 className="font-semibold">{product.name}</h3>
+              <h3 className="font-semibold">
+                {product.displayNames?.[language] || product.name}
+              </h3>
               <p className="text-sm text-muted-foreground">
-                {product.brand.name}
+                {product.brand?.displayNames?.[language] ||
+                  product.brand?.name ||
+                  "N/A"}
               </p>
             </CardHeader>
             <CardContent>
@@ -239,13 +245,15 @@ export default function AdminProductsPage() {
               <div className="relative w-16 h-16">
                 <Image
                   src={product.images[0] || "/placeholder-watch.jpg"}
-                  alt={product.name}
+                  alt={product.displayNames?.[language] || product.name}
                   fill
                   className="object-cover rounded-md"
                 />
               </div>
             </TableCell>
-            <TableCell className="font-medium">{product.name}</TableCell>
+            <TableCell className="font-medium">
+              {product.displayNames?.[language] || product.name}
+            </TableCell>
             <TableCell>
               {product.brand?.displayNames?.[language] ||
                 product.brand?.name ||

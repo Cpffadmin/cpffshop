@@ -36,7 +36,16 @@ const productSchema = new mongoose.Schema(
         required: [true, "Chinese description is required"],
       },
     },
-    images: [{ type: String }],
+    images: {
+      type: [String],
+      default: [],
+      validate: {
+        validator: function (v: string[]) {
+          return Array.isArray(v);
+        },
+        message: "Images must be an array of strings",
+      },
+    },
     price: { type: Number, required: [true, "Price is required"] },
     netPrice: { type: Number },
     originalPrice: { type: Number },
@@ -110,6 +119,23 @@ const productSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// Add middleware to ensure images array is always initialized
+productSchema.pre("save", function (next) {
+  if (!Array.isArray(this.images)) {
+    this.images = [];
+  }
+  next();
+});
+
+// Add middleware to ensure images array is always initialized when updating
+productSchema.pre("findOneAndUpdate", function (next) {
+  const update = this.getUpdate() as any;
+  if (update && update.images && !Array.isArray(update.images)) {
+    update.images = [];
+  }
+  next();
+});
 
 // Add indexes for better query performance
 productSchema.index({ name: 1 });

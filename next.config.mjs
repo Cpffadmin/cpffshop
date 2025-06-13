@@ -29,10 +29,6 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ["mongoose"],
   },
-  env: {
-    NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: "cpffonline",
-    NEXT_PUBLIC_CLOUDINARY_PRESET_NAME: "cpffonline",
-  },
   webpack: (config) => {
     config.resolve.alias["@"] = resolve(__dirname);
     config.resolve.alias["@/utils"] = resolve(__dirname, "utils");

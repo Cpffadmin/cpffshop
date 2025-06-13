@@ -32,13 +32,16 @@ const defaultBrand: ProductBrand = {
 // Cache for product data
 const productCache = new Map<string, any>();
 
+export const dynamic = "force-dynamic";
+
 export async function GET(
   request: Request,
   { params }: { params: { productId: string } }
 ) {
   try {
     await dbConnect();
-    const { productId } = await params;
+    const resolvedParams = await params;
+    const { productId } = resolvedParams;
     const { searchParams } = new URL(request.url);
     const language = (searchParams.get("language") || "en") as Language;
 
@@ -102,6 +105,10 @@ export async function GET(
     const product = doc as unknown as ProductType;
     const brand = product.brand || defaultBrand;
 
+    // Ensure images array is properly handled
+    const images = Array.isArray(product.images) ? product.images : [];
+    console.log("Product images:", images); // Debug log
+
     // Store in cache
     const productData = {
       _id: product._id.toString(),
@@ -115,7 +122,7 @@ export async function GET(
         en: product.description,
         "zh-TW": product.description,
       },
-      images: product.images,
+      images: images, // Use the validated images array
       price: product.price,
       originalPrice: product.originalPrice,
       brand: {

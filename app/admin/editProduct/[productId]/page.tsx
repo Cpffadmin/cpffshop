@@ -404,19 +404,23 @@ const EditProduct = ({ params }: Props) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
 
     if (!session?.user?._id) {
       toast.error("User ID not found");
+      setIsLoading(false);
       return;
     }
 
     if (imageUrls.length === 0) {
       toast.error("Please upload at least one image");
+      setIsLoading(false);
       return;
     }
 
     if (!product.category) {
       toast.error("Please select a category");
+      setIsLoading(false);
       return;
     }
 
@@ -437,10 +441,10 @@ const EditProduct = ({ params }: Props) => {
           .map((spec) => spec.displayNames?.[language] || spec.key)
           .join(", ")}`
       );
+      setIsLoading(false);
       return;
     }
 
-    setIsLoading(true);
     try {
       // Process specifications to ensure proper format for saving
       const processedSpecs = product.specifications.map((spec) => ({
@@ -450,6 +454,7 @@ const EditProduct = ({ params }: Props) => {
         displayNames: spec.displayNames, // Keep display names for reference
       }));
 
+      // Ensure images array is properly set
       const productData = {
         ...product,
         user: session.user._id,
@@ -457,11 +462,13 @@ const EditProduct = ({ params }: Props) => {
         price: Number(product.price),
         netPrice: Number(product.netPrice),
         originalPrice: Number(product.originalPrice),
-        images: imageUrls,
+        images: imageUrls, // Use the imageUrls state which contains all images
         specifications: processedSpecs,
         name: product.displayNames.en,
         description: product.descriptions.en,
       };
+
+      console.log("Submitting product data:", productData);
 
       const response = await axios.put(
         `/api/products/manage/${productId}`,

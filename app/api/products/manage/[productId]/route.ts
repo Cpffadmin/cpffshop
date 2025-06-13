@@ -40,12 +40,16 @@ interface ProductData extends Document {
   draft: boolean;
 }
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: Request, { params }: { params: Params }) {
   try {
+    const resolvedParams = await params;
+    const { productId } = resolvedParams;
     await connectToDatabase();
 
     // Validate ObjectId
-    if (!mongoose.Types.ObjectId.isValid(params.productId)) {
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
       return NextResponse.json(
         { message: "Product not found" },
         { status: 404 }
@@ -53,7 +57,7 @@ export async function GET(request: Request, { params }: { params: Params }) {
     }
 
     // Fetch product with populated brand and category
-    const product = (await Product.findById(params.productId)
+    const product = (await Product.findById(productId)
       .populate({
         path: "brand",
         select: "name displayNames isActive",
@@ -153,13 +157,17 @@ export async function PUT(
         );
       }
 
+      // Ensure images array is properly handled
+      const updatedData = {
+        ...data,
+        user: session.user._id,
+        images: Array.isArray(data.images) ? data.images : [], // Ensure images is an array
+      };
+
       // Update the product
       const updatedProduct = (await Product.findByIdAndUpdate(
         productId,
-        {
-          ...data,
-          user: session.user._id,
-        },
+        updatedData,
         { new: true, runValidators: true }
       )
         .session(mongoSession)

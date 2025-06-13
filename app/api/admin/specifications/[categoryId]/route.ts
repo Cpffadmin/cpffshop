@@ -21,12 +21,16 @@ interface Specification {
   };
 }
 
+export const dynamic = "force-dynamic";
+
 // GET specifications for a category
 export async function GET(
   request: Request,
   { params }: { params: { categoryId: string } }
 ) {
   try {
+    const resolvedParams = await params;
+    const { categoryId } = resolvedParams;
     const session = await getServerSession(authOptions);
     if (!session?.user?.admin) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -35,14 +39,14 @@ export async function GET(
     await connectToDatabase();
 
     // Validate ObjectId
-    if (!Types.ObjectId.isValid(params.categoryId)) {
+    if (!Types.ObjectId.isValid(categoryId)) {
       return NextResponse.json(
         { error: "Invalid category ID format" },
         { status: 400 }
       );
     }
 
-    const category = await Category.findById(params.categoryId);
+    const category = await Category.findById(categoryId);
     console.log("GET - Category from DB:", JSON.stringify(category, null, 2));
 
     if (!category) {

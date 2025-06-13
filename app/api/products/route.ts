@@ -215,23 +215,44 @@ export async function POST(request: Request) {
 
     // Validate required fields
     if (!data.name || !data.description || !data.brand || !data.category) {
-      throw new Error("Missing required fields");
+      throw new Error(
+        "Missing required fields: name, description, brand, or category"
+      );
     }
 
-    // Create product
-    const product = await Product.create({
-      ...data,
-      displayNames: {
-        en: data.name,
-        "zh-TW": data.name,
-      },
-      descriptions: {
-        en: data.description,
-        "zh-TW": data.description,
-      },
-      user: session.user._id,
-    });
+    if (!data.images || data.images.length === 0) {
+      throw new Error("At least one image is required");
+    }
 
-    return { success: true, product };
+    if (typeof data.price !== "number" || data.price <= 0) {
+      throw new Error("Valid price is required");
+    }
+
+    if (typeof data.stock !== "number" || data.stock < 0) {
+      throw new Error("Valid stock quantity is required");
+    }
+
+    try {
+      // Create product
+      const product = await Product.create({
+        ...data,
+        displayNames: {
+          en: data.name,
+          "zh-TW": data.name,
+        },
+        descriptions: {
+          en: data.description,
+          "zh-TW": data.description,
+        },
+        user: session.user._id,
+      });
+
+      return { success: true, product };
+    } catch (error) {
+      console.error("Error creating product:", error);
+      throw new Error(
+        error instanceof Error ? error.message : "Failed to create product"
+      );
+    }
   });
 }

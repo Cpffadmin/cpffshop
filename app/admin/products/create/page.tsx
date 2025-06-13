@@ -281,9 +281,77 @@ const CreateProduct = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!session?.user?._id) {
+      toast.error("User ID not found");
+      return;
+    }
+
+    if (imageUrls.length === 0) {
+      toast.error("Please upload at least one image");
+      return;
+    }
+
+    if (!product.category) {
+      toast.error("Please select a category");
+      return;
+    }
+
+    if (!product.brand) {
+      toast.error("Please select a brand");
+      return;
+    }
+
+    // Check required specifications
+    const missingSpecs = product.specifications.filter((spec) => {
+      if (!spec.required) return false;
+      if (!spec.value) return true;
+      if (spec.type === "text") {
+        const value = spec.value as { en: string; "zh-TW": string };
+        return !value.en || !value["zh-TW"];
+      }
+      return false;
+    });
+
+    if (missingSpecs.length > 0) {
+      toast.error(
+        `Please fill in required specifications: ${missingSpecs
+          .map((spec) => spec.displayNames?.[language] || spec.key)
+          .join(", ")}`
+      );
+      return;
+    }
+
+    setIsLoading(true);
     try {
-      setIsLoading(true);
-      const response = await axios.post("/api/products", product);
+      // Process specifications to ensure proper format for saving
+      const processedSpecs = product.specifications.map((spec) => ({
+        key: spec.key,
+        value: spec.value,
+        type: spec.type,
+        displayNames: spec.displayNames,
+      }));
+
+      const productData = {
+        ...product,
+        user: session.user._id,
+        name: product.displayNames.en,
+        description: product.descriptions.en,
+        stock: Number(product.stock),
+        price: Number(product.price),
+        netPrice: Number(product.netPrice),
+        originalPrice: Number(product.originalPrice),
+        images: imageUrls,
+        specifications: processedSpecs,
+        brand:
+          typeof product.brand === "object" ? product.brand._id : product.brand,
+        category:
+          typeof product.category === "object"
+            ? product.category._id
+            : product.category,
+      };
+
+      const response = await axios.post("/api/products", productData);
       if (response.data) {
         toast.success(
           language === "en" ? "Product created successfully" : "產品創建成功"

@@ -323,60 +323,60 @@ const BlogPostPage: React.FC<BlogPostPageProps> = ({
 
   return (
     <div className="container mx-auto py-6">
-      <Breadcrumb items={breadcrumbItems} />
+        <Breadcrumb items={breadcrumbItems} />
       <h1 className="text-3xl font-bold mb-6">{pageTitle}</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("blog.posts.edit.titleLabel")}</CardTitle>
-            <CardDescription>
-              {t("blog.posts.edit.titlePlaceholder")}
-            </CardDescription>
-          </CardHeader>
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("blog.posts.edit.titleLabel")}</CardTitle>
+                <CardDescription>
+                  {t("blog.posts.edit.titlePlaceholder")}
+                </CardDescription>
+              </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label>{t("blog.posts.edit.titleLabel")}</Label>
-              <MultiLangInput
-                value={formData.title}
-                onChange={(value) => handleInputChange("title", value)}
-                placeholder={{
-                  en: t("blog.posts.edit.titlePlaceholder"),
-                  "zh-TW": t("blog.posts.edit.titlePlaceholder"),
-                }}
-              />
+                <MultiLangInput
+                  value={formData.title}
+                  onChange={(value) => handleInputChange("title", value)}
+                  placeholder={{
+                    en: t("blog.posts.edit.titlePlaceholder"),
+                    "zh-TW": t("blog.posts.edit.titlePlaceholder"),
+                  }}
+                />
             </div>
 
             <div className="space-y-2">
               <Label>{t("blog.posts.edit.contentLabel")}</Label>
-              <MultiLangInput
-                value={formData.content}
-                onChange={(value) => handleInputChange("content", value)}
+                <MultiLangInput
+                  value={formData.content}
+                  onChange={(value) => handleInputChange("content", value)}
                 multiline
-                placeholder={{
-                  en: t("blog.posts.edit.contentPlaceholder"),
-                  "zh-TW": t("blog.posts.edit.contentPlaceholder"),
-                }}
-              />
-            </div>
+                  placeholder={{
+                    en: t("blog.posts.edit.contentPlaceholder"),
+                    "zh-TW": t("blog.posts.edit.contentPlaceholder"),
+                  }}
+                />
+          </div>
 
             <div className="space-y-2">
               <Label>{t("blog.posts.edit.excerptLabel")}</Label>
-              <MultiLangInput
+                  <MultiLangInput
                 value={formData.excerpt}
                 onChange={(value) => handleInputChange("excerpt", value)}
                 multiline
-                placeholder={{
+                    placeholder={{
                   en: t("blog.posts.edit.excerptPlaceholder"),
                   "zh-TW": t("blog.posts.edit.excerptPlaceholder"),
-                }}
-              />
+                    }}
+                  />
             </div>
 
             <div className="space-y-2">
               <Label>{t("blog.posts.edit.categoryLabel")}</Label>
               <Select
-                value={formData.category}
+                    value={formData.category}
                 onValueChange={(value) => handleInputChange("category", value)}
               >
                 <SelectTrigger>
@@ -400,32 +400,32 @@ const BlogPostPage: React.FC<BlogPostPageProps> = ({
 
             <div className="space-y-2">
               <Label>{t("blog.posts.edit.statusLabel")}</Label>
-              <Select
-                value={formData.status}
+                    <Select
+                      value={formData.status}
                 onValueChange={(value) => handleInputChange("status", value)}
-              >
-                <SelectTrigger>
+                    >
+                      <SelectTrigger>
                   <SelectValue placeholder={t("blog.posts.edit.statusLabel")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="draft">
-                    {t("blog.posts.statusTypes.draft")}
-                  </SelectItem>
-                  <SelectItem value="published">
-                    {t("blog.posts.statusTypes.published")}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="draft">
+                          {t("blog.posts.statusTypes.draft")}
+                        </SelectItem>
+                        <SelectItem value="published">
+                          {t("blog.posts.statusTypes.published")}
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-            <div className="flex items-center space-x-2">
-              <Switch
+                  <div className="flex items-center space-x-2">
+                    <Switch
                 id="featured"
-                checked={formData.featured}
-                onCheckedChange={(checked) =>
-                  handleInputChange("featured", checked)
-                }
-              />
+                      checked={formData.featured}
+                      onCheckedChange={(checked) =>
+                        handleInputChange("featured", checked)
+                      }
+                    />
               <Label htmlFor="featured">
                 {t("blog.posts.edit.featuredLabel")}
               </Label>
@@ -453,15 +453,15 @@ const BlogPostPage: React.FC<BlogPostPageProps> = ({
                   <span>{t("blog.posts.edit.uploadMainImage")}</span>
                 </CldUploadButton>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+                  </div>
+                </CardContent>
+              </Card>
 
-        <Card>
-          <CardHeader>
+              <Card>
+                <CardHeader>
             <CardTitle>{t("blog.posts.edit.seoTitle")}</CardTitle>
             <CardDescription>{t("blog.posts.edit.seoTitle")}</CardDescription>
-          </CardHeader>
+                </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label>{t("blog.posts.edit.seoTitleLabel")}</Label>
@@ -514,8 +514,8 @@ const BlogPostPage: React.FC<BlogPostPageProps> = ({
               ? t("common.save")
               : t("common.create")}
           </Button>
-        </div>
-      </form>
+          </div>
+        </form>
     </div>
   );
 };

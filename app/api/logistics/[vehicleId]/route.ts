@@ -32,12 +32,16 @@ interface UpdateData {
   assignedLocation?: string;
 }
 
+export const dynamic = "force-dynamic";
+
 // Get a single vehicle
 export async function GET(
   request: Request,
-  { params }: Params
+  { params }: { params: { vehicleId: string } }
 ): Promise<NextResponse<LogisticsVehicle | { error: string }>> {
   try {
+    const resolvedParams = await params;
+    const { vehicleId } = resolvedParams;
     const session = await getServerSession(authOptions);
     if (!session?.user?.admin) {
       return NextResponse.json(
@@ -49,7 +53,7 @@ export async function GET(
     await connect();
 
     const vehicle = await Logistics.findOne({
-      _id: new ObjectId(params.vehicleId),
+      _id: new ObjectId(vehicleId),
     });
 
     if (!vehicle) {
