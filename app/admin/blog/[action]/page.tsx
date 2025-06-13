@@ -1,7 +1,7 @@
 "use client";
 
 import { Metadata } from "next";
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
@@ -46,7 +46,7 @@ interface BlogPostFormData {
   category: string;
   status: "draft" | "published";
   featured: boolean;
-  featuredImage?: string;
+  mainImage?: string;
   tags: string[];
   seo: {
     metaTitle: MultiLangValue;
@@ -78,6 +78,8 @@ const BlogPostPage: React.FC<BlogPostPageProps> = ({
   const { refreshFeaturedPost } = useBlog();
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
+  const unwrappedParams = use(params);
+  const unwrappedSearchParams = use(searchParams);
   const [formData, setFormData] = useState<BlogPostFormData>({
     title: {
       en: "",
@@ -108,7 +110,7 @@ const BlogPostPage: React.FC<BlogPostPageProps> = ({
     },
   });
 
-  const isEditing = params.action === "edit";
+  const isEditing = unwrappedParams.action === "edit";
   const pageTitle = isEditing
     ? t("blog.posts.edit.title")
     : t("blog.posts.create");
@@ -126,7 +128,7 @@ const BlogPostPage: React.FC<BlogPostPageProps> = ({
     },
     {
       label: isEditing ? t("blog.posts.edit.title") : t("blog.posts.create"),
-      href: `/admin/blog/${params.action}`,
+      href: `/admin/blog/${unwrappedParams.action}`,
       icon: FileText,
     },
   ];
@@ -141,10 +143,12 @@ const BlogPostPage: React.FC<BlogPostPageProps> = ({
 
   useEffect(() => {
     const fetchPost = async () => {
-      if (isEditing && searchParams.id) {
+      if (isEditing && unwrappedSearchParams.id) {
         try {
           setIsLoading(true);
-          const res = await fetch(`/api/blog/posts/${searchParams.id}`);
+          const res = await fetch(
+            `/api/blog/posts/${unwrappedSearchParams.id}`
+          );
           if (!res.ok) throw new Error("Failed to fetch post");
           const post = await res.json();
           setFormData(post);
@@ -160,7 +164,7 @@ const BlogPostPage: React.FC<BlogPostPageProps> = ({
     if (session?.user?.admin) {
       fetchPost();
     }
-  }, [isEditing, searchParams.id, session]);
+  }, [isEditing, unwrappedSearchParams.id, session]);
 
   const handleInputChange = (
     field: keyof BlogPostFormData,
@@ -250,120 +254,53 @@ const BlogPostPage: React.FC<BlogPostPageProps> = ({
     }
   };
 
-  const handleImageUpload = (result: CloudinaryUploadWidgetResults) => {
-    if (
-      result?.event === "success" &&
-      typeof result.info === "object" &&
-      "secure_url" in result.info
-    ) {
-      const imageUrl = result.info.secure_url as string;
+  const handleImageUpload = (result: CloudinaryResult) => {
+    if (result.info?.secure_url) {
       setFormData((prev) => ({
         ...prev,
-        featuredImage: imageUrl,
+        mainImage: result.info.secure_url,
       }));
-      toast.success("Featured image uploaded successfully");
+      toast.success("Image uploaded successfully");
     } else {
-      toast.error("Failed to upload featured image");
+      toast.error("Failed to upload image. Please try again.");
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    if (!session?.user?.admin) return;
 
     try {
-      // Log form data before validation
-      console.log(
-        "Form data before submission:",
-        JSON.stringify(formData, null, 2)
-      );
-
-      // Validate required fields
-      if (!formData.title.en || !formData.title["zh-TW"]) {
-        toast.error("Title is required in both English and Chinese");
-        setIsLoading(false);
-        return;
-      }
-
-      if (!formData.content.en || !formData.content["zh-TW"]) {
-        toast.error("Content is required in both English and Chinese");
-        setIsLoading(false);
-        return;
-      }
-
-      if (!formData.category) {
-        toast.error("Category is required");
-        setIsLoading(false);
-        return;
-      }
-
-      const endpoint = isEditing
-        ? `/api/blog/posts/${searchParams.id}`
+      setIsLoading(true);
+      const url = isEditing
+        ? `/api/blog/posts/${unwrappedSearchParams.id}`
         : "/api/blog/posts";
+      const method = isEditing ? "PUT" : "POST";
 
-      // Log the request details
-      console.log("Making request to:", endpoint);
-      console.log("Request method:", isEditing ? "PUT" : "POST");
-      console.log("Request body:", JSON.stringify(formData, null, 2));
-
-      const response = await fetch(endpoint, {
-        method: isEditing ? "PUT" : "POST",
+      const response = await fetch(url, {
+        method,
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ...formData,
-          // Ensure excerpt has both languages even if empty
-          excerpt: {
-            en: formData.excerpt.en || "",
-            "zh-TW": formData.excerpt["zh-TW"] || "",
-          },
-          // Ensure SEO fields have both languages even if empty
-          seo: {
-            ...formData.seo,
-            metaTitle: {
-              en: formData.seo.metaTitle.en || "",
-              "zh-TW": formData.seo.metaTitle["zh-TW"] || "",
-            },
-            metaDescription: {
-              en: formData.seo.metaDescription.en || "",
-              "zh-TW": formData.seo.metaDescription["zh-TW"] || "",
-            },
-          },
-        }),
+        body: JSON.stringify(formData),
       });
-
-      const data = await response.json();
-      console.log("Response status:", response.status);
-      console.log("Response data:", data);
 
       if (!response.ok) {
-        throw new Error(data.error || data.details || "Failed to save post");
+        throw new Error("Failed to save blog post");
       }
 
-      // If the post is featured, refresh the featured post state
-      if (formData.featured) {
-        await refreshFeaturedPost();
-      }
-
+      const savedPost = await response.json();
       toast.success(
         isEditing
-          ? "Blog post updated successfully"
-          : "Blog post created successfully"
+          ? t("blog.posts.edit.success")
+          : t("blog.posts.create.success")
       );
-
-      // Redirect back to posts list
+      refreshFeaturedPost();
       router.push("/admin/blog/posts");
-    } catch (error: any) {
+    } catch (error) {
       console.error("Failed to save blog post:", error);
-      // Log the full error details
-      console.error("Error details:", {
-        message: error.message,
-        stack: error.stack,
-        response: error.response,
-      });
       toast.error(
-        error.message || "Failed to save blog post. Please try again."
+        isEditing ? t("blog.posts.edit.error") : t("blog.posts.create.error")
       );
     } finally {
       setIsLoading(false);
@@ -385,274 +322,200 @@ const BlogPostPage: React.FC<BlogPostPageProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-      <div className="app-global-container">
-        <Breadcrumb items={breadcrumbItems} />
-        <div className="bg-card rounded-lg p-6 shadow-md">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-3 bg-gradient-to-r from-[#535C91] to-[#424874] dark:from-[#6B74A9] dark:to-[#535C91] bg-clip-text text-transparent">
-            {pageTitle}
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300">
-            {isEditing
-              ? t("blog.posts.edit.description")
-              : t("blog.posts.create.description")}
-          </p>
-        </div>
+    <div className="container mx-auto py-6">
+      <Breadcrumb items={breadcrumbItems} />
+      <h1 className="text-3xl font-bold mb-6">{pageTitle}</h1>
 
-        <form onSubmit={handleSubmit} className="space-y-8 mt-6">
-          {/* Mobile Grid View (<=640px) */}
-          <div className="block sm:hidden space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>{t("blog.posts.edit.titleLabel")}</CardTitle>
-                <CardDescription>
-                  {t("blog.posts.edit.titlePlaceholder")}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <MultiLangInput
-                  value={formData.title}
-                  onChange={(value) => handleInputChange("title", value)}
-                  placeholder={{
-                    en: t("blog.posts.edit.titlePlaceholder"),
-                    "zh-TW": t("blog.posts.edit.titlePlaceholder"),
-                  }}
-                />
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>{t("blog.posts.edit.contentLabel")}</CardTitle>
-                <CardDescription>
-                  {t("blog.posts.edit.contentPlaceholder")}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <MultiLangInput
-                  type="textarea"
-                  value={formData.content}
-                  onChange={(value) => handleInputChange("content", value)}
-                  placeholder={{
-                    en: t("blog.posts.edit.contentPlaceholder"),
-                    "zh-TW": t("blog.posts.edit.contentPlaceholder"),
-                  }}
-                />
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>{t("blog.posts.edit.statusLabel")}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center space-x-4">
-                  <Select
-                    value={formData.status}
-                    onValueChange={(value: "draft" | "published") =>
-                      handleInputChange("status", value)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="draft">
-                        {t("blog.posts.statusTypes.draft")}
-                      </SelectItem>
-                      <SelectItem value="published">
-                        {t("blog.posts.statusTypes.published")}
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    checked={formData.featured}
-                    onCheckedChange={(checked) =>
-                      handleInputChange("featured", checked)
-                    }
-                  />
-                  <Label>{t("blog.posts.edit.featuredLabel")}</Label>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>{t("blog.posts.edit.categoryLabel")}</CardTitle>
-                <CardDescription>
-                  {t("blog.posts.edit.categoryPlaceholder")}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Input
-                  value={formData.category}
-                  onChange={(e) =>
-                    handleInputChange("category", e.target.value)
-                  }
-                  placeholder={t("blog.posts.edit.categoryPlaceholder")}
-                />
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>{t("blog.posts.edit.tagsLabel")}</CardTitle>
-                <CardDescription>
-                  {t("blog.posts.edit.tagsPlaceholder")}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Input
-                  value={formData.tags.join(", ")}
-                  onChange={(e) =>
-                    handleInputChange(
-                      "tags",
-                      e.target.value.split(",").map((tag) => tag.trim())
-                    )
-                  }
-                  placeholder={t("blog.posts.edit.tagsPlaceholder")}
-                />
-              </CardContent>
-            </Card>
-
-            <div className="flex justify-end space-x-4">
-              <Button type="submit" disabled={isLoading} className="w-full">
-                {isLoading ? t("blog.posts.edit.saving") : t("common.save")}
-              </Button>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("blog.posts.edit.titleLabel")}</CardTitle>
+            <CardDescription>
+              {t("blog.posts.edit.titlePlaceholder")}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label>{t("blog.posts.edit.titleLabel")}</Label>
+              <MultiLangInput
+                value={formData.title}
+                onChange={(value) => handleInputChange("title", value)}
+                placeholder={{
+                  en: t("blog.posts.edit.titlePlaceholder"),
+                  "zh-TW": t("blog.posts.edit.titlePlaceholder"),
+                }}
+              />
             </div>
-          </div>
 
-          {/* Desktop Table View (>640px) */}
-          <div className="hidden sm:block">
-            <div className="grid grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t("blog.posts.edit.titleLabel")}</CardTitle>
-                  <CardDescription>
-                    {t("blog.posts.edit.titlePlaceholder")}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <MultiLangInput
-                    value={formData.title}
-                    onChange={(value) => handleInputChange("title", value)}
-                    placeholder={{
-                      en: t("blog.posts.edit.titlePlaceholder"),
-                      "zh-TW": t("blog.posts.edit.titlePlaceholder"),
-                    }}
-                  />
-                </CardContent>
-              </Card>
+            <div className="space-y-2">
+              <Label>{t("blog.posts.edit.contentLabel")}</Label>
+              <MultiLangInput
+                value={formData.content}
+                onChange={(value) => handleInputChange("content", value)}
+                multiline
+                placeholder={{
+                  en: t("blog.posts.edit.contentPlaceholder"),
+                  "zh-TW": t("blog.posts.edit.contentPlaceholder"),
+                }}
+              />
+            </div>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t("blog.posts.edit.categoryLabel")}</CardTitle>
-                  <CardDescription>
-                    {t("blog.posts.edit.categoryPlaceholder")}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Input
-                    value={formData.category}
-                    onChange={(e) =>
-                      handleInputChange("category", e.target.value)
-                    }
+            <div className="space-y-2">
+              <Label>{t("blog.posts.edit.excerptLabel")}</Label>
+              <MultiLangInput
+                value={formData.excerpt}
+                onChange={(value) => handleInputChange("excerpt", value)}
+                multiline
+                placeholder={{
+                  en: t("blog.posts.edit.excerptPlaceholder"),
+                  "zh-TW": t("blog.posts.edit.excerptPlaceholder"),
+                }}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>{t("blog.posts.edit.categoryLabel")}</Label>
+              <Select
+                value={formData.category}
+                onValueChange={(value) => handleInputChange("category", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue
                     placeholder={t("blog.posts.edit.categoryPlaceholder")}
                   />
-                </CardContent>
-              </Card>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="news">
+                    {t("blog.categories.news")}
+                  </SelectItem>
+                  <SelectItem value="tutorials">
+                    {t("blog.categories.tutorials")}
+                  </SelectItem>
+                  <SelectItem value="updates">
+                    {t("blog.categories.updates")}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
-            <Card className="mt-6">
-              <CardHeader>
-                <CardTitle>{t("blog.posts.edit.contentLabel")}</CardTitle>
-                <CardDescription>
-                  {t("blog.posts.edit.contentPlaceholder")}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <MultiLangInput
-                  type="textarea"
-                  value={formData.content}
-                  onChange={(value) => handleInputChange("content", value)}
-                  placeholder={{
-                    en: t("blog.posts.edit.contentPlaceholder"),
-                    "zh-TW": t("blog.posts.edit.contentPlaceholder"),
-                  }}
-                />
-              </CardContent>
-            </Card>
+            <div className="space-y-2">
+              <Label>{t("blog.posts.edit.statusLabel")}</Label>
+              <Select
+                value={formData.status}
+                onValueChange={(value) => handleInputChange("status", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={t("blog.posts.edit.statusLabel")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="draft">
+                    {t("blog.posts.statusTypes.draft")}
+                  </SelectItem>
+                  <SelectItem value="published">
+                    {t("blog.posts.statusTypes.published")}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-            <div className="grid grid-cols-2 gap-6 mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t("blog.posts.edit.statusLabel")}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center space-x-4">
-                    <Select
-                      value={formData.status}
-                      onValueChange={(value: "draft" | "published") =>
-                        handleInputChange("status", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="draft">
-                          {t("blog.posts.statusTypes.draft")}
-                        </SelectItem>
-                        <SelectItem value="published">
-                          {t("blog.posts.statusTypes.published")}
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      checked={formData.featured}
-                      onCheckedChange={(checked) =>
-                        handleInputChange("featured", checked)
-                      }
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="featured"
+                checked={formData.featured}
+                onCheckedChange={(checked) =>
+                  handleInputChange("featured", checked)
+                }
+              />
+              <Label htmlFor="featured">
+                {t("blog.posts.edit.featuredLabel")}
+              </Label>
+            </div>
+
+            <div className="space-y-2">
+              <Label>{t("blog.posts.edit.mainImageLabel")}</Label>
+              <div className="flex items-center space-x-4">
+                {formData.mainImage && (
+                  <div className="relative w-32 h-32">
+                    <Image
+                      src={formData.mainImage}
+                      alt="Main"
+                      fill
+                      className="object-cover rounded-lg"
                     />
-                    <Label>{t("blog.posts.edit.featuredLabel")}</Label>
                   </div>
-                </CardContent>
-              </Card>
+                )}
+                <CldUploadButton
+                  uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_PRESET_NAME}
+                  onSuccess={handleImageUpload}
+                  className="flex items-center space-x-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+                >
+                  <ImageIcon className="w-4 h-4" />
+                  <span>{t("blog.posts.edit.uploadMainImage")}</span>
+                </CldUploadButton>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t("blog.posts.edit.tagsLabel")}</CardTitle>
-                  <CardDescription>
-                    {t("blog.posts.edit.tagsPlaceholder")}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Input
-                    value={formData.tags.join(", ")}
-                    onChange={(e) =>
-                      handleInputChange(
-                        "tags",
-                        e.target.value.split(",").map((tag) => tag.trim())
-                      )
-                    }
-                    placeholder={t("blog.posts.edit.tagsPlaceholder")}
-                  />
-                </CardContent>
-              </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("blog.posts.edit.seoTitle")}</CardTitle>
+            <CardDescription>{t("blog.posts.edit.seoTitle")}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label>{t("blog.posts.edit.seoTitleLabel")}</Label>
+              <MultiLangInput
+                value={formData.seo.metaTitle}
+                onChange={(value) => handleSeoChange("metaTitle", value)}
+                placeholder={{
+                  en: t("blog.posts.edit.seoTitlePlaceholder"),
+                  "zh-TW": t("blog.posts.edit.seoTitlePlaceholder"),
+                }}
+              />
             </div>
 
-            <div className="flex justify-end space-x-4 mt-6">
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? t("blog.posts.edit.saving") : t("common.save")}
-              </Button>
+            <div className="space-y-2">
+              <Label>{t("blog.posts.edit.seoDescriptionLabel")}</Label>
+              <MultiLangInput
+                value={formData.seo.metaDescription}
+                onChange={(value) => handleSeoChange("metaDescription", value)}
+                multiline
+                placeholder={{
+                  en: t("blog.posts.edit.seoDescriptionPlaceholder"),
+                  "zh-TW": t("blog.posts.edit.seoDescriptionPlaceholder"),
+                }}
+              />
             </div>
-          </div>
-        </form>
-      </div>
+
+            <div className="space-y-2">
+              <Label>{t("blog.posts.edit.seoKeywordsLabel")}</Label>
+              <Input
+                value={formData.seo.keywords.join(", ")}
+                onChange={(e) => handleSeoChange("keywords", e.target.value)}
+                placeholder={t("blog.posts.edit.seoKeywordsPlaceholder")}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="flex justify-end space-x-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.push("/admin/blog/posts")}
+          >
+            {t("common.cancel")}
+          </Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading
+              ? t("blog.posts.edit.saving")
+              : isEditing
+              ? t("common.save")
+              : t("common.create")}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 };

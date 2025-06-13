@@ -105,8 +105,11 @@ const ProdDetailsList = ({ product }: Props) => {
             </div>
           )}
 
-          {/* Stock - Only visible to admin */}
-          {session?.user?.admin && (
+          
+        </div>
+
+        {/* Stock - Only visible to admin */}
+        {session?.user?.admin && (
             <div>
               <h4 className="text-sm font-semibold text-muted-foreground mb-1">
                 {t("product.stock")}
@@ -116,7 +119,6 @@ const ProdDetailsList = ({ product }: Props) => {
               </p>
             </div>
           )}
-        </div>
 
         {/* Second Line */}
         <div className="grid grid-cols-3 gap-4">

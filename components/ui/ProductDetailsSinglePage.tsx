@@ -36,7 +36,7 @@ const ProductDetailsSinglePage = ({
   return (
     <div className="container-custom">
       <section className="py-8 md:py-4 bg-background">
-        <div className="app-global-container mx-auto px-4 lg:px-8 max-w-max">
+        <div className="app-global-container mx-auto px-4 lg:px-8 max-w-screen-2xl w-full">
           <div className="flex flex-col md:flex-row bg-card rounded-t-xl overflow-hidden">
             <ProductImageGallery product={product} />
             <div className="flex flex-col md:flex-row flex-1 -mt-4 md:mt-0">

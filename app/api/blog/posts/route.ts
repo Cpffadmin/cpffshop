@@ -83,7 +83,7 @@ interface BlogPostData {
   category: string;
   status: string;
   featured: boolean;
-  featuredImage?: string;
+  mainImage?: string;
   tags: string[];
   seo: {
     metaTitle: Record<string, string>;
@@ -161,7 +161,7 @@ export async function POST(request: Request) {
       category,
       status,
       featured,
-      featuredImage,
+      mainImage,
       tags,
       seo,
     } = data;
@@ -225,7 +225,7 @@ export async function POST(request: Request) {
       category,
       status: status || "draft",
       featured: featured || false,
-      featuredImage,
+      mainImage,
       tags: tags || [],
       seo: {
         metaTitle: seo?.metaTitle || { en: "", "zh-TW": "" },

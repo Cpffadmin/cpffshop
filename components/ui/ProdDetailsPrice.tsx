@@ -70,9 +70,11 @@ const ProdDetailsPrice = ({ product, handleAddToCart, className }: Props) => {
             } transition-colors duration-200 flex-grow`}
           >
             <ShoppingCart className="w-5 h-5 mr-2" />
-            {product.stock === 0
-              ? t("product.outOfStock")
-              : t("product.addToCart")}
+            <span className="whitespace-nowrap text-sm">
+              {product.stock === 0
+                ? t("product.outOfStock")
+                : t("product.addToCart")}
+            </span>
           </button>
 
           {/* Wishlist Button */}

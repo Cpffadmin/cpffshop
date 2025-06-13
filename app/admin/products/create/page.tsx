@@ -249,23 +249,30 @@ const CreateProduct = () => {
   };
 
   const handleUpload = (result: CloudinaryUploadWidgetResults) => {
+    console.log("Upload result:", result);
     if (
-      result.info &&
+      result?.event === "success" &&
       typeof result.info === "object" &&
       "secure_url" in result.info
     ) {
-      const url = result.info.secure_url as string;
-      setImageUrls((prev) => [...prev, url]);
-      setProduct((prev) => ({
-        ...prev,
-        images: [...prev.images, url],
-      }));
+      const newUrl = result.info.secure_url as string;
+      if (!imageUrls.includes(newUrl)) {
+        setImageUrls((prevUrls) => [...prevUrls, newUrl]);
+        setProduct((prev) => ({
+          ...prev,
+          images: [...prev.images, newUrl],
+        }));
+        toast.success("Image uploaded successfully");
+      }
+    } else if (result?.event === "error" || result?.event === "abort") {
+      toast.error("Failed to upload image. Please try again.");
+      console.error("Upload error:", result);
     }
   };
 
   const handleRemoveImage = (e: React.MouseEvent, urlToRemove: string) => {
     e.preventDefault();
-    setImageUrls((prev) => prev.filter((url) => url !== urlToRemove));
+    setImageUrls((prevUrls) => prevUrls.filter((url) => url !== urlToRemove));
     setProduct((prev) => ({
       ...prev,
       images: prev.images.filter((url) => url !== urlToRemove),
@@ -412,22 +419,18 @@ const CreateProduct = () => {
             </label>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {imageUrls.map((url, index) => (
-                <div key={index} className="relative group">
+                <div key={index} className="relative group aspect-square">
                   <Image
                     src={url}
-                    alt={`${language === "en" ? "Product image" : "產品圖片"} ${
-                      index + 1
-                    }`}
-                    width={200}
-                    height={200}
-                    className="rounded-md object-cover"
+                    alt={`Product image ${index + 1}`}
+                    fill
+                    className="object-cover rounded-lg"
                   />
                   <button
-                    type="button"
                     onClick={(e) => handleRemoveImage(e, url)}
-                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                   >
-                    ×
+                    ✕
                   </button>
                 </div>
               ))}

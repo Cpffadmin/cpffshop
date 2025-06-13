@@ -123,6 +123,7 @@ interface CustomUploadResult {
 }
 
 const EditProduct = ({ params }: Props) => {
+  const { productId } = React.use(params);
   const { data: session, status } = useSession();
   const router = useRouter();
   const { language } = useTranslation();
@@ -161,11 +162,11 @@ const EditProduct = ({ params }: Props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("Fetching data for product:", params.productId);
+        console.log("Fetching data for product:", productId);
         const [categoriesRes, brandsRes, productRes] = await Promise.all([
           axios.get("/api/categories"),
           axios.get("/api/brands"),
-          axios.get(`/api/products/manage/${params.productId}`),
+          axios.get(`/api/products/manage/${productId}`),
         ]);
 
         console.log("Categories Response:", categoriesRes.data);
@@ -271,7 +272,7 @@ const EditProduct = ({ params }: Props) => {
     if (session?.user?.admin) {
       fetchData();
     }
-  }, [session, params.productId, router, language]);
+  }, [session, productId, router, language]);
 
   // Redirect if not admin
   useEffect(() => {
@@ -463,7 +464,7 @@ const EditProduct = ({ params }: Props) => {
       };
 
       const response = await axios.put(
-        `/api/products/manage/${params.productId}`,
+        `/api/products/manage/${productId}`,
         productData
       );
 

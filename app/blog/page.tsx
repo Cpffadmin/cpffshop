@@ -34,7 +34,7 @@ interface BlogPostLean {
     name: string;
     email: string;
   };
-  featuredImage?: string;
+  mainImage?: string;
   publishedAt?: Date;
   category: string;
 }
@@ -165,9 +165,9 @@ export default function BlogPage() {
                 <div className="mb-12 bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="relative h-[300px] md:h-[400px]">
-                      {featuredPost.featuredImage ? (
+                      {featuredPost.mainImage ? (
                         <Image
-                          src={featuredPost.featuredImage || "/blog1.jpg"}
+                          src={featuredPost.mainImage || "/blog1.jpg"}
                           alt={featuredPost.title[currentLanguage]}
                           fill
                           className="object-cover"
@@ -253,9 +253,9 @@ export default function BlogPage() {
                     className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200"
                   >
                     <div className="relative h-48">
-                      {post.featuredImage ? (
+                      {post.mainImage ? (
                         <Image
-                          src={post.featuredImage || "/blog1.jpg"}
+                          src={post.mainImage || "/blog1.jpg"}
                           alt={post.title[currentLanguage]}
                           fill
                           className="object-cover"

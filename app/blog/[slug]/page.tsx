@@ -105,11 +105,11 @@ export default function BlogPostPage() {
         </header>
 
         {/* Featured Image */}
-        {post.featuredImage && (
+        {post.mainImage && (
           <div className="max-w-4xl mx-auto mb-12">
             <div className="relative aspect-video">
               <Image
-                src={post.featuredImage || "/blog1.jpg"}
+                src={post.mainImage || "/blog1.jpg"}
                 alt={post.title[currentLanguage]}
                 fill
                 className="object-cover rounded-lg"

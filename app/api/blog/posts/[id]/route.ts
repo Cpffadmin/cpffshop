@@ -13,7 +13,8 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = params;
+    const resolvedParams = await params;
+    const { id } = resolvedParams;
     await connectToDatabase();
 
     // Try to find by ID first
@@ -58,7 +59,8 @@ export async function PUT(
       );
     }
 
-    const { id } = params;
+    const resolvedParams = await params;
+    const { id } = resolvedParams;
     const data = await request.json();
 
     await connectToDatabase();
@@ -116,7 +118,8 @@ export async function DELETE(
       );
     }
 
-    const { id } = params;
+    const resolvedParams = await params;
+    const { id } = resolvedParams;
     await connectToDatabase();
 
     const post = await BlogPost.findByIdAndDelete(id);

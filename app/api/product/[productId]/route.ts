@@ -38,7 +38,7 @@ export async function GET(
 ) {
   try {
     await dbConnect();
-    const { productId } = params;
+    const { productId } = await params;
     const { searchParams } = new URL(request.url);
     const language = (searchParams.get("language") || "en") as Language;
 
@@ -185,7 +185,7 @@ export async function PUT(
 ) {
   try {
     await dbConnect();
-    const { productId } = params;
+    const { productId } = await params;
     const body = await req.json();
 
     const doc = await Product.findByIdAndUpdate(
@@ -248,7 +248,7 @@ export async function DELETE(
 ) {
   try {
     await dbConnect();
-    const { productId } = params;
+    const { productId } = await params;
 
     const doc = await Product.findByIdAndDelete(productId)
       .populate("brand")

@@ -13,7 +13,7 @@ export interface IBlogPost extends mongoose.Document {
   author: mongoose.Types.ObjectId;
   status: "draft" | "published";
   featured: boolean;
-  featuredImage?: string;
+  mainImage?: string;
   tags: string[];
   category: string;
   publishedAt?: Date;
@@ -77,7 +77,7 @@ const blogPostSchema = new mongoose.Schema<IBlogPost>(
       default: false,
       index: true,
     },
-    featuredImage: {
+    mainImage: {
       type: String,
     },
     tags: [
