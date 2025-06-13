@@ -50,6 +50,8 @@ const productSchema = new mongoose.Schema(
     condition: { type: String, default: "Not Specified" },
     featured: { type: Boolean, default: false },
     stock: { type: Number, default: 0 },
+    averageRating: { type: Number, default: 0 },
+    numReviews: { type: Number, default: 0 },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
