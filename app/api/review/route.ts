@@ -8,6 +8,7 @@ import { Order } from "@/utils/models/Order";
 import mongoose from "mongoose";
 import Product from "@/utils/models/Product";
 import { authOptions } from "../auth/[...nextauth]/auth.config";
+import { clearProductsCache } from "../products/route";
 
 export async function POST(req: Request) {
   try {
@@ -78,6 +79,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
+    // Ensure reviews is always an array
+    if (!Array.isArray(product.reviews)) {
+      product.reviews = [];
+    }
     product.reviews.push(newReview._id);
     product.numReviews = product.reviews.length;
     const allReviews = await Review.find({ product: objectIdProductId });
@@ -88,6 +93,7 @@ export async function POST(req: Request) {
 
     await product.save();
     console.log("Product updated with new review");
+    clearProductsCache();
 
     const populatedReview = await Review.findById(newReview._id).populate(
       "user",
@@ -145,6 +151,7 @@ export async function PUT(req: Request) {
       allReviews.length;
     product.averageRating = avgRating;
     await product.save();
+    clearProductsCache();
 
     return NextResponse.json({ message: "Review updated" }, { status: 200 });
   } catch (error: any) {
@@ -194,34 +201,45 @@ export async function DELETE(req: Request) {
     if (!session) {
       return NextResponse.json({ canReview: false }, { status: 200 });
     }
-    const { reviewId } = await req.json();
-
+    let reviewId;
+    // Try to get reviewId from body (for axios) or query string (for fetch)
+    try {
+      const body = await req.json();
+      reviewId = body.reviewId;
+    } catch {
+      const { searchParams } = new URL(req.url);
+      reviewId = searchParams.get("reviewId");
+    }
+    if (!reviewId) {
+      return NextResponse.json(
+        { error: "reviewId is required" },
+        { status: 400 }
+      );
+    }
     const review = await Review.findOne({
       _id: reviewId,
       user: session.user._id,
     });
-
     if (!review) {
       return NextResponse.json(
         { error: "failed to get review" },
         { status: 404 }
       );
     }
-
     const productId = review.product;
     await Review.deleteOne({ _id: reviewId });
-
     const product = await Product.findById(productId);
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
-
+    // Ensure reviews is always an array
+    if (!Array.isArray(product.reviews)) {
+      product.reviews = [];
+    }
     product.reviews = product.reviews.filter(
       (r: mongoose.Types.ObjectId) => r.toString() !== reviewId
     );
-
     product.numReviews = product.reviews.length;
-
     if (product.numReviews > 0) {
       const allReviews = await Review.find({ product: productId });
       const avgRating =
@@ -232,14 +250,18 @@ export async function DELETE(req: Request) {
       product.averageRating = 0;
     }
     await product.save();
-
+    clearProductsCache();
     return NextResponse.json(
-      { message: "Sucessfully deleted review" },
+      { message: "Successfully deleted review" },
       { status: 200 }
     );
   } catch (error: any) {
+    console.error("Error in review DELETE:", error);
     return NextResponse.json(
-      { error: "internal server error at the review api route main" },
+      {
+        error:
+          error.message || "Internal server error at the review api route main",
+      },
       { status: 500 }
     );
   }

@@ -15,15 +15,12 @@ export function StarRating({ rating, className = "" }: StarRatingProps) {
     <div className={`flex items-center ${className}`}>
       {/* Full stars */}
       {Array.from({ length: fullStars }).map((_, i) => (
-        <Star
-          key={`full-${i}`}
-          className="w-4 h-4 text-yellow-400 fill-yellow-400"
-        />
+        <Star key={`full-${i}`} className="w-4 h-4 text-primary fill-primary" />
       ))}
 
       {/* Half star */}
       {hasHalfStar && (
-        <StarHalf className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+        <StarHalf className="w-4 h-4 text-primary fill-primary" />
       )}
 
       {/* Empty stars */}

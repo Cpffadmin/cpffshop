@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import Image from "next/image";
 import { CldUploadButton } from "next-cloudinary";
+import useSWR, { mutate } from "swr";
 
 interface Review {
   _id: string;
@@ -62,6 +63,7 @@ const ReviewSection = ({ productId, averageRating, allReviews }: Props) => {
       setReviews([...reviews, data.review]);
       setNewReview({ rating: 5, comment: "", image: "" });
       toast.success("Review submitted successfully!");
+      mutate("/api/products");
     } catch (err: any) {
       if (
         err.response &&
@@ -233,6 +235,28 @@ const ReviewSection = ({ productId, averageRating, allReviews }: Props) => {
                       ))}
                     </div>
                   </div>
+                  {session?.user?.name === review.user.name && (
+                    <button
+                      onClick={async () => {
+                        try {
+                          await axios.delete(
+                            `/api/review?reviewId=${review._id}`
+                          );
+                          setReviews((prev) =>
+                            prev.filter((r) => r._id !== review._id)
+                          );
+                          toast.success("Review deleted");
+                          mutate("/api/products");
+                        } catch (err) {
+                          toast.error("Failed to delete review");
+                        }
+                      }}
+                      className="ml-2 px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition"
+                      title="Delete review"
+                    >
+                      Delete
+                    </button>
+                  )}
                   <span className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors ml-auto">
                     {new Date(review.createdAt).toLocaleDateString()}
                   </span>

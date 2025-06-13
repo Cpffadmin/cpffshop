@@ -16,7 +16,10 @@ import "@/utils/models"; // Ensure models are registered
 export const dynamic = "force-dynamic";
 
 // Cache for products list
-const productsCache = new Map<string, any>();
+export const productsCache = new Map<string, any>();
+export function clearProductsCache() {
+  productsCache.clear();
+}
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 interface Specification {
