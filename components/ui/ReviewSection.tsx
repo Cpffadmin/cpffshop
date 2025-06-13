@@ -4,16 +4,19 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import { CldUploadButton } from "next-cloudinary";
 
 interface Review {
   _id: string;
-  userId: {
+  user: {
     name: string;
     image?: string;
+    profileImage?: string;
   };
   rating: number;
   comment: string;
   createdAt: string;
+  image?: string;
 }
 
 interface Props {
@@ -24,7 +27,11 @@ interface Props {
 
 const ReviewSection = ({ productId, averageRating, allReviews }: Props) => {
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [newReview, setNewReview] = useState({ rating: 5, comment: "" });
+  const [newReview, setNewReview] = useState({
+    rating: 5,
+    comment: "",
+    image: "",
+  });
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -53,11 +60,20 @@ const ReviewSection = ({ productId, averageRating, allReviews }: Props) => {
         productId,
       });
       setReviews([...reviews, data.review]);
-      setNewReview({ rating: 5, comment: "" });
+      setNewReview({ rating: 5, comment: "", image: "" });
       toast.success("Review submitted successfully!");
-    } catch (err) {
-      console.error("Failed to submit review:", err);
-      toast.error("Failed to submit review");
+    } catch (err: any) {
+      if (
+        err.response &&
+        err.response.data &&
+        err.response.data.error === "you have already reviewed this"
+      ) {
+        toast.error("You have already submitted a review for this product.");
+        setNewReview({ rating: 5, comment: "", image: "" });
+      } else {
+        toast.error("Failed to submit review");
+        setNewReview({ rating: 5, comment: "", image: "" });
+      }
     }
   };
 
@@ -122,66 +138,127 @@ const ReviewSection = ({ productId, averageRating, allReviews }: Props) => {
                   required
                 ></textarea>
               </div>
-              <button
-                type="submit"
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 hover:shadow-md"
-              >
-                Submit Review
-              </button>
+              <div className="mb-4 flex items-center gap-3 mt-2">
+                <CldUploadButton
+                  uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_PRESET_NAME}
+                  onSuccess={(result: any) => {
+                    const url = result.info.secure_url;
+                    setNewReview((prev) => ({ ...prev, image: url }));
+                    toast.success("Image uploaded!");
+                  }}
+                  options={{
+                    cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+                    maxFiles: 1,
+                    sources: ["local", "url", "camera"],
+                    clientAllowedFormats: ["jpg", "jpeg", "png", "webp"],
+                    maxFileSize: 10000000,
+                    multiple: false,
+                  }}
+                >
+                  <div className="w-28 h-10 flex items-center justify-center rounded-lg border border-dashed bg-gray-200 bg-opacity-40 dark:bg-gray-700 dark:bg-opacity-40 hover:bg-opacity-60 dark:hover:bg-opacity-60 transition cursor-pointer">
+                    <span className="text-gray-500 dark:text-gray-300 text-xs">
+                      Upload Image
+                    </span>
+                  </div>
+                </CldUploadButton>
+                {newReview.image && (
+                  <div className="relative">
+                    <Image
+                      src={newReview.image}
+                      alt="Review image preview"
+                      width={40}
+                      height={40}
+                      className="rounded-lg object-cover border border-gray-300"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setNewReview((prev) => ({ ...prev, image: "" }))
+                      }
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow hover:bg-red-600"
+                      title="Remove image"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
+                <button
+                  type="submit"
+                  className="ml-auto bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 hover:shadow-md"
+                >
+                  Submit Review
+                </button>
+              </div>
             </div>
           </form>
         )}
 
         {/* Reviews List */}
         <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 max-w-xl mx-auto sm:px-4">
-          {reviews.map((review) => (
-            <div
-              key={review._id}
-              className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-            >
-              <div className="flex items-center mb-4 gap-3">
-                <div className="flex-shrink-0 transform hover:scale-105 transition-transform duration-200">
-                  <Image
-                    src={review.userId.image || "/profile.jpg"}
-                    alt={review.userId.name}
-                    width={40}
-                    height={40}
-                    className="rounded-full ring-2 ring-gray-100 dark:ring-gray-700 hover:ring-gray-200 dark:hover:ring-gray-600 transition-all"
-                  />
-                </div>
-                <div className="ml-4 flex-grow">
-                  <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
-                    {review.userId.name}
-                  </h4>
-                  <div className="flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`w-4 h-4 transition-colors duration-200 ${
-                          i < review.rating
-                            ? "text-yellow-400 fill-current"
-                            : "text-gray-300 dark:text-gray-600"
-                        }`}
-                      />
-                    ))}
+          {reviews
+            .filter((r) => r?.user)
+            .map((review) => (
+              <div
+                key={review._id}
+                className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+              >
+                <div className="flex items-center mb-4 gap-3">
+                  <div className="flex-shrink-0 transform hover:scale-105 transition-transform duration-200">
+                    <Image
+                      src={
+                        review.user.profileImage ||
+                        review.user.image ||
+                        "/profile.jpg"
+                      }
+                      alt={review.user.name || "User"}
+                      width={40}
+                      height={40}
+                      className="rounded-full ring-2 ring-gray-100 dark:ring-gray-700 hover:ring-gray-200 dark:hover:ring-gray-600 transition-all"
+                    />
                   </div>
+                  <div className="ml-4 flex-grow">
+                    <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
+                      {review.user.name}
+                    </h4>
+                    <div className="flex items-center gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`w-4 h-4 transition-colors duration-200 ${
+                            i < review.rating
+                              ? "text-yellow-400 fill-current"
+                              : "text-gray-300 dark:text-gray-600"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <span className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors ml-auto">
+                    {new Date(review.createdAt).toLocaleDateString()}
+                  </span>
                 </div>
-                <span className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors ml-auto">
-                  {new Date(review.createdAt).toLocaleDateString()}
-                </span>
+                {review.image && (
+                  <div className="mb-2 flex justify-center">
+                    <Image
+                      src={review.image}
+                      alt="Review image"
+                      width={160}
+                      height={160}
+                      className="rounded-lg object-cover"
+                    />
+                  </div>
+                )}
+                <p className="text-gray-600 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200 transition-colors leading-relaxed">
+                  {review.comment}
+                </p>
               </div>
-              <p className="text-gray-600 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200 transition-colors leading-relaxed">
-                {review.comment}
-              </p>
-            </div>
-          ))}
+            ))}
+          {reviews.filter((r) => r?.user).length === 0 && (
+            <p className="text-center text-gray-500 dark:text-gray-400 mt-8 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+              No reviews yet. Be the first to review this product!
+            </p>
+          )}
         </div>
-
-        {reviews.length === 0 && (
-          <p className="text-center text-gray-500 dark:text-gray-400 mt-8 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-            No reviews yet. Be the first to review this product!
-          </p>
-        )}
       </div>
     </section>
   );

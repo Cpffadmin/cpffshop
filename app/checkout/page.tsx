@@ -43,7 +43,8 @@ const stripePromise = loadStripe(
 
 const Cart = () => {
   const { t, language } = useTranslation();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const {
     items,
@@ -83,9 +84,14 @@ const Cart = () => {
   const [paymentProofUrl, setPaymentProofUrl] = useState<string>("");
   const [hasFormChanges, setHasFormChanges] = useState(false);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
-  const router = useRouter();
 
   const userId = session?.user?._id;
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login?callbackUrl=/checkout");
+    }
+  }, [status, router]);
 
   useEffect(() => {
     setIsLoading(false);
@@ -155,6 +161,11 @@ const Cart = () => {
 
   const handleCheckout = async () => {
     if (isCheckingOut) return;
+    if (!session?.user?._id) {
+      toast.error(t("checkout.loginRequired"));
+      router.push("/login?callbackUrl=/checkout");
+      return;
+    }
 
     try {
       setIsCheckingOut(true);
@@ -253,6 +264,11 @@ const Cart = () => {
 
   const handleOfflinePayment = async () => {
     if (isSubmittingOffline) return;
+    if (!session?.user?._id) {
+      toast.error(t("checkout.loginRequired"));
+      router.push("/login?callbackUrl=/checkout");
+      return;
+    }
 
     try {
       setIsSubmittingOffline(true);

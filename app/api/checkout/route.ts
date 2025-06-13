@@ -3,11 +3,22 @@ import connect from "@/utils/config/dbConnection";
 import { Order } from "@/utils/models/Order";
 import Product from "@/utils/models/Product";
 import Stripe from "stripe";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/auth.config";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
 
 export async function POST(req: Request) {
   try {
+    // Check authentication
+    const session = await getServerSession(authOptions);
+    if (!session?.user?._id) {
+      return NextResponse.json(
+        { error: "Authentication required" },
+        { status: 401 }
+      );
+    }
+
     // Validate Stripe key
     if (!process.env.STRIPE_SECRET_KEY) {
       console.error("Missing Stripe secret key");
@@ -52,16 +63,8 @@ export async function POST(req: Request) {
       );
     }
 
-    const {
-      name,
-      email,
-      city,
-      postalCode,
-      streetAddress,
-      country,
-      cartItems,
-      user,
-    } = body;
+    const { name, email, city, postalCode, streetAddress, country, cartItems } =
+      body;
 
     if (!cartItems || cartItems.length === 0) {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
@@ -149,7 +152,7 @@ export async function POST(req: Request) {
         paid: false,
         cartProducts: orderCartProducts,
         total,
-        user,
+        user: session.user._id,
         status: "pending",
       });
       console.log("Order created:", orderDoc);
@@ -164,9 +167,9 @@ export async function POST(req: Request) {
     }
 
     // Create Stripe checkout session
-    let session;
+    let stripeSession;
     try {
-      session = await stripe.checkout.sessions.create({
+      stripeSession = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
         line_items,
         mode: "payment",
@@ -177,7 +180,7 @@ export async function POST(req: Request) {
         },
         customer_email: email,
       });
-      console.log("Stripe session created:", session.id);
+      console.log("Stripe session created:", stripeSession.id);
     } catch (error) {
       console.error("Error creating Stripe session:", error);
       // Delete the order if Stripe session creation fails
@@ -201,8 +204,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       {
-        url: session.url,
-        sessionId: session.id,
+        url: stripeSession.url,
+        sessionId: stripeSession.id,
       },
       { status: 200 }
     );

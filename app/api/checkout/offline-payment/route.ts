@@ -1,9 +1,20 @@
 import { NextResponse } from "next/server";
 import connect from "@/utils/config/dbConnection";
 import { Order } from "@/utils/models/Order";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/auth.config";
 
 export async function POST(req: Request) {
   try {
+    // Check authentication
+    const session = await getServerSession(authOptions);
+    if (!session?.user?._id) {
+      return NextResponse.json(
+        { error: "Authentication required" },
+        { status: 401 }
+      );
+    }
+
     await connect();
     const body = await req.json();
 
@@ -48,7 +59,7 @@ export async function POST(req: Request) {
       paymentProofUrl: body.paymentProofUrl,
       paymentReference: body.paymentReference,
       paymentDate: body.paymentDate,
-      user: body.user || undefined,
+      user: session.user._id,
       deliveryType: body.deliveryType || undefined,
       total: cartProducts.reduce(
         (sum: number, item: any) => sum + item.price * item.quantity,
@@ -58,6 +69,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, orderId: order._id });
   } catch (error) {
+    console.error("Error creating offline payment order:", error);
     return NextResponse.json(
       { error: "Failed to submit offline payment" },
       { status: 500 }

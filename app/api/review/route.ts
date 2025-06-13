@@ -16,11 +16,14 @@ export async function POST(req: Request) {
     const session = await getServerSession(authOptions);
 
     if (!session) {
+      console.log("No session found");
       return NextResponse.json({ canReview: false }, { status: 200 });
     }
 
-    const { productId, rating, comment } = await req.json();
+    const { productId, rating, comment, image } = await req.json();
+    console.log("Received POST data:", { productId, rating, comment, image });
     if (!mongoose.Types.ObjectId.isValid(productId)) {
+      console.log("Invalid productId:", productId);
       return NextResponse.json(
         { error: "invalid product id" },
         { status: 400 }
@@ -35,9 +38,12 @@ export async function POST(req: Request) {
       status: "delivered",
       paid: true,
     });
+    console.log("Order found for review?", !!hasPurchased);
 
     if (!hasPurchased) {
-      console.log("user has not purchased the product");
+      console.log(
+        "User has not purchased the product or order not delivered/paid"
+      );
       return NextResponse.json({ canReview: false }, { status: 200 });
     }
 
@@ -45,8 +51,10 @@ export async function POST(req: Request) {
       user: session.user._id,
       product: objectIdProductId,
     });
+    console.log("Existing review found?", !!existingReview);
 
     if (existingReview) {
+      console.log("User has already reviewed this product");
       return NextResponse.json(
         { error: "you have already reviewed this" },
         { status: 400 }
@@ -58,12 +66,15 @@ export async function POST(req: Request) {
       product: objectIdProductId,
       rating,
       comment,
+      image,
     });
     await newReview.save();
+    console.log("New review saved:", newReview);
 
     const product = await Product.findById(objectIdProductId);
 
     if (!product) {
+      console.log("Product not found for review");
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
@@ -76,10 +87,16 @@ export async function POST(req: Request) {
     product.averageRating = avgRating;
 
     await product.save();
+    console.log("Product updated with new review");
 
+    const populatedReview = await Review.findById(newReview._id).populate(
+      "user",
+      "name profileImage"
+    );
     return NextResponse.json(
       {
         message: "Review added successfully",
+        review: populatedReview,
       },
       { status: 201 }
     );

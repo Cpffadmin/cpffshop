@@ -24,6 +24,7 @@ import { useCloudinary } from "@/components/providers/CloudinaryProvider";
 import { toast } from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import useCartStore from "@/store/cartStore";
+import { useParams } from "next/navigation";
 
 interface PageParams {
   params: {
@@ -31,13 +32,14 @@ interface PageParams {
   };
 }
 
-export default function OrderDetails({ params }: PageParams) {
+const OrderDetails = () => {
+  const params = useParams();
+  const orderId = params.orderId as string;
   const [order, setOrder] = useState<Order | null>(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [showLightbox, setShowLightbox] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { orderId } = params;
   const { data: session } = useSession();
   const { t } = useTranslation();
   const { cloudName, uploadPreset } = useCloudinary();
@@ -77,7 +79,7 @@ export default function OrderDetails({ params }: PageParams) {
       setError(err instanceof Error ? err.message : "Failed to fetch order");
       console.error("Error fetching order:", err);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   }, [orderId]);
 
@@ -123,7 +125,7 @@ export default function OrderDetails({ params }: PageParams) {
     getOrder();
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-400"></div>
@@ -401,4 +403,6 @@ export default function OrderDetails({ params }: PageParams) {
       </div>
     </div>
   );
-}
+};
+
+export default OrderDetails;
