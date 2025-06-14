@@ -102,57 +102,102 @@ const BestSellingProducts: React.FC = () => {
             className="flex items-center sm:h-[27rem] h-[40rem] justify-center overflow-hidden relative"
             onClick={(e) => e.stopPropagation()}
           >
-            {Array.from({ length: products.length }).map((_, offset) => {
-              const product = products[getProductIndex(offset)];
-              if (!product) return null;
-              return (
-                <div
-                  key={product.id}
-                  className={`transition-all duration-300 flex-shrink-0 w-full md:w-1/3 lg:w-1/5 px-2 ${
-                    offset === Math.floor(products.length / 2)
-                      ? "scale-105 z-10"
-                      : "scale-95 opacity-75"
-                  }`}
+            {/* Mobile: Show only one product */}
+            <div className="block md:hidden w-full max-w-md mx-auto">
+              {products.length > 0 && (
+                <Link
+                  href={products[currentIndex].link}
+                  className="bg-card rounded-lg shadow-lg overflow-hidden"
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  <Link
-                    href={product.link}
-                    className="bg-card rounded-lg shadow-lg overflow-hidden"
-                    onClick={(e) => e.stopPropagation()}
-                  >
+                  <div className="w-full aspect-square relative">
                     <Image
-                      width={500}
-                      height={500}
-                      src={product.image}
+                      src={products[currentIndex].image}
                       alt={
-                        product.displayNames[language] ||
-                        product.displayNames.en
+                        products[currentIndex].displayNames[language] ||
+                        products[currentIndex].displayNames.en
                       }
-                      className="w-full sm:h-48 md:h-56 lg:h-64 object-cover"
-                      priority={offset === Math.floor(products.length / 2)}
+                      fill
+                      className="object-cover"
+                      priority
                     />
-                    <div className="p-3">
-                      <h3 className="text-lg md:text-xl font-semibold mb-1 truncate text-foreground">
-                        {product.displayNames[language] ||
-                          product.displayNames.en}
-                      </h3>
-                      <div className="flex justify-between items-center">
-                        <span className="font-bold text-foreground">
-                          ${product.price}
-                        </span>
-                        {typeof product.rating === "number" && (
-                          <div className="flex items-center">
-                            <Star className="w-4 h-4 md:w-5 md:h-5 text-primary fill-current" />
-                            <span className="ml-1 text-sm md:text-base text-muted-foreground">
-                              {product.rating}
-                            </span>
-                          </div>
-                        )}
-                      </div>
+                  </div>
+                  <div className="p-3">
+                    <h3 className="text-lg md:text-xl font-semibold mb-1 truncate text-foreground">
+                      {products[currentIndex].displayNames[language] ||
+                        products[currentIndex].displayNames.en}
+                    </h3>
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold text-foreground">
+                        ${products[currentIndex].price}
+                      </span>
+                      {typeof products[currentIndex].rating === "number" && (
+                        <div className="flex items-center">
+                          <Star className="w-4 h-4 md:w-5 md:h-5 text-primary fill-current" />
+                          <span className="ml-1 text-sm md:text-base text-muted-foreground">
+                            {products[currentIndex].rating}
+                          </span>
+                        </div>
+                      )}
                     </div>
-                  </Link>
-                </div>
-              );
-            })}
+                  </div>
+                </Link>
+              )}
+            </div>
+            {/* Desktop: Show multiple products */}
+            <div className="hidden md:flex w-full justify-center">
+              {Array.from({ length: products.length }).map((_, offset) => {
+                const product = products[getProductIndex(offset)];
+                if (!product) return null;
+                return (
+                  <div
+                    key={product.id}
+                    className={`transition-all duration-300 flex-shrink-0 w-full md:w-1/3 lg:w-1/5 px-2 ${
+                      offset === Math.floor(products.length / 2)
+                        ? "scale-105 z-10"
+                        : "scale-95 opacity-75"
+                    }`}
+                  >
+                    <Link
+                      href={product.link}
+                      className="bg-card rounded-lg shadow-lg overflow-hidden"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Image
+                        width={500}
+                        height={500}
+                        src={product.image}
+                        alt={
+                          product.displayNames[language] ||
+                          product.displayNames.en
+                        }
+                        className="w-full sm:h-48 md:h-56 lg:h-64 object-cover"
+                        priority={offset === Math.floor(products.length / 2)}
+                      />
+                      <div className="p-3">
+                        <h3 className="text-lg md:text-xl font-semibold mb-1 truncate text-foreground">
+                          {product.displayNames[language] ||
+                            product.displayNames.en}
+                        </h3>
+                        <div className="flex justify-between items-center">
+                          <span className="font-bold text-foreground">
+                            ${product.price}
+                          </span>
+                          {typeof product.rating === "number" && (
+                            <div className="flex items-center">
+                              <Star className="w-4 h-4 md:w-5 md:h-5 text-primary fill-current" />
+                              <span className="ml-1 text-sm md:text-base text-muted-foreground">
+                                {product.rating}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                );
+              })}
+            </div>
           </div>
           <button
             onClick={nextProduct}
