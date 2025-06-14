@@ -170,15 +170,12 @@ export default function ProductPage() {
         </div>
       ) : (
         <ProductDetailsSinglePage
-          product={{
-            ...product,
-            name: product.displayNames?.[language] || product.name || "",
-            description:
-              product.descriptions?.[language] || product.description || "",
-          }}
+          product={product}
           handleAddToCart={handleAddToCart}
           averageRating={averageRating}
           allReviews={allReviews}
+          setAllReviews={setAllReviews}
+          setAverageRating={setAverageRating}
         />
       )}
     </div>

@@ -86,9 +86,9 @@ export async function POST(req: Request) {
     product.reviews.push(newReview._id);
     product.numReviews = product.reviews.length;
     const allReviews = await Review.find({ product: objectIdProductId });
-    const totalRating =
-      allReviews.reduce((acc, item) => item.rating + acc, 0) + rating;
-    const avgRating = totalRating / (allReviews.length + 1);
+    const totalRating = allReviews.reduce((acc, item) => item.rating + acc, 0);
+    const avgRating =
+      allReviews.length > 0 ? totalRating / allReviews.length : 0;
     product.averageRating = avgRating;
 
     await product.save();

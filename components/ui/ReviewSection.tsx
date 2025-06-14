@@ -24,10 +24,17 @@ interface Props {
   productId: string;
   averageRating: number;
   allReviews: { rating: number }[];
+  setAllReviews: (reviews: any[]) => void;
+  setAverageRating: (avg: number) => void;
 }
 
-const ReviewSection = ({ productId, averageRating, allReviews }: Props) => {
-  const [reviews, setReviews] = useState<Review[]>([]);
+const ReviewSection = ({
+  productId,
+  averageRating,
+  allReviews,
+  setAllReviews,
+  setAverageRating,
+}: Props) => {
   const [newReview, setNewReview] = useState({
     rating: 5,
     comment: "",
@@ -35,18 +42,11 @@ const ReviewSection = ({ productId, averageRating, allReviews }: Props) => {
   });
   const { data: session } = useSession();
 
-  useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const { data } = await axios.get(`/api/review?productId=${productId}`);
-        setReviews(data.reviews);
-      } catch (err) {
-        console.error("Failed to fetch reviews:", err);
-      }
-    };
-
-    fetchReviews();
-  }, [productId]);
+  // Helper to recalculate average
+  const recalculateAverage = (reviews: any[]) => {
+    if (!reviews.length) return 0;
+    return reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length;
+  };
 
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,15 +55,13 @@ const ReviewSection = ({ productId, averageRating, allReviews }: Props) => {
       return;
     }
 
+    let data;
     try {
-      const { data } = await axios.post(`/api/review`, {
+      const response = await axios.post(`/api/review`, {
         ...newReview,
         productId,
       });
-      setReviews([...reviews, data.review]);
-      setNewReview({ rating: 5, comment: "", image: "" });
-      toast.success("Review submitted successfully!");
-      mutate("/api/products");
+      data = response.data;
     } catch (err: any) {
       if (
         err.response &&
@@ -76,7 +74,32 @@ const ReviewSection = ({ productId, averageRating, allReviews }: Props) => {
         toast.error("Failed to submit review");
         setNewReview({ rating: 5, comment: "", image: "" });
       }
+      return;
     }
+    // Only update UI and show success toast if API call succeeded
+    const updatedReviews = [...allReviews, data.review];
+    setAllReviews(updatedReviews);
+    setAverageRating(recalculateAverage(updatedReviews));
+    setNewReview({ rating: 5, comment: "", image: "" });
+    toast.success("Review submitted successfully!");
+    mutate("/api/products");
+  };
+
+  const handleDeleteReview = async (reviewId: string) => {
+    let success = false;
+    try {
+      await axios.delete(`/api/review?reviewId=${reviewId}`);
+      success = true;
+    } catch (err) {
+      toast.error("Failed to delete review");
+      return;
+    }
+    // Only update UI and show success toast if API call succeeded
+    const updatedReviews = allReviews.filter((r: any) => r._id !== reviewId);
+    setAllReviews(updatedReviews);
+    setAverageRating(recalculateAverage(updatedReviews));
+    toast.success("Review deleted");
+    mutate("/api/products");
   };
 
   return (
@@ -197,9 +220,9 @@ const ReviewSection = ({ productId, averageRating, allReviews }: Props) => {
 
         {/* Reviews List */}
         <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 max-w-xl mx-auto sm:px-4">
-          {reviews
+          {allReviews
             .filter((r) => r?.user)
-            .map((review) => (
+            .map((review: any) => (
               <div
                 key={review._id}
                 className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
@@ -237,20 +260,7 @@ const ReviewSection = ({ productId, averageRating, allReviews }: Props) => {
                   </div>
                   {session?.user?.name === review.user.name && (
                     <button
-                      onClick={async () => {
-                        try {
-                          await axios.delete(
-                            `/api/review?reviewId=${review._id}`
-                          );
-                          setReviews((prev) =>
-                            prev.filter((r) => r._id !== review._id)
-                          );
-                          toast.success("Review deleted");
-                          mutate("/api/products");
-                        } catch (err) {
-                          toast.error("Failed to delete review");
-                        }
-                      }}
+                      onClick={() => handleDeleteReview(review._id)}
                       className="ml-2 px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition"
                       title="Delete review"
                     >
@@ -277,7 +287,7 @@ const ReviewSection = ({ productId, averageRating, allReviews }: Props) => {
                 </p>
               </div>
             ))}
-          {reviews.filter((r) => r?.user).length === 0 && (
+          {allReviews.filter((r) => r?.user).length === 0 && (
             <p className="text-center text-gray-500 dark:text-gray-400 mt-8 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
               No reviews yet. Be the first to review this product!
             </p>

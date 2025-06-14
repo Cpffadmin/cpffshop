@@ -17,6 +17,8 @@ interface Props {
   averageRating: number;
   allReviews: { rating: number }[];
   handleAddToCart: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  setAllReviews: (reviews: any[]) => void;
+  setAverageRating: (avg: number) => void;
 }
 
 const ProductDetailsSinglePage = ({
@@ -24,6 +26,8 @@ const ProductDetailsSinglePage = ({
   averageRating,
   allReviews,
   handleAddToCart,
+  setAllReviews,
+  setAverageRating,
 }: Props) => {
   const { settings } = useStore();
   const { language } = useTranslation();
@@ -55,6 +59,8 @@ const ProductDetailsSinglePage = ({
               productId={product._id.toString()}
               averageRating={averageRating}
               allReviews={allReviews}
+              setAllReviews={setAllReviews}
+              setAverageRating={setAverageRating}
             />
           </div>
           <GuaranteeSection />

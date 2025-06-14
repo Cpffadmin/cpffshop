@@ -114,6 +114,8 @@ export default function ProductPage() {
       handleAddToCart={handleAddToCart}
       averageRating={averageRating}
       allReviews={allReviews}
+      setAllReviews={setAllReviews}
+      setAverageRating={setAverageRating}
     />
   );
 }
