@@ -228,6 +228,9 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       try {
+        // Fetch the latest user from the database to ensure address is always included
+        await connectToDatabase();
+        const dbUser = await User.findOne({ email: session.user.email });
         return {
           ...session,
           user: {
@@ -238,7 +241,7 @@ export const authOptions: NextAuthOptions = {
             role: token.role,
             notificationPreferences: token.notificationPreferences,
             phone: token.phone,
-            address: token.address,
+            address: dbUser?.address || token.address,
           },
         };
       } catch (error) {

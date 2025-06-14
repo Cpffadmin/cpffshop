@@ -1064,6 +1064,9 @@
     "orderConfirmation": "We will email you when your order will be sent.",
     "confirmCancel": "You have filled some information. Are you sure you want to cancel? All entered information will be lost.",
     "cancelPayment": "Cancel Payment",
+    "useProfileAddress": "Use my profile address",
+    "usingProfileAddress": "Using your profile address",
+    "useDeliveryAddress": "Use a different delivery address",
     "success": {
       "orderConfirmed": "Order Confirmed!",
       "paymentReceived": "We have received your payment. Thank you for your purchase!",

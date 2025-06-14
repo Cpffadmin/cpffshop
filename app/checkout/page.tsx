@@ -41,6 +41,27 @@ const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
 );
 
+// Add a helper to format the profile address into simplified fields
+function getSimplifiedProfileAddress(address: any) {
+  return {
+    city: address?.city?.en || "",
+    postalCode: address?.postalCode?.en || "",
+    streetAddress: [
+      address?.roomFlat?.en,
+      address?.floor?.en ? `${address?.floor?.en}/F` : undefined,
+      address?.blockNumber?.en
+        ? `Block ${address?.blockNumber?.en}`
+        : undefined,
+      address?.blockName?.en,
+      address?.buildingName?.en,
+      address?.streetName?.en,
+    ]
+      .filter(Boolean)
+      .join(", "),
+    country: address?.location?.en || "",
+  };
+}
+
 const Cart = () => {
   const { t, language } = useTranslation();
   const { data: session, status } = useSession();
@@ -60,6 +81,7 @@ const Cart = () => {
   const [postalCode, setPostalCode] = useState("");
   const [streetAddress, setStreetAddress] = useState("");
   const [country, setCountry] = useState("");
+  const [useProfileAddress, setUseProfileAddress] = useState(true);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [deliverySettings, setDeliverySettings] = useState<DeliverySettings>({
@@ -84,8 +106,26 @@ const Cart = () => {
   const [paymentProofUrl, setPaymentProofUrl] = useState<string>("");
   const [hasFormChanges, setHasFormChanges] = useState(false);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [addressOption, setAddressOption] = useState<"profile" | "custom">(
+    "profile"
+  );
+  const [customAddress, setCustomAddress] = useState({
+    roomFlat: "",
+    floor: "",
+    blockNumber: "",
+    blockName: "",
+    buildingName: "",
+    streetNumber: "",
+    streetName: "",
+    district: "",
+    location: "",
+    country: "",
+    postalCode: "",
+  });
 
   const userId = session?.user?._id;
+
+  console.log("SESSION ON CHECKOUT:", session);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -106,6 +146,15 @@ const Cart = () => {
       setEmail(session.user.email);
     }
 
+    // Set profile address if user is logged in and useProfileAddress is true
+    if (session?.user?.address && useProfileAddress) {
+      const address = session.user.address;
+      setCity(address.city?.en || "");
+      setPostalCode(address.postalCode?.en || "");
+      setStreetAddress(address.street?.en || "");
+      setCountry(address.country?.en || "");
+    }
+
     const fetchDeliverySettings = async () => {
       try {
         const response = await fetch("/api/delivery");
@@ -120,7 +169,30 @@ const Cart = () => {
       }
     };
     fetchDeliverySettings();
-  }, [session, clearCart, t]);
+  }, [session, clearCart, t, useProfileAddress]);
+
+  // When switching to profile address, fill simplified fields and lock them
+  useEffect(() => {
+    if (addressOption === "profile" && session?.user?.address) {
+      const simplified = getSimplifiedProfileAddress(session.user.address);
+      setCity(simplified.city);
+      setPostalCode(simplified.postalCode);
+      setStreetAddress(simplified.streetAddress);
+      setCountry(simplified.country);
+    } else if (addressOption === "custom") {
+      setCity("");
+      setPostalCode("");
+      setStreetAddress("");
+      setCountry("");
+    }
+  }, [addressOption, session?.user?.address]);
+
+  useEffect(() => {
+    if (addressOption === "profile" && session?.user) {
+      setName(session.user.name || "");
+      setEmail(session.user.email || "");
+    }
+  }, [addressOption, session]);
 
   useEffect(() => {
     if (paymentMethod === "offline") {
@@ -406,6 +478,11 @@ const Cart = () => {
     : 0;
   const total = subtotal + deliveryCost;
 
+  // Get formatted address from profile
+  const formattedProfileAddress =
+    session?.user?.address?.formattedAddress?.en || "";
+  console.log("DEBUG formattedProfileAddress:", formattedProfileAddress);
+
   const cancelDialog = (
     <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
       <DialogContent>
@@ -541,44 +618,197 @@ const Cart = () => {
               <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">
                 {t("checkout.shippingInformation")}
               </h3>
-              <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder={t("checkout.name")}
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded focus:ring focus:ring-blue-200 dark:focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                />
-                {renderEmailField()}
-                <input
-                  type="text"
-                  placeholder={t("checkout.city")}
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded focus:ring focus:ring-blue-200 dark:focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                />
-                <input
-                  type="text"
-                  placeholder={t("checkout.postalCode")}
-                  value={postalCode}
-                  onChange={(e) => setPostalCode(e.target.value)}
-                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded focus:ring focus:ring-blue-200 dark:focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                />
-                <input
-                  type="text"
-                  placeholder={t("checkout.streetAddress")}
-                  value={streetAddress}
-                  onChange={(e) => setStreetAddress(e.target.value)}
-                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded focus:ring focus:ring-blue-200 dark:focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                />
-                <input
-                  type="text"
-                  placeholder={t("checkout.country")}
-                  value={country}
-                  onChange={(e) => setCountry(e.target.value)}
-                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded focus:ring focus:ring-blue-200 dark:focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                />
+              {/* Always show Full Name and Email above the address option toggle */}
+              <input
+                type="text"
+                placeholder="Full Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                readOnly={addressOption === "profile"}
+                className={`w-full p-2 rounded mb-4 ${
+                  addressOption === "profile"
+                    ? "bg-gray-100 dark:bg-gray-700 text-black dark:text-white cursor-not-allowed"
+                    : "bg-white dark:bg-gray-700 text-black dark:text-white"
+                }`}
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                readOnly={addressOption === "profile"}
+                className={`w-full p-2 rounded mb-4 ${
+                  addressOption === "profile"
+                    ? "bg-gray-100 dark:bg-gray-700 text-black dark:text-white cursor-not-allowed"
+                    : "bg-white dark:bg-gray-700 text-black dark:text-white"
+                }`}
+              />
+              {/* Address Option Toggle and Address Fields */}
+              <div className="mb-4 flex gap-4">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="addressOption"
+                    value="profile"
+                    checked={addressOption === "profile"}
+                    onChange={() => setAddressOption("profile")}
+                  />
+                  <span>Use my profile address</span>
+                </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="addressOption"
+                    value="custom"
+                    checked={addressOption === "custom"}
+                    onChange={() => setAddressOption("custom")}
+                  />
+                  <span>Use a different delivery address</span>
+                </label>
               </div>
+              {addressOption === "profile" ? (
+                <textarea
+                  value={formattedProfileAddress}
+                  readOnly
+                  className="w-full p-2 rounded bg-gray-100 dark:bg-gray-700 text-black dark:text-white cursor-not-allowed min-h-[80px]"
+                  placeholder="Profile Address"
+                />
+              ) : (
+                <div className="space-y-4">
+                  <input
+                    type="text"
+                    placeholder="Room/Flat"
+                    className="w-full p-2 border rounded"
+                    value={customAddress.roomFlat}
+                    onChange={(e) =>
+                      setCustomAddress({
+                        ...customAddress,
+                        roomFlat: e.target.value,
+                      })
+                    }
+                  />
+                  <input
+                    type="text"
+                    placeholder="Floor"
+                    className="w-full p-2 border rounded"
+                    value={customAddress.floor}
+                    onChange={(e) =>
+                      setCustomAddress({
+                        ...customAddress,
+                        floor: e.target.value,
+                      })
+                    }
+                  />
+                  <input
+                    type="text"
+                    placeholder="Block Number"
+                    className="w-full p-2 border rounded"
+                    value={customAddress.blockNumber}
+                    onChange={(e) =>
+                      setCustomAddress({
+                        ...customAddress,
+                        blockNumber: e.target.value,
+                      })
+                    }
+                  />
+                  <input
+                    type="text"
+                    placeholder="Block Name"
+                    className="w-full p-2 border rounded"
+                    value={customAddress.blockName}
+                    onChange={(e) =>
+                      setCustomAddress({
+                        ...customAddress,
+                        blockName: e.target.value,
+                      })
+                    }
+                  />
+                  <input
+                    type="text"
+                    placeholder="Property/Building Name"
+                    className="w-full p-2 border rounded"
+                    value={customAddress.buildingName}
+                    onChange={(e) =>
+                      setCustomAddress({
+                        ...customAddress,
+                        buildingName: e.target.value,
+                      })
+                    }
+                  />
+                  <input
+                    type="text"
+                    placeholder="Street Number"
+                    className="w-full p-2 border rounded"
+                    value={customAddress.streetNumber}
+                    onChange={(e) =>
+                      setCustomAddress({
+                        ...customAddress,
+                        streetNumber: e.target.value,
+                      })
+                    }
+                  />
+                  <input
+                    type="text"
+                    placeholder="Street Name"
+                    className="w-full p-2 border rounded"
+                    value={customAddress.streetName}
+                    onChange={(e) =>
+                      setCustomAddress({
+                        ...customAddress,
+                        streetName: e.target.value,
+                      })
+                    }
+                  />
+                  <input
+                    type="text"
+                    placeholder="District"
+                    className="w-full p-2 border rounded"
+                    value={customAddress.district}
+                    onChange={(e) =>
+                      setCustomAddress({
+                        ...customAddress,
+                        district: e.target.value,
+                      })
+                    }
+                  />
+                  <input
+                    type="text"
+                    placeholder="Location"
+                    className="w-full p-2 border rounded"
+                    value={customAddress.location}
+                    onChange={(e) =>
+                      setCustomAddress({
+                        ...customAddress,
+                        location: e.target.value,
+                      })
+                    }
+                  />
+                  <input
+                    type="text"
+                    placeholder="Country"
+                    className="w-full p-2 border rounded"
+                    value={customAddress.country}
+                    onChange={(e) =>
+                      setCustomAddress({
+                        ...customAddress,
+                        country: e.target.value,
+                      })
+                    }
+                  />
+                  <input
+                    type="text"
+                    placeholder="Postal Code"
+                    className="w-full p-2 border rounded"
+                    value={customAddress.postalCode}
+                    onChange={(e) =>
+                      setCustomAddress({
+                        ...customAddress,
+                        postalCode: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+              )}
 
               <div className="mt-6">
                 <label className="block text-sm font-medium mb-1">

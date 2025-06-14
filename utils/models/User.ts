@@ -33,6 +33,7 @@ const HK_DISTRICTS = [
   "Tsuen Wan",
   "Tuen Mun",
   "Yuen Long",
+  "觀塘區",
 ] as const;
 
 // Hong Kong locations enum
@@ -40,6 +41,7 @@ const HK_LOCATIONS = [
   "Hong Kong Island",
   "Kowloon",
   "New Territories",
+  "九龍",
 ] as const;
 
 // Address schema structured to support both English and Chinese ordering
