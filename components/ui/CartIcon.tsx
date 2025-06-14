@@ -13,8 +13,11 @@ const CartIcon = () => {
   const getTotalItems = useCartStore((state) => state.getTotalItems);
   const { isOpen, openCart, closeCart } = useCartUI();
 
-  // Memoize item count calculation - getTotalItems already depends on items internally
-  const itemCount = useMemo(() => getTotalItems(), [getTotalItems]);
+  // Calculate total items directly from items array for immediate updates
+  const itemCount = items.reduce(
+    (total, item) => total + (item.quantity || 1),
+    0
+  );
 
   useEffect(() => {
     setIsLoading(false);
@@ -29,7 +32,7 @@ const CartIcon = () => {
       <Button variant="ghost" className="relative" onClick={openCart}>
         <BsCart3 className="text-xl" />
         {itemCount > 0 && (
-          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-fadeIn">
             {itemCount}
           </span>
         )}

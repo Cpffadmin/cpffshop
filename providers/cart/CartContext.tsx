@@ -83,6 +83,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           return;
         }
 
+        // Optimistically update the UI
+        const currentItems = items;
+
         await axios.patch(
           "/api/userData",
           { cart: items },
@@ -94,10 +97,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         );
       } catch (error) {
         console.error("Failed to sync cart with server:", error);
+        // Revert to last known good state if sync fails
+        if (error.response?.status === 409) {
+          // Handle conflict by reloading server state
+          const response = await axios.get("/api/userData");
+          if (response.data?.cart) {
+            setItems(response.data.cart);
+          }
+        }
       } finally {
         isSyncing.current = false;
       }
-    }, 1000); // Debounce for 1 second
+    }, 300); // Reduced debounce time to 300ms for better responsiveness
 
     // Cleanup timeout on unmount
     return () => {
@@ -114,6 +125,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    // Optimistically update the UI
     const cartItem: CartItem = {
       _id: item._id,
       name: item.name,
@@ -123,7 +135,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       brand: item.brand,
       quantity: 1,
     };
+
+    // Update store immediately
     addStoreItem(cartItem);
+
+    // Show success message
     toast.success("Item added to cart");
   };
 
