@@ -84,8 +84,8 @@ export async function POST(req: Request) {
       product.reviews = [];
     }
     product.reviews.push(newReview._id);
-    product.numReviews = product.reviews.length;
     const allReviews = await Review.find({ product: objectIdProductId });
+    product.numReviews = allReviews.length;
     const totalRating = allReviews.reduce((acc, item) => item.rating + acc, 0);
     const avgRating =
       allReviews.length > 0 ? totalRating / allReviews.length : 0;
@@ -239,9 +239,9 @@ export async function DELETE(req: Request) {
     product.reviews = product.reviews.filter(
       (r: mongoose.Types.ObjectId) => r.toString() !== reviewId
     );
-    product.numReviews = product.reviews.length;
+    const allReviews = await Review.find({ product: productId });
+    product.numReviews = allReviews.length;
     if (product.numReviews > 0) {
-      const allReviews = await Review.find({ product: productId });
       const avgRating =
         allReviews.reduce((acc, item) => item.rating + acc, 0) /
         allReviews.length;

@@ -23,8 +23,8 @@ interface Review {
 interface Props {
   productId: string;
   averageRating: number;
-  allReviews: { rating: number }[];
-  setAllReviews: (reviews: any[]) => void;
+  allReviews: Review[];
+  setAllReviews: (reviews: Review[]) => void;
   setAverageRating: (avg: number) => void;
 }
 
