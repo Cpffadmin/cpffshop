@@ -151,6 +151,47 @@ sudo systemctl reload nginx
 - [ ] MongoDB connection stable in docker logs
 - [ ] Container restarts automatically if health check fails
 
+## Troubleshooting: 502 Bad Gateway
+
+A 502 means nginx is up but cannot reach the app. The app itself is usually fine —
+verify before touching Docker:
+
+```bash
+docker ps                                 # container should be "Up (healthy)"
+curl http://127.0.0.1:3001/api/health     # should return {"status":"healthy",...}
+```
+
+If the health check above returns 200, **the app is fine and the problem is nginx**.
+
+### Cause #1 — nginx points at the wrong port (most common)
+
+Docker publishes the app on host port **3001** (see `ports: "3001:3000"` in
+`docker-compose.yml`): host `3001` -> container `3000`. nginx runs on the host, so
+its `proxy_pass` MUST target the host port `3001`, not `3000`.
+
+```bash
+sudo grep -rl "localhost:3000" /etc/nginx/          # find stale configs
+# fix every proxy_pass in the active site file:
+sudo sed -i 's|http://localhost:3000|http://127.0.0.1:3001|g' /etc/nginx/sites-available/cpffonline
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+### Cause #2 — duplicate site configs ("conflicting server name")
+
+If `nginx -t` warns `conflicting server name "cpffonline.com" ... ignored`, two files
+define the same domain and nginx silently uses only one. Editing the ignored file
+looks like a no-op. Keep ONE file enabled:
+
+```bash
+ls -l /etc/nginx/sites-enabled/                      # see what's enabled
+sudo rm /etc/nginx/sites-enabled/cpffonline.com      # remove the duplicate (keep `cpffonline`)
+sudo nginx -t && sudo systemctl reload nginx         # should now be warning-free
+```
+
+> The canonical host nginx config lives in this repo at `nginx.conf` (already uses
+> `127.0.0.1:3001`). Keep the server's `/etc/nginx/sites-available/cpffonline` in sync
+> with it, and keep only that single file enabled.
+
 ## Support
 
 If issues persist:
