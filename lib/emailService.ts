@@ -45,6 +45,7 @@ export const sendEmail = async ({
   attachments,
 }: SendEmailArgs): Promise<{
   success: boolean;
+  delivered: boolean;
   error?: string;
   providerMessageId?: string;
   timestamp: string;
@@ -56,13 +57,19 @@ export const sendEmail = async ({
   const fromName = senderName || process.env.BREVO_SENDER_NAME || undefined;
 
   if (!client || !fromEmail) {
-    console.log("[Email:dev-mode] Email would have been sent:", {
+    const missing = !client ? "BREVO_API_KEY" : "BREVO_SENDER_EMAIL";
+    console.warn("[Email:dev-mode] Email NOT sent (missing config):", {
       to,
       subject,
-      fromEmail: fromEmail || "<missing BREVO_SENDER_EMAIL>",
+      missing,
       timestamp,
     });
-    return { success: true, timestamp };
+    return {
+      success: true,
+      delivered: false,
+      error: `Email not sent: missing ${missing}`,
+      timestamp,
+    };
   }
 
   try {
@@ -88,10 +95,10 @@ export const sendEmail = async ({
       (response as any)?.message?.messageId ||
       (response as any)?.messageIds?.[0];
 
-    return { success: true, providerMessageId: messageId, timestamp };
+    return { success: true, delivered: true, providerMessageId: messageId, timestamp };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     console.error("Brevo send email failed:", error);
-    return { success: false, error: message, timestamp };
+    return { success: false, delivered: false, error: message, timestamp };
   }
 };

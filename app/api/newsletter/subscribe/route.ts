@@ -44,9 +44,6 @@ ${email}
 export async function POST(req: Request) {
   try {
     const { email, source } = await req.json();
-    const canSendRealEmail = Boolean(
-      process.env.BREVO_API_KEY && process.env.BREVO_SENDER_EMAIL
-    );
 
     // Validate email
     if (!email || !validateEmail(email)) {
@@ -73,7 +70,7 @@ export async function POST(req: Request) {
         await existingSubscriber.resubscribe();
         const mail = buildSubscribeConfirmationEmail(email);
         const emailResult = await sendEmail({ to: email, ...mail });
-        if (emailResult.success && canSendRealEmail) {
+        if (emailResult.delivered) {
           await Newsletter.findByIdAndUpdate(existingSubscriber._id, {
             lastEmailSentAt: new Date(),
           });
@@ -84,7 +81,10 @@ export async function POST(req: Request) {
           );
         }
         return NextResponse.json(
-          { message: "Subscription reactivated successfully" },
+          {
+            message: "Subscription reactivated successfully",
+            emailSent: emailResult.delivered,
+          },
           { status: 200 }
         );
       }
@@ -104,7 +104,7 @@ export async function POST(req: Request) {
     await subscriber.save();
     const mail = buildSubscribeConfirmationEmail(email);
     const emailResult = await sendEmail({ to: email, ...mail });
-    if (emailResult.success && canSendRealEmail) {
+    if (emailResult.delivered) {
       await Newsletter.findByIdAndUpdate(subscriber._id, {
         lastEmailSentAt: new Date(),
       });
@@ -116,7 +116,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(
-      { message: "Subscribed successfully" },
+      { message: "Subscribed successfully", emailSent: emailResult.delivered },
       { status: 201 }
     );
   } catch (error) {
