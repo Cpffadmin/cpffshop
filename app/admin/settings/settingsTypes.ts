@@ -24,6 +24,13 @@ export interface ContactInfo {
   phone: string;
 }
 
+export interface ConfirmationEmailSettings {
+  subject: MultiLangValue;
+  heading: MultiLangValue;
+  message: MultiLangValue;
+  footer: MultiLangValue;
+}
+
 export interface StoreSettings {
   storeName: MultiLangValue;
   logo: string | StaticImageData;
@@ -59,6 +66,7 @@ export interface StoreSettings {
     discountPercentage: number;
     buttonText: MultiLangValue;
     disclaimer: MultiLangValue;
+    confirmationEmail: ConfirmationEmailSettings;
   };
   aboutPage: {
     title: MultiLangValue;

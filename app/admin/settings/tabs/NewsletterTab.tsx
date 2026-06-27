@@ -6,11 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { MultiLangInput } from "@/components/MultiLangInput/MultiLangInput";
 import { useTranslation } from "@/providers/language/LanguageContext";
+import { DEFAULT_CONFIRMATION_EMAIL } from "@/lib/buildNewsletterConfirmationEmail";
 import type {
   StoreSettings,
   SetSettings,
   HandleInputChange,
   UploadHandler,
+  ConfirmationEmailSettings,
 } from "../settingsTypes";
 
 interface NewsletterTabProps {
@@ -31,6 +33,25 @@ export default function NewsletterTab({
   isLoading,
 }: NewsletterTabProps) {
   const { t } = useTranslation();
+  const confirmationEmail: ConfirmationEmailSettings =
+    settings.newsletterSettings.confirmationEmail ?? DEFAULT_CONFIRMATION_EMAIL;
+
+  const updateConfirmationEmail = (
+    field: keyof ConfirmationEmailSettings,
+    value: ConfirmationEmailSettings[keyof ConfirmationEmailSettings]
+  ) => {
+    setSettings((prev) => ({
+      ...prev,
+      newsletterSettings: {
+        ...prev.newsletterSettings,
+        confirmationEmail: {
+          ...(prev.newsletterSettings.confirmationEmail ??
+            DEFAULT_CONFIRMATION_EMAIL),
+          [field]: value,
+        },
+      },
+    }));
+  };
 
   return (
     <div className="bg-card rounded-lg shadow-lg ring-1 ring-gray-200 dark:ring-gray-700">
@@ -162,6 +183,77 @@ export default function NewsletterTab({
                   en: t("newsletter.disclaimer"),
                   "zh-TW": t("newsletter.disclaimer", { lng: "zh-TW" }),
                 }}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-4 border-t border-gray-200 dark:border-gray-700 pt-6">
+            <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              {t("admin-settings.sections.newsletter.confirmationEmail.title")}
+            </h4>
+            <p className="text-sm text-muted-foreground">
+              {t(
+                "admin-settings.sections.newsletter.confirmationEmail.description"
+              )}
+            </p>
+            <div>
+              <label className="block text-sm font-medium text-white dark:text-white">
+                {t(
+                  "admin-settings.sections.newsletter.confirmationEmail.subject"
+                )}
+              </label>
+              <MultiLangInput
+                value={confirmationEmail.subject}
+                onChange={(value) =>
+                  updateConfirmationEmail("subject", value)
+                }
+                placeholder={DEFAULT_CONFIRMATION_EMAIL.subject}
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-white dark:text-white">
+                {t(
+                  "admin-settings.sections.newsletter.confirmationEmail.heading"
+                )}
+              </label>
+              <MultiLangInput
+                value={confirmationEmail.heading}
+                onChange={(value) =>
+                  updateConfirmationEmail("heading", value)
+                }
+                placeholder={DEFAULT_CONFIRMATION_EMAIL.heading}
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-white dark:text-white">
+                {t(
+                  "admin-settings.sections.newsletter.confirmationEmail.message"
+                )}
+              </label>
+              <MultiLangInput
+                type="textarea"
+                value={confirmationEmail.message}
+                onChange={(value) =>
+                  updateConfirmationEmail("message", value)
+                }
+                placeholder={DEFAULT_CONFIRMATION_EMAIL.message}
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-white dark:text-white">
+                {t(
+                  "admin-settings.sections.newsletter.confirmationEmail.footer"
+                )}
+              </label>
+              <MultiLangInput
+                type="textarea"
+                value={confirmationEmail.footer}
+                onChange={(value) => updateConfirmationEmail("footer", value)}
+                placeholder={DEFAULT_CONFIRMATION_EMAIL.footer}
                 required
               />
             </div>

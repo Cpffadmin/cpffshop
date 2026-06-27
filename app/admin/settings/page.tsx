@@ -13,6 +13,7 @@ import {
 } from "next-cloudinary";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { DEFAULT_CONFIRMATION_EMAIL } from "@/lib/buildNewsletterConfirmationEmail";
 import { useStore } from "@/providers/store/StoreContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import router from "next/router";
@@ -133,6 +134,24 @@ export default function AdminSettingsPage() {
       disclaimer: {
         en: "By subscribing, you agree to receive email marketing. You can unsubscribe at any time.",
         "zh-TW": "訂閱即表示您同意接收電子郵件行銷。您可以隨時取消訂閱。",
+      },
+      confirmationEmail: {
+        subject: {
+          en: "Welcome to CpffOnline newsletter",
+          "zh-TW": "歡迎訂閱 CpffOnline 電子報",
+        },
+        heading: {
+          en: "Welcome to CpffOnline newsletter",
+          "zh-TW": "歡迎訂閱 CpffOnline 電子報",
+        },
+        message: {
+          en: "Thanks for subscribing. We'll send updates, promotions, and new arrivals to:",
+          "zh-TW": "感謝您訂閱！我們會把最新消息、優惠和新品資訊發送到：",
+        },
+        footer: {
+          en: "You can unsubscribe anytime from future campaign emails.",
+          "zh-TW": "您可在日後活動電郵中隨時取消訂閱。",
+        },
       },
     },
     aboutPage: {
@@ -308,7 +327,16 @@ export default function AdminSettingsPage() {
       try {
         setIsLoading(true);
         const response = await axios.get("/api/store-settings");
-        setSettings(response.data);
+        const data = response.data;
+        setSettings({
+          ...data,
+          newsletterSettings: {
+            ...data.newsletterSettings,
+            confirmationEmail:
+              data.newsletterSettings?.confirmationEmail ??
+              DEFAULT_CONFIRMATION_EMAIL,
+          },
+        });
       } catch (error) {
         console.error("Error fetching settings:", error);
         toast.error("Failed to load settings");

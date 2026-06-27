@@ -123,6 +123,12 @@ const storeSettingsSchema = new mongoose.Schema(
       },
       buttonText: multiLangSchema,
       disclaimer: multiLangSchema,
+      confirmationEmail: {
+        subject: multiLangSchema,
+        heading: multiLangSchema,
+        message: multiLangSchema,
+        footer: multiLangSchema,
+      },
       backgroundColor: {
         type: String,
         default: "#f8f9fa",

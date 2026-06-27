@@ -112,7 +112,15 @@
       "discountPercentage": "訂閱電子報折扣",
       "button": "按鈕文字",
       "buttonText": "電子報訂閱按鈕文字",
-      "disclaimer": "免責聲明"
+      "disclaimer": "免責聲明",
+      "confirmationEmail": {
+        "title": "確認電郵",
+        "description": "編輯訂閱成功後發送的歡迎電郵。訂閱者的電郵地址會自動插入在訊息與頁尾之間。",
+        "subject": "電郵主旨",
+        "heading": "電郵標題",
+        "message": "電郵內容",
+        "footer": "電郵頁尾"
+      }
     },
     "about": {
       "title": "關於我們頁面",
