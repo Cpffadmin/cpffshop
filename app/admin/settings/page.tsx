@@ -140,10 +140,6 @@ export default function AdminSettingsPage() {
           en: "Welcome to CpffOnline newsletter",
           "zh-TW": "歡迎訂閱 CpffOnline 電子報",
         },
-        heading: {
-          en: "Welcome to CpffOnline newsletter",
-          "zh-TW": "歡迎訂閱 CpffOnline 電子報",
-        },
         message: {
           en: "Thanks for subscribing. We'll send updates, promotions, and new arrivals to:",
           "zh-TW": "感謝您訂閱！我們會把最新消息、優惠和新品資訊發送到：",

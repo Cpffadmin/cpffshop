@@ -215,21 +215,6 @@ export default function NewsletterTab({
             <div>
               <label className="block text-sm font-medium text-white dark:text-white">
                 {t(
-                  "admin-settings.sections.newsletter.confirmationEmail.heading"
-                )}
-              </label>
-              <MultiLangInput
-                value={confirmationEmail.heading}
-                onChange={(value) =>
-                  updateConfirmationEmail("heading", value)
-                }
-                placeholder={DEFAULT_CONFIRMATION_EMAIL.heading}
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-white dark:text-white">
-                {t(
                   "admin-settings.sections.newsletter.confirmationEmail.message"
                 )}
               </label>

@@ -115,9 +115,8 @@
       "disclaimer": "Disclaimer",
       "confirmationEmail": {
         "title": "Confirmation Email",
-        "description": "Edit the welcome email sent when someone subscribes. The subscriber's email address is inserted automatically between the message and footer.",
-        "subject": "Email Subject",
-        "heading": "Email Heading",
+        "description": "Edit the welcome email sent when someone subscribes. The subject also appears as the heading inside the email. The subscriber's email address is inserted automatically between the message and footer.",
+        "subject": "Email Subject / Heading",
         "message": "Email Message",
         "footer": "Email Footer"
       }

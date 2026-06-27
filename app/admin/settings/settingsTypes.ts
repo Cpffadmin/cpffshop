@@ -26,7 +26,6 @@ export interface ContactInfo {
 
 export interface ConfirmationEmailSettings {
   subject: MultiLangValue;
-  heading: MultiLangValue;
   message: MultiLangValue;
   footer: MultiLangValue;
 }

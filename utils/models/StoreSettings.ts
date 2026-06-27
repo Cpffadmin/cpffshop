@@ -125,7 +125,6 @@ const storeSettingsSchema = new mongoose.Schema(
       disclaimer: multiLangSchema,
       confirmationEmail: {
         subject: multiLangSchema,
-        heading: multiLangSchema,
         message: multiLangSchema,
         footer: multiLangSchema,
       },

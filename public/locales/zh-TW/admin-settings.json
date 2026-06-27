@@ -115,9 +115,8 @@
       "disclaimer": "免責聲明",
       "confirmationEmail": {
         "title": "確認電郵",
-        "description": "編輯訂閱成功後發送的歡迎電郵。訂閱者的電郵地址會自動插入在訊息與頁尾之間。",
-        "subject": "電郵主旨",
-        "heading": "電郵標題",
+        "description": "編輯訂閱成功後發送的歡迎電郵。主旨亦會顯示為電郵內的標題。訂閱者的電郵地址會自動插入在訊息與頁尾之間。",
+        "subject": "電郵主旨 / 標題",
         "message": "電郵內容",
         "footer": "電郵頁尾"
       }
