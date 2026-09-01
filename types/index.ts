@@ -239,7 +239,7 @@ export interface CartStore {
   selectedDeliveryType: number;
   addItem: (item: AddToCartItem) => void;
   removeItem: (id: string, selectedSpecs?: Record<string, any>) => void;
-  clearCart: () => void;
+  clearCart: () => Promise<boolean>;
   clearLocalCart: () => void;
   getTotalPrice: () => number;
   getTotalItems: () => number;

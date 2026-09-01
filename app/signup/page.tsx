@@ -9,44 +9,7 @@ import { Input } from "@/components/ui/input";
 import { FaGoogle } from "react-icons/fa";
 import { motion } from "framer-motion";
 import axios, { AxiosError } from "axios";
-
-const AnimatedBackground = () => {
-  return (
-    <svg
-      className="absolute inset-0 w-full h-full"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <defs>
-        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#4F46E5" stopOpacity="0.2" />
-          <stop offset="100%" stopColor="#7C3AED" stopOpacity="0.2" />
-        </linearGradient>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#grad1)" />
-      {[...Array(20)].map((_, i) => (
-        <motion.circle
-          key={i}
-          r={Math.random() * 20 + 10}
-          fill="#fff"
-          initial={{
-            opacity: Math.random() * 0.5 + 0.1,
-            x: Math.random() * 100 + "%",
-            y: Math.random() * 100 + "%",
-          }}
-          animate={{
-            x: Math.random() * 100 + "%",
-            y: Math.random() * 100 + "%",
-          }}
-          transition={{
-            duration: Math.random() * 10 + 20,
-            repeat: Infinity,
-            repeatType: "reverse",
-          }}
-        />
-      ))}
-    </svg>
-  );
-};
+import AnimatedBackground from "@/components/ui/AnimatedBackground";
 
 const Signup = () => {
   const router = useRouter();

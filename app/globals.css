@@ -501,6 +501,12 @@
   );
 }
 
+/* Footer background is driven by theme settings through this variable rather
+   than inline styles, so the dynamically imported footer hydrates cleanly. */
+footer {
+  background-color: hsl(var(--footer-background, 220 39% 11%));
+}
+
 .navbar-container {
   @apply flex items-center justify-center;
   width: 100%;

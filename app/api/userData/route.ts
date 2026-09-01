@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import mongoose from "mongoose";
 import User from "@/utils/models/User";
+import Product from "@/utils/models/Product";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/auth.config";
 import { createRouteHandler } from "@/utils/routeHandler";
@@ -8,6 +10,39 @@ import { Session } from "next-auth";
 export const dynamic = "force-dynamic";
 
 const handleUserData = createRouteHandler({ requireAuth: true });
+
+// Cart items are stored as snapshots on the user document, so deleting a
+// product leaves an orphan that keeps reappearing after every "clear cart".
+// Drop those items and persist the cleaned cart so they stop coming back.
+async function removeDeletedProductsFromCart(
+  userId: mongoose.Types.ObjectId,
+  cart: unknown
+): Promise<any[]> {
+  if (!Array.isArray(cart) || cart.length === 0) {
+    return Array.isArray(cart) ? cart : [];
+  }
+
+  const productIds = cart
+    .map((item) => String(item?._id ?? ""))
+    .filter((id) => mongoose.Types.ObjectId.isValid(id));
+
+  const existingProducts = await Product.find({ _id: { $in: productIds } })
+    .select("_id")
+    .lean();
+  const existingIds = new Set(
+    existingProducts.map((product) => String(product._id))
+  );
+
+  const liveCart = cart.filter((item) =>
+    existingIds.has(String(item?._id ?? ""))
+  );
+
+  if (liveCart.length !== cart.length) {
+    await User.updateOne({ _id: userId }, { $set: { cart: liveCart } });
+  }
+
+  return liveCart;
+}
 
 // Helper function to get user name from session
 function getUserNameFromSession(session: Session): string {
@@ -51,6 +86,7 @@ export async function GET() {
 
     // Convert to plain object and ensure address structure
     const userObj = user.toObject();
+    userObj.cart = await removeDeletedProductsFromCart(user._id, userObj.cart);
     if (!userObj.address) {
       userObj.address = {
         en: "",

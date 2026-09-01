@@ -164,16 +164,20 @@ const useCartStore = create<CartStore>()(
             });
           }),
         })),
+      // Returns false when the account cart could not be emptied, so callers can
+      // warn instead of reporting success — otherwise the items silently return
+      // on the next refresh via loadServerCart.
       clearCart: async () => {
-        console.log("Clearing cart...");
         set({ items: [], selectedDeliveryType: 0 });
         window.localStorage.removeItem("cart-storage");
         try {
           await axios.patch("/api/userData", { cart: [] });
           // Server cart changed; drop cached userData so reloads are fresh.
           invalidateCache("/api/userData");
+          return true;
         } catch (error) {
           console.error("Failed to clear server cart:", error);
+          return false;
         }
       },
       // Resets the cart in this browser only, WITHOUT touching the server copy.

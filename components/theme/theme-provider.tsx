@@ -8,7 +8,6 @@ import {
 import { cachedGet } from "@/utils/services/clientCache";
 
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
-  const [mounted, setMounted] = React.useState(false);
   const [themeSettings, setThemeSettings] = React.useState({
     light: {
       background: "#ffffff",
@@ -230,27 +229,21 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
         `${cardItemBorderHSL.h} ${cardItemBorderHSL.s}% ${cardItemBorderHSL.l}%`
       );
 
-      // Apply footer colors
+      // Apply footer colors via CSS variable (the `footer` rule reads this).
+      // Setting inline styles here would fight React: the footer is
+      // dynamically imported and hydrates after this runs, so the injected
+      // style would show up as a hydration mismatch.
       const footerHSL = hexToHSL(colors.footer);
       document.documentElement.style.setProperty(
         "--footer-background",
         `${footerHSL.h} ${footerHSL.s}% ${footerHSL.l}%`
       );
-
-      // Set footer color directly for compatibility
-      const footerElements = document.getElementsByTagName("footer");
-      for (let i = 0; i < footerElements.length; i++) {
-        const footer = footerElements[i] as HTMLElement;
-        footer.style.backgroundColor = `hsl(${footerHSL.h}, ${footerHSL.s}%, ${footerHSL.l}%)`;
-      }
     },
     [hexToHSL, themeSettings]
   );
 
   // Apply colors on mount and theme change
   React.useEffect(() => {
-    setMounted(true);
-
     // Create a MutationObserver to watch for theme class changes
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
@@ -325,10 +318,6 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
       );
     };
   }, []);
-
-  if (!mounted) {
-    return null;
-  }
 
   return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
 }

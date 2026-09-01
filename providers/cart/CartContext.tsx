@@ -22,7 +22,7 @@ type CartContextType = {
   addItem: (item: AddToCartItem) => void;
   removeItem: (itemId: string, selectedSpecs?: Record<string, any>) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
-  clearCart: () => void;
+  clearCart: () => Promise<void>;
   selectedDeliveryType: number;
   setSelectedDeliveryType: (type: number) => void;
 };
@@ -110,11 +110,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       try {
         isSyncing.current = true;
 
+        // Read the live cart instead of the items captured when this sync was
+        // scheduled. Clearing the cart empties the store and PATCHes `cart: []`
+        // itself, so sending the stale snapshot here would put the items back.
+        const currentItems = useCartStore.getState().items;
+        if (currentItems.length === 0) {
+          return;
+        }
+
         // Double-check auth status before sync
         if (status === "authenticated" && userData?.id) {
           await axios.patch(
             "/api/userData",
-            { cart: items },
+            { cart: currentItems },
             {
               headers: {
                 "Content-Type": "application/json",
@@ -183,9 +191,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     updateStoreItemQuantity(itemId, quantity);
   };
 
-  const clearCart = () => {
-    clearStoreCart();
-    toast.success("Cart cleared");
+  const clearCart = async () => {
+    const cleared = await clearStoreCart();
+    if (cleared) {
+      toast.success("Cart cleared");
+    } else {
+      toast.error("Cart cleared here, but saving to your account failed");
+    }
   };
 
   const handleAuthDialogClose = () => {

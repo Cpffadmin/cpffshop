@@ -5,7 +5,7 @@ export interface CartStore {
   selectedDeliveryType: number;
   addItem: (item: AddToCartItem) => void;
   removeItem: (id: string) => void;
-  clearCart: () => Promise<void>;
+  clearCart: () => Promise<boolean>;
   clearLocalCart: () => void;
   getTotalPrice: () => number;
   getTotalItems: () => number;
