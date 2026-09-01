@@ -3,6 +3,7 @@
   "name": "姓名",
   "email": "電子郵件",
   "phone": "電話號碼",
+  "phonePlaceholder": "請輸入電話號碼（至少 8 位數字）",
   "cart": {
     "title": "購物車",
     "empty": "購物車是空的",

@@ -3,6 +3,7 @@
   "name": "Full Name",
   "email": "Email",
   "phone": "Phone Number",
+  "phonePlaceholder": "Enter your phone number (at least 8 digits)",
   "fillRequiredFields": "Please fill in all required fields",
   "invalidPhoneNumber": "Please enter a valid phone number (minimum 8 digits)",
   "cart": {

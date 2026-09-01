@@ -130,6 +130,12 @@ export default function CheckoutPage() {
     }
   }, [userData, userLoading]);
 
+  // The phone input mirrors the saved profile number, so it is only locked when
+  // there is actually a number to mirror. Locking an empty field would make
+  // checkout impossible: phone is required but could never be typed in.
+  const isProfilePhoneLocked =
+    addressOption === "profile" && Boolean(userData?.phone);
+
   // When switching to profile address, fill simplified fields and lock them
   useEffect(() => {
     if (addressOption === "profile" && userData?.address) {
@@ -921,9 +927,9 @@ export default function CheckoutPage() {
                   onChange={handlePhoneChange}
                   pattern="\d*"
                   required
-                  readOnly={addressOption === "profile"}
+                  readOnly={isProfilePhoneLocked}
                   className={`w-full p-2 border border-gray-300 dark:border-gray-600 rounded ${
-                    addressOption === "profile"
+                    isProfilePhoneLocked
                       ? "bg-gray-100 dark:bg-gray-700 text-black dark:text-white cursor-not-allowed"
                       : "bg-white dark:bg-gray-700 text-black dark:text-white"
                   }`}
