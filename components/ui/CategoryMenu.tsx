@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cachedGet } from "@/utils/services/clientCache";
 import { useTranslation } from "@/providers/language/LanguageContext";
 import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
-import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 interface Category {
   _id: string;
@@ -36,7 +36,6 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
   const [showArrows, setShowArrows] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { language, t } = useTranslation();
-  const pathname = usePathname();
 
   const handleScroll = (direction: "left" | "right") => {
     const container = containerRef.current;
@@ -54,7 +53,6 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
     });
   };
 
-  // Check if arrows should be shown
   const checkArrows = () => {
     const container = containerRef.current;
     if (!container) return;
@@ -63,7 +61,6 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
     setShowArrows(hasOverflow);
   };
 
-  // Add resize observer to check when container size changes
   useEffect(() => {
     const container = containerRef.current;
     if (container) {
@@ -73,7 +70,6 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
     }
   }, []);
 
-  // Check scrollable when categories change
   useEffect(() => {
     checkArrows();
   }, [categories]);
@@ -106,16 +102,28 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
     onCategorySelect(category);
   };
 
+  const chipClass = (active: boolean) =>
+    cn(
+      "flex-shrink-0 snap-start flex items-center justify-center rounded-lg transition-colors px-3 h-10 md:w-28 md:h-14 md:p-2",
+      active
+        ? "bg-primary text-primary-foreground"
+        : "bg-card text-foreground hover:bg-accent hover:text-accent-foreground"
+    );
+
+  const chipLabelClass = (active: boolean) =>
+    cn(
+      "text-sm font-medium line-clamp-2 whitespace-nowrap md:whitespace-normal",
+      active ? "text-primary-foreground" : ""
+    );
+
   return (
-    <div
-      className={`relative w-full ${isMobile ? "" : ""} py-4 ${
-        isMobile ? "block" : "hidden md:block"
-      }`}
-    >
+    <div className="relative w-full py-2 md:py-4">
       {!isMobile && showArrows && (
         <button
+          type="button"
           onClick={() => handleScroll("left")}
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 dark:bg-gray-800/80 rounded-lg p-1.5 h-10 shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none"
+          className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 dark:bg-gray-800/80 rounded-lg p-1.5 h-10 shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none items-center"
+          aria-label={t("common.previous")}
         >
           <ChevronLeft className="h-5 w-5 text-gray-600 dark:text-gray-300" />
         </button>
@@ -123,11 +131,11 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
 
       <div
         ref={containerRef}
-        className={`mx-auto max-w-[1200px] px-12 ${
+        className={
           !isMobile
-            ? "flex gap-4 overflow-x-auto hide-scrollbar scroll-smooth"
-            : "flex flex-col space-y-4"
-        }`}
+            ? "mx-auto max-w-[1200px] px-0 md:px-12 flex gap-2 md:gap-4 overflow-x-auto hide-scrollbar scroll-smooth snap-x"
+            : "mx-auto max-w-[1200px] px-4 flex flex-col space-y-4"
+        }
         style={
           !isMobile
             ? { scrollbarWidth: "none", msOverflowStyle: "none" }
@@ -140,100 +148,96 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
               <LoadingSkeleton
                 key={i}
                 width={isMobile ? "w-full" : "w-28"}
-                height={isMobile ? "h-12" : "h-14"}
-                className="rounded-lg"
+                height={isMobile ? "h-12" : "h-10 md:h-14"}
+                className="rounded-lg flex-shrink-0"
               />
             ))}
           </>
+        ) : !isMobile ? (
+          <>
+            <button
+              type="button"
+              onClick={() => handleCategoryClick("All Categories")}
+              className={chipClass(selectedCategory === "All Categories")}
+            >
+              <span className={chipLabelClass(selectedCategory === "All Categories")}>
+                {t("common.allCategories")}
+              </span>
+            </button>
+
+            {categories.map((category) => {
+              if (!category) return null;
+              const active = selectedCategory === category._id;
+              return (
+                <button
+                  type="button"
+                  key={category._id}
+                  onClick={() => handleCategoryClick(category._id)}
+                  className={chipClass(active)}
+                >
+                  <span className={chipLabelClass(active)}>
+                    {category.displayNames?.[language] || category.name}
+                  </span>
+                </button>
+              );
+            })}
+          </>
         ) : (
           <>
-            {!isMobile ? (
-              <>
-                <button
-                  onClick={() => handleCategoryClick("All Categories")}
-                  className="flex-shrink-0 flex items-center justify-center w-28 h-14 transition-all duration-300 p-2 group rounded-lg bg-card"
-                >
-                  <span
-                    className={`text-sm ${
-                      selectedCategory === "All Categories"
-                        ? "text-blue-500 dark:text-blue-400"
-                        : "text-gray-700 dark:text-gray-200 group-hover:text-blue-500 dark:group-hover:text-blue-400"
-                    } transition-colors line-clamp-2`}
+            <button
+              type="button"
+              onClick={() => handleCategoryClick("All Categories")}
+              className={cn(
+                "flex-shrink-0 flex items-center justify-start px-4 w-full h-12 mb-2 rounded-lg transition-colors",
+                selectedCategory === "All Categories"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-foreground hover:bg-accent"
+              )}
+            >
+              <span className="text-sm font-medium line-clamp-2 text-left w-full">
+                {t("common.allCategories")}
+              </span>
+            </button>
+
+            <div
+              className={
+                categories.length > 8
+                  ? "grid grid-cols-2 gap-2"
+                  : "flex flex-col space-y-2"
+              }
+            >
+              {categories.map((category) => {
+                if (!category) return null;
+                const active = selectedCategory === category._id;
+                return (
+                  <button
+                    type="button"
+                    key={category._id}
+                    onClick={() => handleCategoryClick(category._id)}
+                    className={cn(
+                      "flex-shrink-0 flex items-center justify-start px-4 w-full h-12 rounded-lg transition-colors",
+                      active
+                        ? "bg-primary text-primary-foreground"
+                        : "text-foreground hover:bg-accent"
+                    )}
                   >
-                    {t("common.allCategories")}
-                  </span>
-                </button>
-
-                {categories.map((category) => {
-                  if (!category) return null;
-                  return (
-                    <button
-                      key={category._id}
-                      onClick={() => handleCategoryClick(category._id)}
-                      className={`flex-shrink-0 flex items-center justify-center w-28 h-14 rounded-lg bg-card ${
-                        selectedCategory === category._id ? "bg-accent" : ""
-                      } transition-all duration-300 p-2 group`}
-                    >
-                      <span
-                        className={`text-sm font-medium ${
-                          selectedCategory === category._id
-                            ? "text-blue-500 dark:text-blue-400"
-                            : "text-gray-700 dark:text-gray-300 group-hover:text-blue-500 dark:group-hover:text-blue-400"
-                        } transition-colors line-clamp-2`}
-                      >
-                        {category.displayNames?.[language] || category.name}
-                      </span>
-                    </button>
-                  );
-                })}
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={() => handleCategoryClick("All Categories")}
-                  className="flex-shrink-0 flex items-center justify-start px-4 w-full h-12 mb-2 text-blue-500 dark:text-blue-400 rounded-lg transition-all duration-300 p-2 group"
-                >
-                  <span className="text-sm font-medium transition-colors line-clamp-2 text-left w-full">
-                    {t("common.allCategories")}
-                  </span>
-                </button>
-
-                <div
-                  className={
-                    categories.length > 8
-                      ? "grid grid-cols-2 gap-2"
-                      : "flex flex-col space-y-2"
-                  }
-                >
-                  {categories.map((category) => {
-                    if (!category) return null;
-                    return (
-                      <button
-                        key={category._id}
-                        onClick={() => handleCategoryClick(category._id)}
-                        className={`flex-shrink-0 flex items-center justify-start px-4 w-full h-12 ${
-                          selectedCategory === category._id
-                            ? "text-blue-500 dark:text-blue-400"
-                            : "text-gray-700 dark:text-gray-300"
-                        } rounded-lg transition-all duration-300 p-2 group`}
-                      >
-                        <span className="text-sm font-medium transition-colors line-clamp-2 text-left w-full">
-                          {category.displayNames?.[language] || category.name}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </>
-            )}
+                    <span className="text-sm font-medium line-clamp-2 text-left w-full">
+                      {category.displayNames?.[language] || category.name}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </>
         )}
       </div>
 
       {!isMobile && showArrows && (
         <button
+          type="button"
           onClick={() => handleScroll("right")}
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 dark:bg-gray-800/80 rounded-lg p-1.5 h-14 shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none"
+          className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 dark:bg-gray-800/80 rounded-lg p-1.5 h-14 shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none items-center"
+          aria-label={t("common.next")}
         >
           <ChevronRight className="h-5 w-5 text-gray-600 dark:text-gray-300" />
         </button>

@@ -4,6 +4,11 @@ Append a dated entry under "Fix log" whenever you resolve a root-cause issue. Ch
 
 ## Fix log
 
+### 2026-09-04 — Mobile products hid the category bar (`hidden md:block`); site-icon rail was the wrong nav
+- **Symptom:** Phone `/products` had no way to pick a product kind without opening the hamburger. A later left icon rail (Home/Blog/About/…) was not what was needed.
+- **Root cause:** `CategoryMenu` on the products page used the desktop-only layout (`hidden md:block`). Categories existed but were invisible below `md`.
+- **Fix:** Removed the site-icon rail. Products page now shows a swipeable category chip bar on all widths (selected chip uses `bg-primary`). Bar is sticky under the mobile header. Hamburger overlay still lists categories as a fallback.
+
 ### 2026-09-04 — Desktop add-to-cart ignored theme button color; mobile had no visible left nav
 - **Symptom:** Changing Admin → Theme → Button Color updated mobile list/cart icons (`bg-primary`) but desktop product-grid Add to Cart stayed bright blue. Narrow/mobile view still had only a top hamburger — no persistent left navbar.
 - **Root cause:** Grid cards (`ProductCard`) and product-detail CTA (`ProdDetailsPrice`) used hardcoded `bg-blue-600`. Mobile nav was a hamburger overlay only (`MobileMenu`), never a always-visible left rail.

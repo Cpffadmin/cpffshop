@@ -262,13 +262,13 @@ const MobileMenu = ({
   return (
     <>
       <div
-        className={`fixed inset-0 left-14 bg-black/60 z-40 ${
+        className={`fixed inset-0 bg-black/60 z-40 ${
           isOpen ? "visible" : "invisible pointer-events-none"
         }`}
         onClick={handleMenuClose}
       >
         <div
-          className={`fixed top-0 left-14 h-full w-3/4 bg-white/60 dark:bg-black/60 shadow-lg transform transition-transform duration-500 ${
+          className={`fixed top-0 left-0 h-full w-3/4 bg-white/60 dark:bg-black/60 shadow-lg transform transition-transform duration-500 ${
             isOpen ? "translate-x-0" : "-translate-x-full"
           }`}
           onClick={(e) => e.stopPropagation()}
