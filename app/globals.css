@@ -214,6 +214,22 @@
     @apply rounded-lg border border-[color:var(--card-item-border-color)] bg-card/80 text-card-foreground;
   }
 
+  .product-card-surface {
+    background-color: hsla(var(--card), var(--card-opacity, 1));
+  }
+
+  .product-card-surface:hover,
+  .product-card-surface:focus-within,
+  .product-card-surface:active {
+    background-color: #ffffff;
+  }
+
+  .dark .product-card-surface:hover,
+  .dark .product-card-surface:focus-within,
+  .dark .product-card-surface:active {
+    background-color: rgb(31 41 55);
+  }
+
   .button-base {
     @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors
     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2

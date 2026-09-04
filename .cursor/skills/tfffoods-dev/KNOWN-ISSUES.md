@@ -7,7 +7,7 @@ Append a dated entry under "Fix log" whenever you resolve a root-cause issue. Ch
 ### 2026-09-04 — Mobile products list: selected vs unselected backgrounds blended into the page
 - **Symptom:** On `/products` mobile list view, the selected grid/list toggle looked black, the unselected toggle and Previous button disappeared into the mint page color, and product rows merged into one white slab.
 - **Root cause:** Theme `--background` is the mint page color; `--primary` is unthemed near-black. Toggles/pagination used `bg-primary` / `bg-background`. List rows were `<tr className="bg-card">` inside `border-collapse`, so radius/shadow/gaps did not apply.
-- **Fix:** Selected toggle uses the same `#535C91` as the list cart button; unselected toggle and pagination use `bg-card` + border. List items are separate card rows (same `bg-card` / border / shadow as grid cards).
+- **Follow-up:** list/grid product surfaces now use themed `hsla(var(--card), var(--card-opacity))` when unselected and **white** (`#ffffff`) on hover/focus/press. `bg-card` was solid and ignored theme card opacity, so every row looked “selected” (white).
 
 ### 2026-09-04 — Admin products list hard-capped at 100 (101st+ products looked uncreated)
 - **Symptom:** Creating more than 100 products appeared to fail — the extra products were saved but never showed on `/admin/products`.

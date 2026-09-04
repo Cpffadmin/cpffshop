@@ -109,7 +109,7 @@ export default function ProductCard({
 
   return (
     <div
-      className="bg-card rounded-lg shadow-md overflow-hidden relative border border-border"
+      className="product-card-surface rounded-lg shadow-md overflow-hidden relative border border-border transition-colors"
       data-product-id={currentProduct._id}
     >
       {session?.user?.admin && (

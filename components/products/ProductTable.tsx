@@ -92,7 +92,7 @@ const ProductRow = ({ product: initialProduct }: { product: Product }) => {
   return (
     <>
       <div
-        className="bg-card hover:bg-accent/10 shadow-md hover:shadow-lg rounded-lg overflow-hidden border border-border"
+        className="product-card-surface hover:shadow-lg shadow-md rounded-lg overflow-hidden border border-border transition-colors"
         data-product-id={currentProduct._id}
       >
         <div className="flex items-center gap-3 p-3 sm:p-4">
