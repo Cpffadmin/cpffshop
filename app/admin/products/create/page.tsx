@@ -490,7 +490,10 @@ const CreateProduct = () => {
       if (response.data) {
         // Invalidate the products cache
         await mutate(
-          `/api/products?includeDrafts=true&limit=100&language=${language}`
+          (key) =>
+            typeof key === "string" &&
+            key.startsWith("/api/products?") &&
+            key.includes("includeDrafts=true")
         );
 
         toast.success(

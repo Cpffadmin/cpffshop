@@ -77,6 +77,10 @@
     "actions": {
       "edit": "編輯商品",
       "delete": "刪除商品"
+    },
+    "pagination": {
+      "perPage": "每頁顯示",
+      "showing": "顯示 {{from}}–{{to}}，共 {{total}} 項"
     }
   },
   "reviews": {

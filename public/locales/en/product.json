@@ -77,6 +77,10 @@
     "actions": {
       "edit": "Edit Product",
       "delete": "Delete Product"
+    },
+    "pagination": {
+      "perPage": "Per page",
+      "showing": "Showing {{from}}–{{to}} of {{total}}"
     }
   },
   "reviews": {

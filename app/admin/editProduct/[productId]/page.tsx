@@ -610,16 +610,11 @@ const EditProduct = () => {
         // Force immediate cache invalidation with new data
         await Promise.all([
           mutate(
-            `/api/products?includeDrafts=true&limit=100&language=${language}`,
-            (oldData: any) => {
-              if (!oldData?.products) return oldData;
-              return {
-                ...oldData,
-                products: oldData.products.map((p: any) =>
-                  p._id === productId ? { ...p, ...productData } : p
-                ),
-              };
-            },
+            (key) =>
+              typeof key === "string" &&
+              key.startsWith("/api/products?") &&
+              key.includes("includeDrafts=true"),
+            undefined,
             { revalidate: true }
           ),
           mutate(

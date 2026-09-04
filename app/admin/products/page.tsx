@@ -23,6 +23,17 @@ import { useTranslation } from "@/providers/language/LanguageContext";
 import { LayoutDashboard, Package } from "lucide-react";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { useConfirm } from "@/components/ui/confirm-provider";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const ADMIN_LIST_FETCH_LIMIT = 100;
+const PAGE_SIZE_OPTIONS = [20, 50, 100] as const;
+const DEFAULT_PAGE_SIZE = 50;
 
 interface Product {
   _id: string;
@@ -47,6 +58,17 @@ interface Product {
   displayNames?: Record<string, string>;
 }
 
+function paginateItems<T>(items: T[], page: number, pageSize: number) {
+  const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
+  const safePage = Math.min(Math.max(page, 1), totalPages);
+  const start = (safePage - 1) * pageSize;
+  return {
+    items: items.slice(start, start + pageSize),
+    totalPages,
+    page: safePage,
+  };
+}
+
 export default function AdminProductsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -57,6 +79,9 @@ export default function AdminProductsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
+  const [activePage, setActivePage] = useState(1);
+  const [draftPage, setDraftPage] = useState(1);
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
   const breadcrumbItems = [
     {
@@ -75,10 +100,32 @@ export default function AdminProductsPage() {
   const loadProducts = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get(
-        `/api/products?includeDrafts=true&limit=100&language=${language}`
-      );
-      setProducts(response.data.products || []);
+      const allProducts: Product[] = [];
+      let page = 1;
+      let totalPages = 1;
+
+      do {
+        const response = await axios.get(
+          `/api/products?includeDrafts=true&limit=${ADMIN_LIST_FETCH_LIMIT}&page=${page}&language=${language}&skipCache=true`
+        );
+        const batch = response.data.products || [];
+        allProducts.push(...batch);
+
+        const total =
+          typeof response.data.total === "number"
+            ? response.data.total
+            : allProducts.length;
+        totalPages = Math.max(
+          1,
+          Number(response.data.totalPages) ||
+            Math.ceil(total / ADMIN_LIST_FETCH_LIMIT)
+        );
+
+        if (batch.length === 0) break;
+        page += 1;
+      } while (page <= totalPages);
+
+      setProducts(allProducts);
       setError(null);
     } catch (err) {
       console.error("Error loading products:", err);
@@ -99,6 +146,28 @@ export default function AdminProductsPage() {
   // Filter products and drafts
   const activeProducts = products.filter((p) => !p.draft);
   const draftProducts = products.filter((p) => p.draft);
+  const paginatedActive = paginateItems(
+    activeProducts,
+    activePage,
+    pageSize
+  );
+  const paginatedDrafts = paginateItems(
+    draftProducts,
+    draftPage,
+    pageSize
+  );
+
+  useEffect(() => {
+    if (activePage !== paginatedActive.page) {
+      setActivePage(paginatedActive.page);
+    }
+  }, [activePage, paginatedActive.page]);
+
+  useEffect(() => {
+    if (draftPage !== paginatedDrafts.page) {
+      setDraftPage(paginatedDrafts.page);
+    }
+  }, [draftPage, paginatedDrafts.page]);
 
   // Add logging for data changes
   useEffect(() => {
@@ -172,6 +241,80 @@ export default function AdminProductsPage() {
   if (status === "authenticated" && !session?.user?.admin) {
     return null;
   }
+
+  const handlePageSizeChange = (value: string) => {
+    setPageSize(Number(value));
+    setActivePage(1);
+    setDraftPage(1);
+  };
+
+  const renderPagination = (
+    page: number,
+    totalPages: number,
+    onPageChange: (page: number) => void,
+    totalItems: number
+  ) => {
+    const from = totalItems === 0 ? 0 : (page - 1) * pageSize + 1;
+    const to = Math.min(page * pageSize, totalItems);
+
+    return (
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="text-sm text-muted-foreground">
+            {t("product.admin.pagination.showing", {
+              from,
+              to,
+              total: totalItems,
+            })}
+          </span>
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-muted-foreground whitespace-nowrap">
+              {t("product.admin.pagination.perPage")}
+            </label>
+            <Select
+              value={String(pageSize)}
+              onValueChange={handlePageSizeChange}
+            >
+              <SelectTrigger className="w-[90px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {PAGE_SIZE_OPTIONS.map((size) => (
+                  <SelectItem key={size} value={String(size)}>
+                    {size}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-4">
+            <Button
+              variant="outline"
+              onClick={() => onPageChange(Math.max(page - 1, 1))}
+              disabled={page === 1}
+            >
+              {t("common.previous")}
+            </Button>
+            <span className="text-sm text-muted-foreground">
+              {t("common.pagination", {
+                current: page,
+                total: totalPages,
+              })}
+            </span>
+            <Button
+              variant="outline"
+              onClick={() => onPageChange(Math.min(page + 1, totalPages))}
+              disabled={page === totalPages}
+            >
+              {t("common.next")}
+            </Button>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const handleDeleteProduct = async (productId: string, productName?: string) => {
     const confirmed = await confirm({
@@ -417,8 +560,14 @@ export default function AdminProductsPage() {
               </CardHeader>
               <CardContent>
                 {viewMode === "table"
-                  ? renderProductTable(activeProducts)
-                  : renderProductGrid(activeProducts)}
+                  ? renderProductTable(paginatedActive.items)
+                  : renderProductGrid(paginatedActive.items)}
+                {renderPagination(
+                  paginatedActive.page,
+                  paginatedActive.totalPages,
+                  setActivePage,
+                  activeProducts.length
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -432,8 +581,14 @@ export default function AdminProductsPage() {
               </CardHeader>
               <CardContent>
                 {viewMode === "table"
-                  ? renderProductTable(draftProducts)
-                  : renderProductGrid(draftProducts)}
+                  ? renderProductTable(paginatedDrafts.items)
+                  : renderProductGrid(paginatedDrafts.items)}
+                {renderPagination(
+                  paginatedDrafts.page,
+                  paginatedDrafts.totalPages,
+                  setDraftPage,
+                  draftProducts.length
+                )}
               </CardContent>
             </Card>
           </TabsContent>

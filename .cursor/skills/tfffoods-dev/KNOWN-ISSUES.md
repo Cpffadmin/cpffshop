@@ -4,6 +4,11 @@ Append a dated entry under "Fix log" whenever you resolve a root-cause issue. Ch
 
 ## Fix log
 
+### 2026-09-04 — Admin products list hard-capped at 100 (101st+ products looked uncreated)
+- **Symptom:** Creating more than 100 products appeared to fail — the extra products were saved but never showed on `/admin/products`.
+- **Root cause:** Create `POST /api/products` has **no count or stock cap**. The admin list (and create/edit SWR mutate keys) requested `limit=100` with **no pagination**, sorted by `order` ascending. New products get the next `order` number, so product 101+ was stored but cut off from the list.
+- **Fix:** Admin products page now fetches every API page until `total` is reached, shows true published/draft counts, and paginates the table/grid (50 per page). Create/edit cache invalidation matches any `includeDrafts=true` products query, not a hardcoded `limit=100`.
+
 ### 2026-06-23 — Next 16 sync `params` bug across dynamic routes (404/500 on admin actions)
 - **Symptom:** dynamic API routes/pages throwing `Route "…" used \`params.x\`. \`params\` is a Promise and must be unwrapped with \`await\` or \`React.use()\`` → request 404s/500s (saw it on `PUT /api/orders/[orderId]`).
 - **Root cause:** Next.js 16 makes `params` a **Promise**; handlers using `{ params }: { params: { x: string } }` and accessing `params.x` directly fail.
