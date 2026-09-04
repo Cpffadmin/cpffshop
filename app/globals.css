@@ -497,7 +497,7 @@
 }
 
 .add-to-cart-button {
-  @apply bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700;
+  @apply bg-primary text-primary-foreground px-4 py-2 rounded hover:bg-primary/90;
 }
 
 /* Navbar Styles */

@@ -138,7 +138,7 @@ export default function RootLayout({
                                     <CartProvider>
                                       <CartUIProvider>
                                         <ConfirmProvider>
-                                          <div className="flex flex-col min-h-screen">
+                                          <div className="flex flex-col min-h-screen pl-14 md:pl-0">
                                             <Navbar />
                                             <main className="flex-grow">
                                               {children}

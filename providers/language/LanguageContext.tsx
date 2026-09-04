@@ -37,6 +37,8 @@ const defaultTranslations: Record<string, TranslationsType> = {
     previous: "Previous",
     pagination: "Page {{current}} of {{total}}",
     next: "Next",
+    menu: "Menu",
+    close: "Close",
     pageNotFound: "Page Not Found",
     pageNotFoundDesc: "The page you are looking for does not exist.",
     backToHome: "Back to Home",

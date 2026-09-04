@@ -196,7 +196,7 @@ export default function ProductCard({
             className={`px-4 py-2 rounded text-sm sm:text-base right-iconAssignBottom transition-colors disabled:opacity-100 ${
               isOutOfStock
                 ? "bg-red-500 text-white cursor-not-allowed"
-                : "bg-blue-600 text-white hover:bg-blue-700"
+                : "bg-primary text-primary-foreground hover:bg-primary/90"
             }`}
           >
             {isOutOfStock

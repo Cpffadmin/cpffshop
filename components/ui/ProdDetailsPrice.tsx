@@ -147,7 +147,7 @@ const ProdDetailsPrice = ({
             className={`flex items-center justify-center px-6 py-2.5 border border-transparent rounded-md text-base font-medium ${
               currentStock === 0
                 ? "bg-muted text-muted-foreground cursor-not-allowed"
-                : "bg-blue-600 text-white hover:bg-blue-700"
+                : "bg-primary text-primary-foreground hover:bg-primary/90"
             } transition-colors duration-200 flex-grow`}
             type="button"
           >

@@ -4,6 +4,11 @@ Append a dated entry under "Fix log" whenever you resolve a root-cause issue. Ch
 
 ## Fix log
 
+### 2026-09-04 — Desktop add-to-cart ignored theme button color; mobile had no visible left nav
+- **Symptom:** Changing Admin → Theme → Button Color updated mobile list/cart icons (`bg-primary`) but desktop product-grid Add to Cart stayed bright blue. Narrow/mobile view still had only a top hamburger — no persistent left navbar.
+- **Root cause:** Grid cards (`ProductCard`) and product-detail CTA (`ProdDetailsPrice`) used hardcoded `bg-blue-600`. Mobile nav was a hamburger overlay only (`MobileMenu`), never a always-visible left rail.
+- **Fix:** Those CTAs (and `.add-to-cart-button`) now use `bg-primary` / `--primary` from theme settings. Added `MobileSideNav` (`md:hidden` fixed `w-14` rail) with Home/Products/Blog/About/Contact + hamburger; layout pads `pl-14` below `md`. Hamburger still opens the existing overlay for search/categories/account.
+
 ### 2026-09-04 — Theme settings had no button color (storefront buttons stayed hardcoded purple)
 - **Symptom:** Add-to-cart, list/grid toggle, and other `bg-primary` actions could not be changed from Admin → Theme.
 - **Root cause:** `themeSettings` stored surfaces (background/card/navbar/text/…) but no button/primary. `--primary` stayed the shadcn near-black default, and several product controls used `#535C91` directly.

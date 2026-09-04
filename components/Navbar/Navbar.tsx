@@ -2,10 +2,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { RxHamburgerMenu } from "react-icons/rx";
 import CartIcon from "@/components/ui/CartIcon";
 import ProductDrawer from "./ProductDrawer";
 import AdminDrawer from "@/components/Navbar/AdminDrawer";
@@ -22,8 +20,7 @@ import { useSearch } from "@/hooks/useSearch";
 import type { CustomSession, SearchResult } from "@/types";
 import { useStore } from "@/providers/store/StoreContext";
 import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
-import { IoMdClose } from "react-icons/io";
-import HamburgerIcon from "@/components/ui/HamburgerIcon";
+import MobileSideNav from "@/components/Navbar/MobileSideNav";
 
 const Navbar = () => {
   const router = useRouter();
@@ -181,6 +178,17 @@ const Navbar = () => {
         </div>
       </nav>
 
+      {/* Mobile side navbar — always visible below md */}
+      <MobileSideNav
+        isOpen={isOpen}
+        onMenuToggle={setMenuClose}
+        session={session}
+        onAdminOpen={() => {
+          setAdmin(true);
+          setAdminPanelMob(true);
+        }}
+      />
+
       {/* Mobile Logo - Only visible on mobile */}
       <div className="md:hidden fixed top-3 left-1/2 -translate-x-1/2 z-50">
         {isLoading ? (
@@ -200,23 +208,6 @@ const Navbar = () => {
             priority
           />
         )}
-      </div>
-
-      {/* Mobile Menu Button - Only visible on mobile */}
-      <div className="md:hidden fixed top-3 left-3 z-50">
-        <Button
-          variant="ghost"
-          size="sm"
-          className={`w-8 h-8 flex items-center justify-center transition-colors ${
-            isOpen
-              ? "text-foreground"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
-          onClick={setMenuClose}
-          aria-label={isOpen ? "Close menu" : "Open menu"}
-        >
-          <HamburgerIcon isOpen={isOpen} />
-        </Button>
       </div>
 
       {/* Mobile Action Icons - Only visible on mobile */}
