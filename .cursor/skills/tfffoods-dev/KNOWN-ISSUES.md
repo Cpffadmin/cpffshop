@@ -4,6 +4,11 @@ Append a dated entry under "Fix log" whenever you resolve a root-cause issue. Ch
 
 ## Fix log
 
+### 2026-09-04 — Mobile category chips overlapped; needed a collapsible vertical list
+- **Symptom:** On phone `/products`, category names sat in one horizontal row (`whitespace-nowrap`) and ran off / stacked on top of each other.
+- **Root cause:** The products page `CategoryMenu` always used the desktop chip strip. Showing it on mobile without wrapping or a collapse control made long bilingual names overflow.
+- **Fix:** Below `md`, categories are a collapsed dropdown (label + current kind). Expand to a vertical list; picking a kind collapses it again. Desktop chip strip is unchanged (`hidden md:block`).
+
 ### 2026-09-04 — Mobile products hid the category bar (`hidden md:block`); site-icon rail was the wrong nav
 - **Symptom:** Phone `/products` had no way to pick a product kind without opening the hamburger. A later left icon rail (Home/Blog/About/…) was not what was needed.
 - **Root cause:** `CategoryMenu` on the products page used the desktop-only layout (`hidden md:block`). Categories existed but were invisible below `md`.
