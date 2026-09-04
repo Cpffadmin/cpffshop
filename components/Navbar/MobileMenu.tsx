@@ -8,6 +8,7 @@ import {
   IoMailOutline,
 } from "react-icons/io5";
 import { FaBlogger } from "react-icons/fa";
+import { FaShop } from "react-icons/fa6";
 import { MdContactSupport } from "react-icons/md";
 import Link from "next/link";
 import Image from "next/image";
@@ -182,6 +183,12 @@ const MobileMenu = ({
     } as React.ChangeEvent<HTMLInputElement>);
   };
 
+  const closeNav = () => {
+    handleMenuClose();
+    if (productModile) setProductModile(false);
+    if (adminPanelMob) setAdminPanelMob(false);
+  };
+
   const NavLink = ({
     href,
     onClick,
@@ -311,9 +318,63 @@ const MobileMenu = ({
               )}
             </div>
 
+            <nav className="p-2 border-b border-border/50">
+              <ul className="space-y-1 list-none">
+                <NavLink
+                  href="/"
+                  onClick={closeNav}
+                  variant={pathname === "/" ? "active" : "default"}
+                  className={navbarButtonStyles.withIcon}
+                >
+                  <IoHomeOutline size={22} />
+                  {t("navigation.home")}
+                </NavLink>
+                <NavLink
+                  href="/products"
+                  onClick={closeNav}
+                  variant={
+                    pathname === "/products" || pathname.startsWith("/product")
+                      ? "active"
+                      : "default"
+                  }
+                  className={navbarButtonStyles.withIcon}
+                >
+                  <FaShop size={20} />
+                  {t("navigation.products")}
+                </NavLink>
+                <NavLink
+                  href="/blog"
+                  onClick={closeNav}
+                  variant={pathname.startsWith("/blog") ? "active" : "default"}
+                  className={navbarButtonStyles.withIcon}
+                >
+                  <FaBlogger size={20} />
+                  {t("navigation.blog")}
+                </NavLink>
+                <NavLink
+                  href="/about"
+                  onClick={closeNav}
+                  variant={pathname === "/about" ? "active" : "default"}
+                  className={navbarButtonStyles.withIcon}
+                >
+                  <IoInformationCircleOutline size={22} />
+                  {t("navigation.about")}
+                </NavLink>
+                <NavLink
+                  href="/contact"
+                  onClick={closeNav}
+                  variant={pathname === "/contact" ? "active" : "default"}
+                  className={navbarButtonStyles.withIcon}
+                >
+                  <IoMailOutline size={22} />
+                  {t("navigation.contact")}
+                </NavLink>
+              </ul>
+            </nav>
+
             {categoriesSection}
 
-            <div className="overflow-y-auto max-h-[calc(100vh-120px)]">
+            <div className="overflow-y-auto flex-1">
               <nav className="p-2">
                 {session?.user?.admin && (
                   <Button
@@ -322,135 +383,71 @@ const MobileMenu = ({
                       setAdminPanelMob(true);
                     }}
                     variant="ghost"
-                    className="w-full mt-4 bg-yellow-500 hover:bg-yellow-400 text-foreground dark:text-foreground transition-colors"
+                    className="w-full bg-yellow-500 hover:bg-yellow-400 text-foreground dark:text-foreground transition-colors"
                   >
                     {t("navigation.adminPanel")}
                   </Button>
                 )}
               </nav>
 
-              {/* User Section */}
-              <div className="p-2 mt-2">
-                <div className="flex items-center justify-between border-b border-black dark:border-white pb-4">
-                  <div className="flex items-center gap-4">
-                    <Link
-                      href="/"
-                      onClick={() => {
-                        setMenuClose();
-                        if (productModile) setProductModile(false);
-                        if (adminPanelMob) setAdminPanelMob(false);
-                      }}
-                      className="text-foreground hover:text-foreground/80 transition-colors"
-                    >
-                      <IoHomeOutline size={28} />
-                    </Link>
-
-                    <Link
-                      href="/blog"
-                      onClick={() => {
-                        setMenuClose();
-                        if (productModile) setProductModile(false);
-                        if (adminPanelMob) setAdminPanelMob(false);
-                      }}
-                      className="text-foreground hover:text-foreground/80 transition-colors"
-                    >
-                      <FaBlogger size={24} />
-                    </Link>
-
-                    <Link
-                      href="/about"
-                      onClick={() => {
-                        setMenuClose();
-                        if (productModile) setProductModile(false);
-                        if (adminPanelMob) setAdminPanelMob(false);
-                      }}
-                      className="text-foreground hover:text-foreground/80 transition-colors"
-                    >
-                      <IoInformationCircleOutline size={28} />
-                    </Link>
-
-                    <Link
-                      href="/contact"
-                      onClick={() => {
-                        setMenuClose();
-                        if (productModile) setProductModile(false);
-                        if (adminPanelMob) setAdminPanelMob(false);
-                      }}
-                      className="text-foreground hover:text-foreground/80 transition-colors"
-                    >
-                      <IoMailOutline size={28} />
-                    </Link>
-                    {session?.user && (
-                      <div className="flex items-center gap-2 list-none">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage
-                            src={session.user.image || "/default-avatar.png"}
-                            alt={session.user.name || "User"}
-                          />
-                          <AvatarFallback>
-                            {session.user.name?.[0] || "U"}
-                          </AvatarFallback>
-                        </Avatar>
-                        <NavLink
-                          href="/profile"
-                          onClick={() => {
-                            setMenuClose();
-                            if (productModile) setProductModile(false);
-                            if (adminPanelMob) setAdminPanelMob(false);
-                          }}
-                          className="text-foreground hover:text-foreground/80 hover:bg-accent"
-                        >
-                          {t("navigation.profile")}
-                        </NavLink>
-                      </div>
-                    )}
-                  </div>
-                </div>
+              <div className="p-2 mt-2 border-t border-border/50">
                 {session?.user ? (
                   <ul className="space-y-1 list-none">
-                    <button
-                      onClick={async () => {
-                        try {
-                          // 1. Clear the cart in THIS browser only — the
-                          //    account cart stays on the server and reloads on
-                          //    next login (and on other devices).
-                          clearLocalCart();
-
-                          // 2. Clear client storage BEFORE redirecting (a
-                          //    redirecting signOut navigates away, so code
-                          //    after it may never run). Preserves theme +
-                          //    language preferences across logout.
-                          clearClientStorageOnLogout();
-
-                          // 3. Use NextAuth's signOut with redirect
-                          await signOut({
-                            callbackUrl: "/login",
-                            redirect: true,
-                          });
-                        } catch (error) {
-                          console.error("Logout failed:", error);
-                          // Even on error, try to redirect
-                          window.location.href = "/login";
-                        }
-                      }}
-                      className="text-red-500 hover:text-red-600 font-medium transition-colors"
+                    <NavLink
+                      href="/profile"
+                      onClick={closeNav}
+                      variant={
+                        pathname.startsWith("/profile") ? "active" : "default"
+                      }
+                      className={navbarButtonStyles.withIcon}
                     >
-                      {t("navigation.logout")}
-                    </button>
+                      <Avatar className="h-6 w-6">
+                        <AvatarImage
+                          src={session.user.image || "/default-avatar.png"}
+                          alt={session.user.name || "User"}
+                        />
+                        <AvatarFallback>
+                          {session.user.name?.[0] || "U"}
+                        </AvatarFallback>
+                      </Avatar>
+                      {t("navigation.profile")}
+                    </NavLink>
+                    <li>
+                      <button
+                        onClick={async () => {
+                          try {
+                            clearLocalCart();
+                            clearClientStorageOnLogout();
+                            await signOut({
+                              callbackUrl: "/login",
+                              redirect: true,
+                            });
+                          } catch (error) {
+                            console.error("Logout failed:", error);
+                            window.location.href = "/login";
+                          }
+                        }}
+                        className={cn(
+                          navbarButtonStyles.base,
+                          navbarButtonStyles.danger,
+                          navbarButtonStyles.withIcon
+                        )}
+                      >
+                        {t("navigation.logout")}
+                      </button>
+                    </li>
                   </ul>
                 ) : (
-                  <div className="list-none">
+                  <ul className="space-y-1 list-none">
                     <NavLink
                       href="/login"
-                      onClick={() => {
-                        setMenuClose();
-                      }}
+                      onClick={closeNav}
                       variant="primary"
-                      className="text-foreground hover:text-foreground/80 hover:bg-accent"
+                      className={navbarButtonStyles.withIcon}
                     >
                       {t("navigation.login")}
                     </NavLink>
-                  </div>
+                  </ul>
                 )}
               </div>
             </div>

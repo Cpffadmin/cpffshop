@@ -160,7 +160,7 @@ const ProductRow = ({ product: initialProduct }: { product: Product }) => {
               className={`sm:hidden h-10 w-10 disabled:opacity-100 ${
                 isOutOfStock
                   ? "bg-red-500 text-white cursor-not-allowed"
-                  : "bg-[#535C91] hover:bg-[#424874] text-white"
+                  : "bg-primary hover:bg-primary/90 text-primary-foreground"
               }`}
               title={
                 isOutOfStock

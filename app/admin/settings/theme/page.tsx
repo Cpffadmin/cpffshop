@@ -36,6 +36,8 @@ export default function ThemeSettings() {
   const darkCardBorderPickerRef = useRef<HTMLDivElement>(null);
   const lightCardItemBorderPickerRef = useRef<HTMLDivElement>(null);
   const darkCardItemBorderPickerRef = useRef<HTMLDivElement>(null);
+  const lightButtonPickerRef = useRef<HTMLDivElement>(null);
+  const darkButtonPickerRef = useRef<HTMLDivElement>(null);
 
   // Handle click outside to close color pickers
   useEffect(() => {
@@ -148,6 +150,18 @@ export default function ThemeSettings() {
       ) {
         setShowDarkCardItemBorderPicker(false);
       }
+      if (
+        lightButtonPickerRef.current &&
+        !lightButtonPickerRef.current.contains(event.target as Node)
+      ) {
+        setShowLightButtonPicker(false);
+      }
+      if (
+        darkButtonPickerRef.current &&
+        !darkButtonPickerRef.current.contains(event.target as Node)
+      ) {
+        setShowDarkButtonPicker(false);
+      }
     }
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -176,6 +190,8 @@ export default function ThemeSettings() {
     useState("#e5e7eb");
   const [darkCardItemBorderColor, setDarkCardItemBorderColor] =
     useState("#374151");
+  const [lightButtonColor, setLightButtonColor] = useState("#535C91");
+  const [darkButtonColor, setDarkButtonColor] = useState("#6B74A9");
   const [showLightPicker, setShowLightPicker] = useState(false);
   const [showDarkPicker, setShowDarkPicker] = useState(false);
   const [showLightCardPicker, setShowLightCardPicker] = useState(false);
@@ -199,6 +215,8 @@ export default function ThemeSettings() {
     useState(false);
   const [showDarkCardItemBorderPicker, setShowDarkCardItemBorderPicker] =
     useState(false);
+  const [showLightButtonPicker, setShowLightButtonPicker] = useState(false);
+  const [showDarkButtonPicker, setShowDarkButtonPicker] = useState(false);
   const [lightBgOpacity, setLightBgOpacity] = useState(100);
   const [darkBgOpacity, setDarkBgOpacity] = useState(100);
   const [lightCardOpacity, setLightCardOpacity] = useState(100);
@@ -228,6 +246,7 @@ export default function ThemeSettings() {
           setLightFooterColor(light.footer);
           setLightCardBorderColor(light.cardBorder);
           setLightCardItemBorderColor(light.cardItemBorder);
+          setLightButtonColor(light.button ?? "#535C91");
           setLightBgOpacity(light.backgroundOpacity);
           setLightCardOpacity(light.cardOpacity);
           setLightNavbarOpacity(light.navbarOpacity);
@@ -243,6 +262,7 @@ export default function ThemeSettings() {
           setDarkFooterColor(dark.footer);
           setDarkCardBorderColor(dark.cardBorder);
           setDarkCardItemBorderColor(dark.cardItemBorder);
+          setDarkButtonColor(dark.button ?? "#6B74A9");
           setDarkBgOpacity(dark.backgroundOpacity);
           setDarkCardOpacity(dark.cardOpacity);
           setDarkNavbarOpacity(dark.navbarOpacity);
@@ -270,6 +290,7 @@ export default function ThemeSettings() {
           footer: lightFooterColor,
           cardBorder: lightCardBorderColor,
           cardItemBorder: lightCardItemBorderColor,
+          button: lightButtonColor,
           backgroundOpacity: lightBgOpacity,
           cardOpacity: lightCardOpacity,
           navbarOpacity: lightNavbarOpacity,
@@ -285,6 +306,7 @@ export default function ThemeSettings() {
           footer: darkFooterColor,
           cardBorder: darkCardBorderColor,
           cardItemBorder: darkCardItemBorderColor,
+          button: darkButtonColor,
           backgroundOpacity: darkBgOpacity,
           cardOpacity: darkCardOpacity,
           navbarOpacity: darkNavbarOpacity,
@@ -491,6 +513,43 @@ export default function ThemeSettings() {
                   <span className="w-12 text-right">{lightNavbarOpacity}%</span>
                 </div>
               </div>
+            </div>
+
+            <div>
+              <Label htmlFor="lightButtonColor">Button Color</Label>
+              <div className="flex gap-2 mt-1">
+                <div
+                  className="w-10 h-10 rounded border cursor-pointer"
+                  style={{ backgroundColor: lightButtonColor }}
+                  onClick={() =>
+                    setShowLightButtonPicker(!showLightButtonPicker)
+                  }
+                />
+                <Input
+                  id="lightButtonColor"
+                  value={lightButtonColor}
+                  onChange={(e) => setLightButtonColor(e.target.value)}
+                  className="font-mono"
+                />
+              </div>
+              {showLightButtonPicker && (
+                <div className="absolute mt-2 z-10" ref={lightButtonPickerRef}>
+                  <HexColorPicker
+                    color={lightButtonColor}
+                    onChange={setLightButtonColor}
+                  />
+                </div>
+              )}
+              <Button
+                type="button"
+                className="mt-2"
+                style={{
+                  backgroundColor: lightButtonColor,
+                  color: "#ffffff",
+                }}
+              >
+                Preview
+              </Button>
             </div>
 
             <div>
@@ -833,6 +892,43 @@ export default function ThemeSettings() {
                   <span className="w-12 text-right">{darkNavbarOpacity}%</span>
                 </div>
               </div>
+            </div>
+
+            <div>
+              <Label htmlFor="darkButtonColor">Button Color</Label>
+              <div className="flex gap-2 mt-1">
+                <div
+                  className="w-10 h-10 rounded border cursor-pointer"
+                  style={{ backgroundColor: darkButtonColor }}
+                  onClick={() =>
+                    setShowDarkButtonPicker(!showDarkButtonPicker)
+                  }
+                />
+                <Input
+                  id="darkButtonColor"
+                  value={darkButtonColor}
+                  onChange={(e) => setDarkButtonColor(e.target.value)}
+                  className="font-mono"
+                />
+              </div>
+              {showDarkButtonPicker && (
+                <div className="absolute mt-2 z-10" ref={darkButtonPickerRef}>
+                  <HexColorPicker
+                    color={darkButtonColor}
+                    onChange={setDarkButtonColor}
+                  />
+                </div>
+              )}
+              <Button
+                type="button"
+                className="mt-2"
+                style={{
+                  backgroundColor: darkButtonColor,
+                  color: "#ffffff",
+                }}
+              >
+                Preview
+              </Button>
             </div>
 
             <div>

@@ -4,6 +4,11 @@ Append a dated entry under "Fix log" whenever you resolve a root-cause issue. Ch
 
 ## Fix log
 
+### 2026-09-04 — Theme settings had no button color (storefront buttons stayed hardcoded purple)
+- **Symptom:** Add-to-cart, list/grid toggle, and other `bg-primary` actions could not be changed from Admin → Theme.
+- **Root cause:** `themeSettings` stored surfaces (background/card/navbar/text/…) but no button/primary. `--primary` stayed the shadcn near-black default, and several product controls used `#535C91` directly.
+- **Fix:** Added `button` on light/dark theme settings (defaults `#535C91` / `#6B74A9`), color pickers on the theme page, and `theme-provider` writes `--primary` / `--primary-foreground` / `--ring`. Product list toggle + cart icon use `bg-primary`. **Restart the dev server** after this schema field (Mongoose caches the model).
+
 ### 2026-09-04 — Mobile products list: selected vs unselected backgrounds blended into the page
 - **Symptom:** On `/products` mobile list view, the selected grid/list toggle looked black, the unselected toggle and Previous button disappeared into the mint page color, and product rows merged into one white slab.
 - **Root cause:** Theme `--background` is the mint page color; `--primary` is unthemed near-black. Toggles/pagination used `bg-primary` / `bg-background`. List rows were `<tr className="bg-card">` inside `border-collapse`, so radius/shadow/gaps did not apply.

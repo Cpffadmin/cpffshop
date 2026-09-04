@@ -19,6 +19,7 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
       footer: "#f9fafb",
       cardBorder: "#e5e7eb",
       cardItemBorder: "#e5e7eb",
+      button: "#535C91",
       backgroundOpacity: 100,
       cardOpacity: 100,
       navbarOpacity: 100,
@@ -34,6 +35,7 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
       footer: "#111827",
       cardBorder: "#374151",
       cardItemBorder: "#374151",
+      button: "#6B74A9",
       backgroundOpacity: 100,
       cardOpacity: 100,
       navbarOpacity: 100,
@@ -167,6 +169,23 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
       document.documentElement.style.setProperty(
         "--navbar-opacity",
         String(colors.navbarOpacity / 100)
+      );
+
+      const buttonHex =
+        (colors as { button?: string }).button ||
+        (isDark ? "#6B74A9" : "#535C91");
+      const buttonHSL = hexToHSL(buttonHex);
+      document.documentElement.style.setProperty(
+        "--primary",
+        `${buttonHSL.h} ${buttonHSL.s}% ${buttonHSL.l}%`
+      );
+      document.documentElement.style.setProperty(
+        "--primary-foreground",
+        buttonHSL.l > 60 ? "240 5.9% 10%" : "0 0% 98%"
+      );
+      document.documentElement.style.setProperty(
+        "--ring",
+        `${buttonHSL.h} ${buttonHSL.s}% ${buttonHSL.l}%`
       );
 
       // Apply text colors

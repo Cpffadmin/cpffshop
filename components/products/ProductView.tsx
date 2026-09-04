@@ -73,7 +73,7 @@ const ProductView: React.FC<ProductViewProps> = ({
           onClick={() => setViewMode("grid")}
           className={`p-2 rounded-md transition-colors ${
             viewMode === "grid"
-              ? "bg-[#535C91] text-white dark:bg-[#6B74A9]"
+              ? "bg-primary text-primary-foreground"
               : "bg-card text-foreground border border-border hover:bg-accent hover:text-accent-foreground"
           }`}
         >
@@ -83,7 +83,7 @@ const ProductView: React.FC<ProductViewProps> = ({
           onClick={() => setViewMode("table")}
           className={`p-2 rounded-md transition-colors ${
             viewMode === "table"
-              ? "bg-[#535C91] text-white dark:bg-[#6B74A9]"
+              ? "bg-primary text-primary-foreground"
               : "bg-card text-foreground border border-border hover:bg-accent hover:text-accent-foreground"
           }`}
         >
