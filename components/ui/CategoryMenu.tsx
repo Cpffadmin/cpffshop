@@ -283,12 +283,12 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
         )}
       </div>
 
-      <div className="hidden md:block">
-        {canScrollLeft && (
+      <div className="mx-auto hidden max-w-[1200px] items-center gap-2 md:flex">
+        {(canScrollLeft || canScrollRight) && (
           <button
             type="button"
             onClick={() => handleScroll("left")}
-            className="absolute left-4 top-1/2 z-10 hidden h-10 -translate-y-1/2 items-center rounded-lg bg-white/80 p-1.5 shadow-md transition-colors hover:bg-gray-100 focus:outline-none dark:bg-gray-800/80 dark:hover:bg-gray-700 md:flex"
+            className="flex h-14 w-10 shrink-0 items-center justify-center rounded-lg bg-white/80 shadow-md transition-colors hover:bg-gray-100 focus:outline-none dark:bg-gray-800/80 dark:hover:bg-gray-700"
             aria-label={t("common.previous")}
           >
             <ChevronLeft className="h-5 w-5 text-gray-600 dark:text-gray-300" />
@@ -297,7 +297,7 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
 
         <div
           ref={containerRef}
-          className="mx-auto flex max-w-[1200px] gap-4 overflow-x-auto scroll-smooth px-12 hide-scrollbar"
+          className="flex min-w-0 flex-1 gap-4 overflow-x-auto scroll-smooth hide-scrollbar"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {loading ? (
@@ -340,11 +340,11 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
           )}
         </div>
 
-        {canScrollRight && (
+        {(canScrollLeft || canScrollRight) && (
           <button
             type="button"
             onClick={() => handleScroll("right")}
-            className="absolute right-4 top-1/2 z-10 hidden h-14 -translate-y-1/2 items-center rounded-lg bg-white/80 p-1.5 shadow-md transition-colors hover:bg-gray-100 focus:outline-none dark:bg-gray-800/80 dark:hover:bg-gray-700 md:flex"
+            className="flex h-14 w-10 shrink-0 items-center justify-center rounded-lg bg-white/80 shadow-md transition-colors hover:bg-gray-100 focus:outline-none dark:bg-gray-800/80 dark:hover:bg-gray-700"
             aria-label={t("common.next")}
           >
             <ChevronRight className="h-5 w-5 text-gray-600 dark:text-gray-300" />
