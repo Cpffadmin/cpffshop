@@ -91,12 +91,12 @@ const ProductRow = ({ product: initialProduct }: { product: Product }) => {
 
   return (
     <>
-      <tr
-        className="bg-card hover:bg-accent/5 shadow-sm hover:shadow-md rounded-lg overflow-hidden"
+      <div
+        className="bg-card hover:bg-accent/10 shadow-md hover:shadow-lg rounded-lg overflow-hidden border border-border"
         data-product-id={currentProduct._id}
       >
-        <td className="p-4">
-          <div className="relative h-16 w-16">
+        <div className="flex items-center gap-3 p-3 sm:p-4">
+          <div className="relative h-16 w-16 flex-shrink-0">
             <Image
               src={currentProduct.images[0]}
               alt={currentProduct.name}
@@ -104,11 +104,9 @@ const ProductRow = ({ product: initialProduct }: { product: Product }) => {
               className="object-cover rounded"
             />
           </div>
-        </td>
-        <td className="p-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+          <div className="flex min-w-0 flex-1 flex-col sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <Link href={`/product/${currentProduct._id}`}>
-              <span className="font-medium hover:text-primary block mb-2 sm:mb-0">
+              <span className="font-medium hover:text-primary block mb-1 sm:mb-0">
                 {currentProduct.displayNames?.[language] || currentProduct.name}
               </span>
             </Link>
@@ -124,9 +122,7 @@ const ProductRow = ({ product: initialProduct }: { product: Product }) => {
                 )}
             </div>
           </div>
-        </td>
-        <td className="hidden sm:table-cell p-4">
-          <div className="flex items-center">
+          <div className="hidden sm:flex items-center">
             {currentProduct.averageRating &&
             currentProduct.averageRating > 0 ? (
               <>
@@ -142,9 +138,7 @@ const ProductRow = ({ product: initialProduct }: { product: Product }) => {
               </span>
             )}
           </div>
-        </td>
-        <td className="p-4">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
             <Button
               variant={isOutOfStock ? "destructive" : "default"}
               size="sm"
@@ -187,8 +181,8 @@ const ProductRow = ({ product: initialProduct }: { product: Product }) => {
               </Link>
             )}
           </div>
-        </td>
-      </tr>
+        </div>
+      </div>
       {/* Specifications Modal */}
       <SpecificationsModal
         product={currentProduct}
@@ -206,6 +200,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
   totalPages,
   onPageChange,
 }) => {
+  const { t } = useTranslation();
   if (isLoading && products.length === 0) {
     return (
       <div className="space-y-4">
@@ -218,14 +213,10 @@ const ProductTable: React.FC<ProductTableProps> = ({
 
   return (
     <div className="space-y-8">
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse">
-          <tbody>
-            {products.map((product) => (
-              <ProductRow key={product._id} product={product} />
-            ))}
-          </tbody>
-        </table>
+      <div className="space-y-3">
+        {products.map((product) => (
+          <ProductRow key={product._id} product={product} />
+        ))}
       </div>
 
       {/* Pagination */}
@@ -234,19 +225,22 @@ const ProductTable: React.FC<ProductTableProps> = ({
           <button
             onClick={() => onPageChange(Math.max(currentPage - 1, 1))}
             disabled={currentPage === 1}
-            className="px-4 py-2 rounded-md border border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 rounded-md border border-border bg-card text-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            Previous
+            {t("common.previous")}
           </button>
           <span className="text-sm text-muted-foreground">
-            Page {currentPage} of {totalPages}
+            {t("common.pagination", {
+              current: currentPage,
+              total: totalPages,
+            })}
           </span>
           <button
             onClick={() => onPageChange(Math.min(currentPage + 1, totalPages))}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 rounded-md border border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 rounded-md border border-border bg-card text-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            Next
+            {t("common.next")}
           </button>
         </div>
       )}

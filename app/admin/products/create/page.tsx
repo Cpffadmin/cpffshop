@@ -20,6 +20,8 @@ import { Label } from "@/components/ui/label";
 import { mutate } from "swr";
 import { numberInputDisplay, parseNumberInput } from "@/lib/utils";
 import type { ProductSpecification } from "@/components/types";
+import { ArrowLeft, LayoutDashboard, Package } from "lucide-react";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 interface Brand {
   _id: string;
@@ -109,7 +111,7 @@ interface ProductData {
 const CreateProduct = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const { language } = useTranslation();
+  const { language, t } = useTranslation();
 
   // Add debug logs
   useEffect(() => {
@@ -523,9 +525,39 @@ const CreateProduct = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-8">
-        {language === "en" ? "Create Product" : "創建產品"}
-      </h1>
+      <Breadcrumb
+        items={[
+          {
+            label: t("navigation.adminPanel"),
+            href: "/admin",
+            icon: LayoutDashboard,
+          },
+          {
+            label: t("product.admin.title"),
+            href: "/admin/products",
+            icon: Package,
+          },
+          {
+            label: language === "en" ? "Create Product" : "創建產品",
+            href: "/admin/products/create",
+            current: true,
+          },
+        ]}
+      />
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-2xl font-bold">
+          {language === "en" ? "Create Product" : "創建產品"}
+        </h1>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => router.push("/admin/products")}
+          className="flex items-center gap-2"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          {t("common.back")}
+        </Button>
+      </div>
       <form
         onSubmit={handleSubmit}
         className="space-y-6 bg-card rounded-lg p-8 border border-[color:var(--card-border)]"
@@ -938,7 +970,14 @@ const CreateProduct = () => {
             </Label>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push("/admin/products")}
+            >
+              {t("common.back")}
+            </Button>
             <Button
               type="submit"
               disabled={isLoading}

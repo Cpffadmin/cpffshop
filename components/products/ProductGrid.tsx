@@ -47,7 +47,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
         <button
           onClick={() => onPageChange(Math.max(currentPage - 1, 1))}
           disabled={currentPage === 1}
-          className="px-4 py-2 rounded-md border border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-4 py-2 rounded-md border border-border bg-card text-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {t("common.previous")}
         </button>
@@ -62,7 +62,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
             onPageChange(Math.min(currentPage + 1, Math.max(totalPages, 1)))
           }
           disabled={currentPage === Math.max(totalPages, 1)}
-          className="px-4 py-2 rounded-md border border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-4 py-2 rounded-md border border-border bg-card text-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {t("common.next")}
         </button>

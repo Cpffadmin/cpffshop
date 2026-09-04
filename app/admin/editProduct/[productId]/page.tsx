@@ -19,6 +19,8 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { mutate } from "swr";
 import { numberInputDisplay, parseNumberInput } from "@/lib/utils";
+import { ArrowLeft, LayoutDashboard, Package } from "lucide-react";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 interface Brand {
   _id: string;
@@ -648,9 +650,39 @@ const EditProduct = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-8">
-        {language === "en" ? "Edit Product" : "編輯產品"}
-      </h1>
+      <Breadcrumb
+        items={[
+          {
+            label: t("navigation.adminPanel"),
+            href: "/admin",
+            icon: LayoutDashboard,
+          },
+          {
+            label: t("product.admin.title"),
+            href: "/admin/products",
+            icon: Package,
+          },
+          {
+            label: language === "en" ? "Edit Product" : "編輯產品",
+            href: `/admin/editProduct/${productId}`,
+            current: true,
+          },
+        ]}
+      />
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-2xl font-bold">
+          {language === "en" ? "Edit Product" : "編輯產品"}
+        </h1>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => router.push("/admin/products")}
+          className="flex items-center gap-2"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          {t("common.back")}
+        </Button>
+      </div>
       <form
         onSubmit={handleSubmit}
         className="space-y-6 bg-card rounded-lg p-8 border border-[color:var(--card-border)]"
@@ -1078,11 +1110,20 @@ const EditProduct = () => {
             </Label>
           </div>
 
-          <Button
-            type="submit"
-            className="w-full md:w-auto"
-            disabled={isLoading}
-          >
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push("/admin/products")}
+              className="w-full md:w-auto"
+            >
+              {t("common.back")}
+            </Button>
+            <Button
+              type="submit"
+              className="w-full md:w-auto"
+              disabled={isLoading}
+            >
             {isLoading
               ? language === "en"
                 ? "Updating..."
@@ -1090,7 +1131,8 @@ const EditProduct = () => {
               : language === "en"
               ? "Update Product"
               : "更新產品"}
-          </Button>
+            </Button>
+          </div>
         </div>
       </form>
     </div>
