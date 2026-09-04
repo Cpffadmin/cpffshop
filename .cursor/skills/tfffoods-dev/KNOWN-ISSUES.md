@@ -4,6 +4,11 @@ Append a dated entry under "Fix log" whenever you resolve a root-cause issue. Ch
 
 ## Fix log
 
+### 2026-09-04 — Desktop grid/list toggles overlapped the category scroll arrow
+- **Symptom:** After putting category + view toggles on one row (mobile space save), desktop squeezed the category strip and the toggles sat on top of the right arrow.
+- **Root cause:** That flex row had no `md` breakpoint — `flex-1` category + `shrink-0` toggles applied at all widths.
+- **Fix:** Same row only below `md`. From `md` up, category bar is full width; grid/list buttons sit on the next row, right-aligned.
+
 ### 2026-09-04 — Mobile category dropdown pushed product cards down
 - **Symptom:** Expanding categories inserted a long vertical list into the layout, so product cards jumped down the page.
 - **Root cause:** The open list was in normal document flow (`flex-col`) under the trigger.
