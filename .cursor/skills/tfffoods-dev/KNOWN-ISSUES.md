@@ -4,6 +4,11 @@ Append a dated entry under "Fix log" whenever you resolve a root-cause issue. Ch
 
 ## Fix log
 
+### 2026-09-04 — Category bar showed both scroll arrows even at the start/end
+- **Symptom:** Left `<` stayed visible at the beginning of the category strip (and `>` at the end) whenever the row overflowed.
+- **Root cause:** One `showArrows` flag meant “has overflow,” not “can scroll this direction.”
+- **Fix:** Left arrow only if `scrollLeft > 0`; right arrow only if not at `scrollWidth - clientWidth`. Updates on scroll and resize.
+
 ### 2026-09-04 — Desktop grid/list toggles overlapped the category scroll arrow
 - **Symptom:** After putting category + view toggles on one row (mobile space save), desktop squeezed the category strip and the toggles sat on top of the right arrow.
 - **Root cause:** That flex row had no `md` breakpoint — `flex-1` category + `shrink-0` toggles applied at all widths.

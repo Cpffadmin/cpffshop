@@ -33,10 +33,25 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
 }) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showArrows, setShowArrows] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { language, t } = useTranslation();
+
+  const updateScrollButtons = () => {
+    const container = containerRef.current;
+    if (!container) {
+      setCanScrollLeft(false);
+      setCanScrollRight(false);
+      return;
+    }
+
+    const { scrollLeft, scrollWidth, clientWidth } = container;
+    const maxScroll = scrollWidth - clientWidth;
+    setCanScrollLeft(scrollLeft > 1);
+    setCanScrollRight(maxScroll - scrollLeft > 1);
+  };
 
   const handleScroll = (direction: "left" | "right") => {
     const container = containerRef.current;
@@ -53,27 +68,6 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
       behavior: "smooth",
     });
   };
-
-  const checkArrows = () => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const hasOverflow = container.scrollWidth > container.clientWidth;
-    setShowArrows(hasOverflow);
-  };
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (container) {
-      const resizeObserver = new ResizeObserver(checkArrows);
-      resizeObserver.observe(container);
-      return () => resizeObserver.disconnect();
-    }
-  }, []);
-
-  useEffect(() => {
-    checkArrows();
-  }, [categories]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -98,6 +92,21 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
 
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    updateScrollButtons();
+    const resizeObserver = new ResizeObserver(updateScrollButtons);
+    resizeObserver.observe(container);
+    container.addEventListener("scroll", updateScrollButtons, { passive: true });
+
+    return () => {
+      resizeObserver.disconnect();
+      container.removeEventListener("scroll", updateScrollButtons);
+    };
+  }, [categories, loading]);
 
   const categoryLabel = (category: Category) =>
     category.displayNames?.[language] || category.name;
@@ -275,7 +284,7 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
       </div>
 
       <div className="hidden md:block">
-        {showArrows && (
+        {canScrollLeft && (
           <button
             type="button"
             onClick={() => handleScroll("left")}
@@ -331,7 +340,7 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
           )}
         </div>
 
-        {showArrows && (
+        {canScrollRight && (
           <button
             type="button"
             onClick={() => handleScroll("right")}
