@@ -4,6 +4,11 @@ Append a dated entry under "Fix log" whenever you resolve a root-cause issue. Ch
 
 ## Fix log
 
+### 2026-09-04 — Mobile category dropdown pushed product cards down
+- **Symptom:** Expanding categories inserted a long vertical list into the layout, so product cards jumped down the page.
+- **Root cause:** The open list was in normal document flow (`flex-col`) under the trigger.
+- **Fix:** Open panel is `absolute` over the cards (3-column grid), `hsl(var(--navbar-background) / 0.8)` so it stays 80% opaque navbar-tinted. Tap outside to close.
+
 ### 2026-09-04 — Mobile category chips overlapped; needed a collapsible vertical list
 - **Symptom:** On phone `/products`, category names sat in one horizontal row (`whitespace-nowrap`) and ran off / stacked on top of each other.
 - **Root cause:** The products page `CategoryMenu` always used the desktop chip strip. Showing it on mobile without wrapping or a collapse control made long bilingual names overflow.

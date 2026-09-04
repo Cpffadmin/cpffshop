@@ -177,16 +177,22 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
     </>
   );
 
-  const collapsibleList = (
-    <div className="mt-2 flex max-h-[50vh] flex-col gap-1 overflow-y-auto">
+  const overlayItemClass = (active: boolean) =>
+    cn(
+      "flex min-h-10 items-center justify-center rounded-md px-1 py-2 text-center text-xs font-medium leading-tight",
+      active
+        ? "bg-primary text-primary-foreground"
+        : "text-foreground hover:bg-accent/70"
+    );
+
+  const overlayGrid = (
+    <div className="grid grid-cols-3 gap-1">
       <button
         type="button"
         onClick={() => handleCategoryClick("All Categories")}
-        className={listItemClass(selectedCategory === "All Categories")}
+        className={overlayItemClass(selectedCategory === "All Categories")}
       >
-        <span className="line-clamp-2 w-full text-left">
-          {t("common.allCategories")}
-        </span>
+        <span className="line-clamp-2">{t("common.allCategories")}</span>
       </button>
       {categories.map((category) => {
         if (!category) return null;
@@ -196,11 +202,9 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
             type="button"
             key={category._id}
             onClick={() => handleCategoryClick(category._id)}
-            className={listItemClass(active)}
+            className={overlayItemClass(active)}
           >
-            <span className="line-clamp-2 w-full text-left">
-              {categoryLabel(category)}
-            </span>
+            <span className="line-clamp-2">{categoryLabel(category)}</span>
           </button>
         );
       })}
@@ -224,16 +228,24 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
   }
 
   return (
-    <div className="relative w-full">
+    <div className="w-full md:relative">
       <div className="md:hidden">
         {loading ? (
           <LoadingSkeleton width="w-full" height="h-10" className="rounded-lg" />
         ) : (
           <>
+            {isExpanded && (
+              <button
+                type="button"
+                className="fixed inset-0 z-20 cursor-default"
+                aria-label={t("common.close")}
+                onClick={() => setIsExpanded(false)}
+              />
+            )}
             <button
               type="button"
               onClick={() => setIsExpanded((open) => !open)}
-              className="flex h-10 w-full items-center justify-between gap-2 rounded-lg border border-border bg-card px-3 text-left"
+              className="relative z-30 flex h-10 w-full items-center justify-between gap-2 rounded-lg border border-border bg-card px-3 text-left"
               aria-expanded={isExpanded}
               aria-label={t("product.filters.categories")}
             >
@@ -247,7 +259,17 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
                 )}
               />
             </button>
-            {isExpanded && collapsibleList}
+            {isExpanded && (
+              <div
+                className="absolute left-0 right-0 top-full z-30 mt-1 rounded-lg border border-border p-2 shadow-lg"
+                style={{
+                  backgroundColor:
+                    "hsl(var(--navbar-background, 0 0% 100%) / 0.8)",
+                }}
+              >
+                {overlayGrid}
+              </div>
+            )}
           </>
         )}
       </div>
