@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, ReactNode } from "react";
 import { LayoutGrid, Table } from "lucide-react";
 import { Product } from "@/types";
 import ProductGrid from "./ProductGrid";
@@ -11,6 +11,7 @@ interface ProductViewProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  toolbarStart?: ReactNode;
 }
 
 const ProductView: React.FC<ProductViewProps> = ({
@@ -19,6 +20,7 @@ const ProductView: React.FC<ProductViewProps> = ({
   currentPage,
   totalPages,
   onPageChange,
+  toolbarStart,
 }) => {
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
   const [lastWidth, setLastWidth] = useState(0);
@@ -57,39 +59,55 @@ const ProductView: React.FC<ProductViewProps> = ({
     };
   }, [updateViewMode]);
 
-  // If there are no products and we're not loading, show the empty message
+  const viewToggleClass = (active: boolean) =>
+    `h-10 w-10 flex items-center justify-center rounded-md transition-colors ${
+      active
+        ? "bg-primary text-primary-foreground"
+        : "bg-card text-foreground border border-border hover:bg-accent hover:text-accent-foreground"
+    }`;
+
+  const toolbar = (
+    <div className="sticky top-14 z-20 -mx-4 px-4 py-1 app-background md:static md:mx-0 md:px-0">
+      <div className="flex items-start gap-2">
+        {toolbarStart ? (
+          <div className="min-w-0 flex-1">{toolbarStart}</div>
+        ) : null}
+        <div className={`flex shrink-0 gap-2 ${toolbarStart ? "" : "ml-auto"}`}>
+          <button
+            type="button"
+            onClick={() => setViewMode("grid")}
+            className={viewToggleClass(viewMode === "grid")}
+            aria-pressed={viewMode === "grid"}
+          >
+            <LayoutGrid className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode("table")}
+            className={viewToggleClass(viewMode === "table")}
+            aria-pressed={viewMode === "table"}
+          >
+            <Table className="h-5 w-5" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
   if (!isLoading && products.length === 0) {
     return (
-      <div className="flex justify-center items-center min-h-[200px] text-muted-foreground">
-        {t("categories.common.emptyCategory")}
+      <div className="space-y-6">
+        {toolbar}
+        <div className="flex justify-center items-center min-h-[200px] text-muted-foreground">
+          {t("categories.common.emptyCategory")}
+        </div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end gap-2">
-        <button
-          onClick={() => setViewMode("grid")}
-          className={`p-2 rounded-md transition-colors ${
-            viewMode === "grid"
-              ? "bg-primary text-primary-foreground"
-              : "bg-card text-foreground border border-border hover:bg-accent hover:text-accent-foreground"
-          }`}
-        >
-          <LayoutGrid className="h-5 w-5" />
-        </button>
-        <button
-          onClick={() => setViewMode("table")}
-          className={`p-2 rounded-md transition-colors ${
-            viewMode === "table"
-              ? "bg-primary text-primary-foreground"
-              : "bg-card text-foreground border border-border hover:bg-accent hover:text-accent-foreground"
-          }`}
-        >
-          <Table className="h-5 w-5" />
-        </button>
-      </div>
+      {toolbar}
 
       {viewMode === "grid" ? (
         <ProductGrid

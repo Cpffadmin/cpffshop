@@ -355,19 +355,19 @@ export default function Products() {
     <div className="min-h-screen app-background">
       <div className="container mx-auto px-4 py-8">
         <Breadcrumb items={breadcrumbItems} />
-        <div className="sticky top-14 z-20 -mx-4 px-4 py-1 app-background md:static md:mx-0 md:px-0">
-          <CategoryMenu
-            selectedCategory={selectedCategory}
-            onCategorySelect={setSelectedCategory}
-          />
-        </div>
-        <div className="mt-8">
+        <div className="mt-4">
           <ProductView
             products={products}
             isLoading={isValidating}
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={setCurrentPage}
+            toolbarStart={
+              <CategoryMenu
+                selectedCategory={selectedCategory}
+                onCategorySelect={setSelectedCategory}
+              />
+            }
           />
         </div>
       </div>

@@ -224,25 +224,21 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
   }
 
   return (
-    <div className="relative w-full py-2 md:py-4">
+    <div className="relative w-full">
       <div className="md:hidden">
         {loading ? (
-          <LoadingSkeleton width="w-full" height="h-12" className="rounded-lg" />
+          <LoadingSkeleton width="w-full" height="h-10" className="rounded-lg" />
         ) : (
           <>
             <button
               type="button"
               onClick={() => setIsExpanded((open) => !open)}
-              className="flex w-full items-center justify-between gap-3 rounded-lg border border-border bg-card px-3 py-3 text-left"
+              className="flex h-10 w-full items-center justify-between gap-2 rounded-lg border border-border bg-card px-3 text-left"
               aria-expanded={isExpanded}
+              aria-label={t("product.filters.categories")}
             >
-              <span className="min-w-0">
-                <span className="block text-xs text-muted-foreground">
-                  {t("product.filters.categories")}
-                </span>
-                <span className="block truncate text-sm font-medium text-foreground">
-                  {selectedLabel}
-                </span>
+              <span className="min-w-0 truncate text-sm font-medium text-foreground">
+                {selectedLabel}
               </span>
               <ChevronDown
                 className={cn(
