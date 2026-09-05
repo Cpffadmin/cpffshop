@@ -67,7 +67,7 @@ const ProductView: React.FC<ProductViewProps> = ({
     }`;
 
   const toolbar = (
-    <div className="sticky top-14 z-20 -mx-4 px-4 py-1 app-background overflow-visible md:static md:mx-0 md:px-0">
+    <div className="sticky top-14 z-20 -mx-4 px-4 py-1 app-background overflow-visible md:top-[var(--navbar-height)] md:mx-0 md:px-0">
       <div className="flex items-start gap-2 md:flex-col md:items-stretch md:gap-3">
         {toolbarStart ? (
           <div className="min-w-0 flex-1 md:w-full">{toolbarStart}</div>

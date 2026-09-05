@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth.config";
-import { connectToDatabase } from "@/utils/database";
+import { connectToDatabase, waitForConnection } from "@/utils/database";
 import Product from "@/utils/models/Product";
 import Category from "@/utils/models/Category";
 import Brand from "@/utils/models/Brand";
@@ -268,11 +268,30 @@ export async function PUT(
       : product.slug;
 
     // Ensure images array is properly handled
+    const specifications = Array.isArray(data.specifications)
+      ? data.specifications.map((spec) => ({
+          key: spec.key,
+          value: {
+            en: spec.value?.en ?? "",
+            "zh-TW": spec.value?.["zh-TW"] ?? "",
+          },
+          type: spec.type || "text",
+          displayNames: {
+            en: spec.displayNames?.en || spec.key,
+            "zh-TW": spec.displayNames?.["zh-TW"] || spec.key,
+          },
+          options: spec.type === "select" ? spec.options : undefined,
+          selectedOptionPrice: spec.selectedOptionPrice || 0,
+          required: spec.required || false,
+        }))
+      : [];
+
     const updatedData = {
       ...data,
       slug,
       user: session.user.id,
       images: Array.isArray(data.images) ? data.images : [],
+      specifications,
       brand: mongoose.Types.ObjectId.isValid(data.brand) ? data.brand : null,
       category: mongoose.Types.ObjectId.isValid(data.category)
         ? data.category
@@ -329,6 +348,12 @@ export async function PUT(
       await mongoSession.abortTransaction();
     }
     console.error("Error in PUT handler:", error);
+    if (error instanceof mongoose.Error.ValidationError) {
+      return NextResponse.json(
+        { error: error.message, details: error.errors },
+        { status: 400 }
+      );
+    }
     return NextResponse.json(
       { error: "Failed to update product", details: error },
       { status: 500 }
@@ -370,6 +395,65 @@ export async function DELETE(
     console.error("❌ Delete Error:", error);
     return NextResponse.json(
       { error: "Failed to delete product" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ productId: string }> }
+) {
+  try {
+    const session = (await getServerSession(authOptions)) as Session | null;
+    if (!session?.user?.admin) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    await connectToDatabase();
+    const isConnected = await waitForConnection(10000);
+    if (!isConnected) {
+      return NextResponse.json(
+        { error: "Database connection timeout" },
+        { status: 503 }
+      );
+    }
+
+    const { productId } = await params;
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return NextResponse.json(
+        { error: "Invalid product ID" },
+        { status: 400 }
+      );
+    }
+
+    const body = await request.json();
+    if (typeof body.draft !== "boolean") {
+      return NextResponse.json(
+        { error: "draft must be a boolean" },
+        { status: 400 }
+      );
+    }
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productId,
+      { $set: { draft: body.draft } },
+      { new: true, runValidators: false }
+    ).lean();
+
+    if (!updatedProduct) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
+
+    clearAllProductCaches(productId);
+    return NextResponse.json({
+      _id: updatedProduct._id,
+      draft: updatedProduct.draft,
+    });
+  } catch (error) {
+    console.error("Error in PATCH handler:", error);
+    return NextResponse.json(
+      { error: "Failed to update product status" },
       { status: 500 }
     );
   }

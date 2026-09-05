@@ -668,6 +668,7 @@ const CreateProduct = () => {
                     src={url}
                     alt={`Product image ${index + 1}`}
                     fill
+                    sizes="(max-width: 768px) 50vw, 25vw"
                     className="object-cover rounded-lg"
                   />
                   <button

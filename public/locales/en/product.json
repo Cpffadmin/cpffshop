@@ -69,6 +69,7 @@
       "brand": "Brand",
       "price": "Price",
       "actions": "Actions",
+      "status": "Status",
       "noProducts": "No products found"
     },
     "grid": {
@@ -76,7 +77,17 @@
     },
     "actions": {
       "edit": "Edit Product",
-      "delete": "Delete Product"
+      "delete": "Delete Product",
+      "activateAll": "Activate all drafts"
+    },
+    "toggle": {
+      "active": "Active",
+      "activateSuccess": "Product is now active",
+      "draftSuccess": "Product moved to drafts",
+      "activateAllConfirm": "Activate all {{count}} draft products?",
+      "activateAllSuccess": "Activated {{count}} draft products",
+      "toggleError": "Failed to update product status",
+      "activateAllError": "Failed to activate draft products"
     },
     "pagination": {
       "perPage": "Per page",
@@ -103,7 +114,8 @@
     "ratings": "Ratings",
     "availability": "Availability",
     "clearAll": "Clear All",
-    "apply": "Apply Filters"
+    "apply": "Apply Filters",
+    "selectTypeHint": "Please select the product type you want"
   },
   "sorting": {
     "title": "Sort By",

@@ -640,6 +640,7 @@ export default function HeroSettingsPage() {
                             src={section.media.posterUrl}
                             alt="Hero Image"
                             fill
+                            sizes="160px"
                             className="object-cover rounded"
                           />
                         </div>

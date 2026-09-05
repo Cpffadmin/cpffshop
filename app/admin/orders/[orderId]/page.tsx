@@ -355,6 +355,7 @@ export default function AdminOrderDetailsPage({
                           src={item.product.images[0]}
                           alt={item.product.name}
                           fill
+                          sizes="64px"
                           className="object-cover"
                         />
                       </div>
@@ -426,6 +427,7 @@ export default function AdminOrderDetailsPage({
                     src={order.paymentProofUrl}
                     alt="Payment Proof"
                     fill
+                    sizes="(max-width: 768px) 100vw, 768px"
                     className="object-contain"
                   />
                 </div>

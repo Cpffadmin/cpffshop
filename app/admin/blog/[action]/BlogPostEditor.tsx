@@ -386,6 +386,7 @@ export const BlogPostEditor = ({
                       src={formData.mainImage}
                       alt="Main"
                       fill
+                      sizes="128px"
                       className="object-cover rounded-lg"
                     />
                   </div>

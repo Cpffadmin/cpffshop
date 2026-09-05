@@ -711,6 +711,7 @@ const Orders = ({ filterStatus }: Props) => {
                 src={paymentProofUrl}
                 alt={t("admin-orders.payment.proof")}
                 fill
+                sizes="(max-width: 768px) 100vw, 768px"
                 className="object-contain rounded-lg cursor-pointer"
                 onClick={() => setLightboxUrl(paymentProofUrl)}
               />
@@ -884,6 +885,7 @@ const Orders = ({ filterStatus }: Props) => {
                 src={lightboxUrl}
                 alt={t("order.details.payment.proof")}
                 fill
+                sizes="100vw"
                 className="object-contain"
               />
             </div>

@@ -45,6 +45,7 @@ export default function OrderSummaryCard({ invoice }: OrderSummaryCardProps) {
                             item.product.name
                           }
                           fill
+                          sizes="64px"
                           className="object-cover rounded-md"
                         />
                       </div>

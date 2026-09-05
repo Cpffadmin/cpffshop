@@ -68,6 +68,7 @@ const DynamicHeroVideo = () => {
             src={activeSection.media.posterUrl}
             alt={activeSection.title[language] || "Hero Image"}
             fill
+            sizes="100vw"
             className="object-cover"
             priority
           />

@@ -387,6 +387,7 @@ export default function AdminInvoiceDetailPage({
                           src={invoice.paymentProofUrl}
                           alt="Payment Proof"
                           fill
+                          sizes="96px"
                           className="object-cover rounded-lg"
                         />
                       </div>
@@ -400,6 +401,7 @@ export default function AdminInvoiceDetailPage({
                               src={invoice.paymentProofUrl}
                               alt="Payment Proof"
                               fill
+                              sizes="100vw"
                               className="object-contain"
                             />
                           </div>

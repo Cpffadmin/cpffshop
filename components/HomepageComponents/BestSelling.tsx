@@ -117,6 +117,7 @@ const BestSellingProducts: React.FC = () => {
                         products[currentIndex].displayNames.en
                       }
                       fill
+                      sizes="(max-width: 768px) 100vw, 28rem"
                       className="object-cover"
                       priority
                     />

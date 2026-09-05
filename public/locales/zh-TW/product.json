@@ -69,6 +69,7 @@
       "brand": "品牌",
       "price": "價格",
       "actions": "操作",
+      "status": "狀態",
       "noProducts": "找不到商品"
     },
     "grid": {
@@ -76,7 +77,17 @@
     },
     "actions": {
       "edit": "編輯商品",
-      "delete": "刪除商品"
+      "delete": "刪除商品",
+      "activateAll": "全部上架"
+    },
+    "toggle": {
+      "active": "上架",
+      "activateSuccess": "商品已上架",
+      "draftSuccess": "商品已移至草稿",
+      "activateAllConfirm": "確定將全部 {{count}} 件草稿商品上架？",
+      "activateAllSuccess": "已上架 {{count}} 件草稿商品",
+      "toggleError": "更新商品狀態失敗",
+      "activateAllError": "批次上架失敗"
     },
     "pagination": {
       "perPage": "每頁顯示",
@@ -103,7 +114,8 @@
     "ratings": "評分",
     "availability": "庫存狀態",
     "clearAll": "清除全部",
-    "apply": "套用篩選"
+    "apply": "套用篩選",
+    "selectTypeHint": "請選擇您想要的產品類型"
   },
   "sorting": {
     "title": "排序方式",

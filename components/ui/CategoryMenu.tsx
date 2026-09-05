@@ -23,19 +23,19 @@ interface Category {
 interface CategoryMenuProps {
   selectedCategory: string;
   onCategorySelect: (category: string) => void;
-  isMobile?: boolean;
 }
 
 const CategoryMenu: React.FC<CategoryMenuProps> = ({
   selectedCategory,
   onCategorySelect,
-  isMobile = false,
 }) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [hintTimedOut, setHintTimedOut] = useState(false);
+  const [hintHovered, setHintHovered] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { language, t } = useTranslation();
 
@@ -126,13 +126,21 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
     setIsExpanded(false);
   };
 
-  const listItemClass = (active: boolean) =>
-    cn(
-      "flex w-full items-center justify-start rounded-lg px-3 py-3 text-left text-sm font-medium transition-colors",
-      active
-        ? "bg-primary text-primary-foreground"
-        : "bg-card text-foreground hover:bg-accent hover:text-accent-foreground"
-    );
+  const showSelectHint = selectedCategory === "All Categories";
+
+  useEffect(() => {
+    if (!showSelectHint || loading) {
+      setHintHovered(false);
+      return;
+    }
+
+    setHintTimedOut(false);
+    const timeoutId = window.setTimeout(() => setHintTimedOut(true), 15000);
+    return () => window.clearTimeout(timeoutId);
+  }, [showSelectHint, loading]);
+
+  const showHintBubble =
+    showSelectHint && !isExpanded && !loading && (!hintTimedOut || hintHovered);
 
   const chipClass = (active: boolean) =>
     cn(
@@ -142,60 +150,16 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
         : "bg-card text-foreground hover:bg-accent hover:text-accent-foreground"
     );
 
-  const categoryButtons = (
-    <>
-      <button
-        type="button"
-        onClick={() => handleCategoryClick("All Categories")}
-        className={
-          isMobile
-            ? listItemClass(selectedCategory === "All Categories")
-            : chipClass(selectedCategory === "All Categories")
-        }
-      >
-        <span
-          className={
-            isMobile ? "line-clamp-2 w-full text-left" : "line-clamp-2 text-center"
-          }
-        >
-          {t("common.allCategories")}
-        </span>
-      </button>
-      {categories.map((category) => {
-        if (!category) return null;
-        const active = selectedCategory === category._id;
-        return (
-          <button
-            type="button"
-            key={category._id}
-            onClick={() => handleCategoryClick(category._id)}
-            className={isMobile ? listItemClass(active) : chipClass(active)}
-          >
-            <span
-              className={
-                isMobile
-                  ? "line-clamp-2 w-full text-left"
-                  : "line-clamp-2 text-center"
-              }
-            >
-              {categoryLabel(category)}
-            </span>
-          </button>
-        );
-      })}
-    </>
-  );
-
   const overlayItemClass = (active: boolean) =>
     cn(
-      "flex min-h-10 items-center justify-center rounded-md px-1 py-2 text-center text-xs font-medium leading-tight",
+      "flex min-h-12 items-center justify-center rounded-md px-2 py-2.5 text-center text-base font-medium leading-snug",
       active
         ? "bg-primary text-primary-foreground"
         : "text-foreground hover:bg-accent/70"
     );
 
   const overlayGrid = (
-    <div className="grid grid-cols-3 gap-1">
+    <div className="grid grid-cols-3 gap-2">
       <button
         type="button"
         onClick={() => handleCategoryClick("All Categories")}
@@ -220,24 +184,8 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
     </div>
   );
 
-  if (isMobile) {
-    return (
-      <div className="relative w-full py-2">
-        {loading ? (
-          <div className="flex flex-col space-y-2 px-4">
-            {[...Array(6)].map((_, i) => (
-              <LoadingSkeleton key={i} width="w-full" height="h-12" className="rounded-lg" />
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col gap-1 px-4">{categoryButtons}</div>
-        )}
-      </div>
-    );
-  }
-
   return (
-    <div className="w-full md:relative">
+    <div className="relative w-full">
       <div className="md:hidden">
         {loading ? (
           <LoadingSkeleton width="w-full" height="h-10" className="rounded-lg" />
@@ -251,23 +199,52 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
                 onClick={() => setIsExpanded(false)}
               />
             )}
-            <button
-              type="button"
-              onClick={() => setIsExpanded((open) => !open)}
-              className="relative z-30 flex h-10 w-full items-center justify-between gap-2 rounded-lg border border-border bg-card px-3 text-left"
-              aria-expanded={isExpanded}
-              aria-label={t("product.filters.categories")}
+            <div
+              className="relative z-30"
+              onMouseEnter={() => setHintHovered(true)}
+              onMouseLeave={() => setHintHovered(false)}
             >
-              <span className="min-w-0 truncate text-sm font-medium text-foreground">
-                {selectedLabel}
-              </span>
-              <ChevronDown
+              <button
+                type="button"
+                onClick={() => setIsExpanded((open) => !open)}
+                onFocus={() => setHintHovered(true)}
+                onBlur={() => setHintHovered(false)}
                 className={cn(
-                  "h-5 w-5 flex-shrink-0 text-muted-foreground transition-transform",
-                  isExpanded && "rotate-180"
+                  "flex h-10 w-full items-center justify-between gap-2 rounded-lg border bg-card px-3 text-left",
+                  showSelectHint
+                    ? "category-hint-blink border-primary"
+                    : "border-border"
                 )}
-              />
-            </button>
+                aria-expanded={isExpanded}
+                aria-label={t("product.filters.categories")}
+                aria-describedby={
+                  showHintBubble ? "category-select-hint" : undefined
+                }
+              >
+                <span className="min-w-0 truncate text-sm font-medium text-foreground">
+                  {selectedLabel}
+                </span>
+                <ChevronDown
+                  className={cn(
+                    "h-5 w-5 flex-shrink-0 text-muted-foreground transition-transform",
+                    isExpanded && "rotate-180"
+                  )}
+                />
+              </button>
+              {showHintBubble && (
+                <div
+                  id="category-select-hint"
+                  role="status"
+                  className="pointer-events-none absolute right-0 top-full z-40 mt-2 w-max max-w-[min(calc(100vw-2rem),20rem)] rounded-lg bg-primary px-4 py-3 text-sm font-medium leading-snug text-primary-foreground shadow-lg"
+                >
+                  <span
+                    className="absolute -top-1.5 right-5 h-3 w-3 rotate-45 bg-primary"
+                    aria-hidden="true"
+                  />
+                  {t("product.filters.selectTypeHint")}
+                </div>
+              )}
+            </div>
             {isExpanded && (
               <div
                 className="absolute left-0 right-0 top-full z-30 mt-1 rounded-lg border border-border p-2 shadow-lg"
@@ -314,7 +291,10 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
               <button
                 type="button"
                 onClick={() => handleCategoryClick("All Categories")}
-                className={chipClass(selectedCategory === "All Categories")}
+                className={cn(
+                  chipClass(selectedCategory === "All Categories"),
+                  showSelectHint && "category-hint-blink"
+                )}
               >
                 <span className="line-clamp-2 text-center text-sm font-medium">
                   {t("common.allCategories")}

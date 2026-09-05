@@ -104,6 +104,7 @@ export default function ContactTab({
                       src={settings.contactPage.bannerImage}
                       alt="Contact Banner"
                       fill
+                      sizes="160px"
                       className="object-cover"
                     />
                   ) : (
@@ -111,6 +112,7 @@ export default function ContactTab({
                       src="/images/banner-default.svg"
                       alt="Contact Banner"
                       fill
+                      sizes="160px"
                       className="object-cover"
                     />
                   )}
@@ -450,6 +452,7 @@ export default function ContactTab({
                       src={settings.contactPage.supportChannels.image}
                       alt="Support Channels"
                       fill
+                      sizes="160px"
                       className="object-cover"
                     />
                   ) : (
@@ -457,6 +460,7 @@ export default function ContactTab({
                       src="/images/support-default.svg"
                       alt="Support Channels"
                       fill
+                      sizes="160px"
                       className="object-cover"
                     />
                   )}

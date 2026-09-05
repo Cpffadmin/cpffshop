@@ -101,6 +101,7 @@ const ProductRow = ({ product: initialProduct }: { product: Product }) => {
               src={currentProduct.images[0]}
               alt={currentProduct.name}
               fill
+              sizes="64px"
               className="object-cover rounded"
             />
           </div>

@@ -28,8 +28,6 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { signOut } from "next-auth/react";
 import { useCartUI } from "@/components/ui/CartUIContext";
 import Cart from "@/components/ui/Cart";
-import CategoryMenu from "@/components/ui/CategoryMenu";
-import { cachedGet } from "@/utils/services/clientCache";
 import { clearClientStorageOnLogout } from "@/utils/clientLogout";
 
 interface MobileMenuProps {
@@ -58,17 +56,6 @@ interface MobileMenuProps {
   user: CustomUser | undefined;
   adminPanelMob: boolean;
   isLoading?: boolean;
-}
-
-interface Category {
-  _id: string;
-  name: string;
-  displayNames: {
-    en: string;
-    "zh-TW": string;
-  };
-  isActive: boolean;
-  order: number;
 }
 
 // Common styles for navbar buttons
@@ -102,62 +89,12 @@ const MobileMenu = ({
   const router = useRouter();
   const pathname = usePathname();
   const [showSearch, setShowSearch] = useState(false);
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
   const items = useCartStore((state) => state.items);
   const clearLocalCart = useCartStore((state) => state.clearLocalCart);
   const { settings } = useStore();
   const { openCart, closeCart, isOpen: isCartOpen } = useCartUI();
-  const [selectedCategory, setSelectedCategory] = useState("All Categories");
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [isLoadingCategories, setIsLoadingCategories] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [lastFetch, setLastFetch] = useState(Date.now());
-  const [isNavigating, setIsNavigating] = useState(false);
   const [menuWasOpen, setMenuWasOpen] = useState(false);
-
-  const fetchCategories = async () => {
-    try {
-      setIsLoadingCategories(true);
-      setError(null);
-      const data = await cachedGet<Category[]>("/api/categories");
-      setCategories(data); // API now returns array directly
-    } catch (error) {
-      console.error("Failed to fetch categories:", error);
-      setError("Failed to load categories");
-    } finally {
-      setIsLoadingCategories(false);
-    }
-  };
-
-  // Initial fetch only
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const handleCategoryClick = async (categoryId: string) => {
-    try {
-      // First update the selected category
-      setSelectedCategory(categoryId);
-      setIsNavigating(true);
-
-      // Build the path
-      const path =
-        categoryId === "All Categories"
-          ? "/products"
-          : `/products?category=${categoryId}`;
-
-      // Close the menu
-      handleMenuClose();
-
-      // Force a hard navigation
-      window.location.href = path;
-    } catch (error) {
-      console.error("Navigation error:", error);
-      setIsNavigating(false);
-      // Show error to user
-      alert(t("common.navigationError"));
-    }
-  };
 
   // Close mobile menu when screen size changes to desktop
   useEffect(() => {
@@ -244,17 +181,6 @@ const MobileMenu = ({
         {children}
       </button>
     </li>
-  );
-
-  // Categories Section JSX
-  const categoriesSection = (
-    <div className="border-t border-border/50 mt-4">
-      <CategoryMenu
-        selectedCategory={selectedCategory}
-        onCategorySelect={handleCategoryClick}
-        isMobile={true}
-      />
-    </div>
   );
 
   if (!isOpen) return null;
@@ -371,8 +297,6 @@ const MobileMenu = ({
                 </NavLink>
               </ul>
             </nav>
-
-            {categoriesSection}
 
             <div className="overflow-y-auto flex-1">
               <nav className="p-2">

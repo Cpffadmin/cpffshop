@@ -118,6 +118,7 @@ export default function NewsletterTab({
                     }
                     alt={t("admin-settings.sections.newsletter.bannerImage")}
                     fill
+                    sizes="160px"
                     className="object-cover"
                   />
                 </div>

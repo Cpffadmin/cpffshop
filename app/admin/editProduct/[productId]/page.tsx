@@ -322,40 +322,45 @@ const EditProduct = () => {
       console.log("Found category:", category);
       setSelectedCategory(category || null);
 
-      // Initialize specifications when category changes
-      const initialSpecs =
-        category?.specifications?.map((spec) => ({
-          key: spec.key || spec.label.toLowerCase().replace(/\s+/g, "_"),
-          value: {
-            en: "",
-            "zh-TW": "",
-          },
-          type: spec.type,
-          displayNames: {
-            en: spec.displayNames?.en || spec.label,
-            "zh-TW": spec.displayNames?.["zh-TW"] || spec.label,
-          },
-          options:
-            spec.type === "select"
-              ? {
-                  en: spec.options?.en || [],
-                  "zh-TW": spec.options?.["zh-TW"] || [],
-                  prices:
-                    spec.options?.prices ||
-                    Array(spec.options?.en?.length || 0).fill(0),
-                }
-              : undefined,
-          required: spec.required || false,
-        })) || [];
-
       setProduct((prev) => {
-        const updated = {
+        const previousByKey = Object.fromEntries(
+          prev.specifications.map((spec) => [spec.key, spec])
+        );
+        const initialSpecs =
+          category?.specifications?.map((spec) => {
+            const key =
+              spec.key || spec.label.toLowerCase().replace(/\s+/g, "_");
+            const previous = previousByKey[key];
+            return {
+              key,
+              value: previous?.value || {
+                en: "",
+                "zh-TW": "",
+              },
+              type: spec.type,
+              displayNames: {
+                en: spec.displayNames?.en || spec.label,
+                "zh-TW": spec.displayNames?.["zh-TW"] || spec.label,
+              },
+              options:
+                spec.type === "select"
+                  ? {
+                      en: spec.options?.en || [],
+                      "zh-TW": spec.options?.["zh-TW"] || [],
+                      prices:
+                        spec.options?.prices ||
+                        Array(spec.options?.en?.length || 0).fill(0),
+                    }
+                  : undefined,
+              required: spec.required || false,
+            };
+          }) || [];
+
+        return {
           ...prev,
           category: value,
           specifications: initialSpecs,
         };
-        console.log("Updating product with:", updated);
-        return updated;
       });
     } else {
       setProduct((prev) => ({
@@ -955,6 +960,7 @@ const EditProduct = () => {
                     src={url}
                     alt={`Product image ${index + 1}`}
                     fill
+                    sizes="(max-width: 768px) 50vw, 25vw"
                     className="object-cover rounded-lg"
                   />
                   <button

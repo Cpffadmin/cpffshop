@@ -19,6 +19,7 @@ import Image from "next/image";
 import { Edit, Trash, Plus } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 import { useTranslation } from "@/providers/language/LanguageContext";
 import { LayoutDashboard, Package } from "lucide-react";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
@@ -82,6 +83,8 @@ export default function AdminProductsPage() {
   const [activePage, setActivePage] = useState(1);
   const [draftPage, setDraftPage] = useState(1);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [activatingAll, setActivatingAll] = useState(false);
 
   const breadcrumbItems = [
     {
@@ -360,6 +363,65 @@ export default function AdminProductsPage() {
     }
   };
 
+  const handleDraftToggle = async (productId: string, draft: boolean) => {
+    setUpdatingId(productId);
+    try {
+      await axios.patch(`/api/products/manage/${productId}`, { draft });
+      setProducts((prev) =>
+        prev.map((product) =>
+          product._id === productId ? { ...product, draft } : product
+        )
+      );
+      toast.success(
+        draft
+          ? t("product.admin.toggle.draftSuccess")
+          : t("product.admin.toggle.activateSuccess")
+      );
+    } catch (error) {
+      console.error("Error updating product status:", error);
+      toast.error(t("product.admin.toggle.toggleError"));
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const handleActivateAllDrafts = async () => {
+    const count = draftProducts.length;
+    if (count === 0) return;
+
+    const confirmed = await confirm({
+      title: t("product.admin.actions.activateAll"),
+      description: t("product.admin.toggle.activateAllConfirm", { count }),
+      confirmText: t("product.admin.actions.activateAll"),
+      cancelText: t("common.cancel"),
+    });
+    if (!confirmed) return;
+
+    setActivatingAll(true);
+    try {
+      const response = await axios.post("/api/products/manage/bulk-draft", {
+        draft: false,
+      });
+      const modifiedCount =
+        typeof response.data?.modifiedCount === "number"
+          ? response.data.modifiedCount
+          : count;
+      setProducts((prev) =>
+        prev.map((product) =>
+          product.draft ? { ...product, draft: false } : product
+        )
+      );
+      toast.success(
+        t("product.admin.toggle.activateAllSuccess", { count: modifiedCount })
+      );
+    } catch (error) {
+      console.error("Error activating draft products:", error);
+      toast.error(t("product.admin.toggle.activateAllError"));
+    } finally {
+      setActivatingAll(false);
+    }
+  };
+
   const renderProductGrid = (items: Product[]) => {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -370,6 +432,7 @@ export default function AdminProductsPage() {
                 src={product.images[0] || "/placeholder-watch.jpg"}
                 alt={product.displayNames?.[language] || product.name}
                 fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 className="object-cover"
               />
             </div>
@@ -393,7 +456,22 @@ export default function AdminProductsPage() {
                     </p>
                   )}
                 </div>
-                <div className="flex gap-2">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground">
+                      {t("product.admin.toggle.active")}
+                    </span>
+                    <Switch
+                      checked={!product.draft}
+                      disabled={
+                        updatingId === product._id || activatingAll
+                      }
+                      onCheckedChange={(checked) =>
+                        handleDraftToggle(product._id, !checked)
+                      }
+                      aria-label={t("product.admin.toggle.active")}
+                    />
+                  </div>
                   <Link href={`/admin/editProduct/${product._id}`}>
                     <Button
                       size="icon"
@@ -436,6 +514,7 @@ export default function AdminProductsPage() {
           <TableHead>{t("product.admin.table.price")}</TableHead>
           <TableHead>{t("product.price")}</TableHead>
           <TableHead>{t("product.listedDate")}</TableHead>
+          <TableHead>{t("product.admin.table.status")}</TableHead>
           <TableHead className="text-right">
             {t("product.admin.table.actions")}
           </TableHead>
@@ -452,6 +531,7 @@ export default function AdminProductsPage() {
                     src={product.images[0] || "/placeholder-watch.jpg"}
                     alt={product.displayNames?.[language] || product.name}
                     fill
+                    sizes="64px"
                     className="object-cover rounded-md"
                   />
                 </div>
@@ -469,6 +549,21 @@ export default function AdminProductsPage() {
               <TableCell>${product.originalPrice.toLocaleString()}</TableCell>
               <TableCell>
                 {new Date(product.createdAt).toLocaleDateString()}
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={!product.draft}
+                    disabled={updatingId === product._id || activatingAll}
+                    onCheckedChange={(checked) =>
+                      handleDraftToggle(product._id, !checked)
+                    }
+                    aria-label={t("product.admin.toggle.active")}
+                  />
+                  <span className="text-sm text-muted-foreground">
+                    {t("product.admin.toggle.active")}
+                  </span>
+                </div>
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
@@ -495,7 +590,7 @@ export default function AdminProductsPage() {
           ))}
         {items.length === 0 && (
           <TableRow>
-            <TableCell colSpan={8} className="text-center py-10">
+            <TableCell colSpan={9} className="text-center py-10">
               {t("product.admin.table.noProducts")}
             </TableCell>
           </TableRow>
@@ -574,10 +669,17 @@ export default function AdminProductsPage() {
 
           <TabsContent value="drafts">
             <Card>
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 gap-4">
                 <h2 className="text-xl font-semibold">
                   {t("product.admin.status.draft")}
                 </h2>
+                <Button
+                  variant="outline"
+                  onClick={handleActivateAllDrafts}
+                  disabled={draftProducts.length === 0 || activatingAll}
+                >
+                  {t("product.admin.actions.activateAll")}
+                </Button>
               </CardHeader>
               <CardContent>
                 {viewMode === "table"

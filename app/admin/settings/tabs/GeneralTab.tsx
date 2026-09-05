@@ -78,6 +78,7 @@ export default function GeneralTab({
                       src={settings.logo}
                       alt={t("admin-settings.sections.store.logo")}
                       fill
+                      sizes="80px"
                       className="object-contain"
                     />
                   ) : (
@@ -85,6 +86,7 @@ export default function GeneralTab({
                       src="/images/placeholder-logo.png"
                       alt={t("admin-settings.sections.store.logo")}
                       fill
+                      sizes="80px"
                       className="object-contain"
                     />
                   )}

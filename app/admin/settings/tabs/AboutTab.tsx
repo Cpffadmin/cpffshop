@@ -107,6 +107,7 @@ export default function AboutTab({
                       src={settings.aboutPage.bannerImage}
                       alt="About Banner"
                       fill
+                      sizes="160px"
                       className="object-cover"
                     />
                   ) : (
@@ -114,6 +115,7 @@ export default function AboutTab({
                       src="/images/banner-default.svg"
                       alt="About Banner"
                       fill
+                      sizes="160px"
                       className="object-cover"
                     />
                   )}
@@ -200,6 +202,7 @@ export default function AboutTab({
                       src={settings.aboutPage.story.image}
                       alt="Story Image"
                       fill
+                      sizes="160px"
                       className="object-cover"
                     />
                   ) : (
@@ -207,6 +210,7 @@ export default function AboutTab({
                       src="/images/banner-default.svg"
                       alt="Story Image"
                       fill
+                      sizes="160px"
                       className="object-cover"
                     />
                   )}
@@ -572,6 +576,7 @@ export default function AboutTab({
                             src={member.image}
                             alt={`${member.name[language]} - ${member.role[language]}`}
                             fill
+                            sizes="80px"
                             className="object-cover"
                           />
                         ) : (
@@ -579,6 +584,7 @@ export default function AboutTab({
                             src="/images/placeholder-logo.png"
                             alt={`${member.name[language]} - ${member.role[language]}`}
                             fill
+                            sizes="80px"
                             className="object-cover"
                           />
                         )}

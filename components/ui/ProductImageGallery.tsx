@@ -78,9 +78,9 @@ const ProductImageGallery = ({ product }: Props) => {
           <Image
             src="/placeholder-watch.jpg"
             alt={product.name}
-            layout="fill"
-            objectFit="cover"
-            className="rounded-lg"
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="rounded-lg object-cover"
           />
         </div>
       </div>
@@ -93,9 +93,9 @@ const ProductImageGallery = ({ product }: Props) => {
         <Image
           src={images[currentImageIndex] || "/placeholder-watch.jpg"}
           alt={`${product.name} - Image ${currentImageIndex + 1}`}
-          layout="fill"
-          objectFit="cover"
-          className="rounded-lg"
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="rounded-lg object-cover"
           priority={currentImageIndex === 0}
           onError={(e) => {
             const target = e.target as HTMLImageElement;

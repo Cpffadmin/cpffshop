@@ -45,8 +45,8 @@ const specificationSchema = new mongoose.Schema(
   {
     key: { type: String, required: true },
     value: {
-      en: { type: String, required: true },
-      "zh-TW": { type: String, required: true },
+      en: { type: String, default: "" },
+      "zh-TW": { type: String, default: "" },
     },
     type: {
       type: String,
@@ -212,7 +212,12 @@ productSchema.index({ lastSaved: -1 });
 productSchema.index({ createdAt: -1 });
 productSchema.index({ updatedAt: -1 });
 
-export const Product =
-  mongoose.models.Product ||
-  mongoose.model<ProductDocument>("Product", productSchema);
+if (mongoose.models.Product) {
+  delete mongoose.models.Product;
+}
+
+export const Product = mongoose.model<ProductDocument>(
+  "Product",
+  productSchema
+);
 export default Product;

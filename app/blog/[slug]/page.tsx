@@ -112,6 +112,7 @@ export default function BlogPostPage() {
                 src={post.mainImage || "/blog1.jpg"}
                 alt={post.title[currentLanguage]}
                 fill
+                sizes="(max-width: 896px) 100vw, 896px"
                 className="object-cover rounded-lg"
                 priority
               />

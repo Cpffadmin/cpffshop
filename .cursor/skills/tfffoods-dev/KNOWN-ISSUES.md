@@ -4,6 +4,21 @@ Append a dated entry under "Fix log" whenever you resolve a root-cause issue. Ch
 
 ## Fix log
 
+### 2026-09-05 — Mobile hamburger listed product kinds; All Categories had no prompt
+- **Symptom:** Phone menu showed 所有類別 / 魚類 / … under Contact. The products category + grid/list bar scrolled away. Staying on All Categories looked like a finished filter.
+- **Root cause:** `MobileMenu` rendered `CategoryMenu`. The products toolbar used `md:static`, so it did not stay under the header. There was no hint when the catch-all category was selected.
+- **Fix:** Drawer is site nav only (Home / Products / Blog / About / Contact). Toolbar stays `sticky` under the mobile icons / desktop navbar. All Categories uses a blinking border plus `product.filters.selectTypeHint`.
+
+### 2026-09-05 — Changing product category on edit saved as HTTP 500
+- **Symptom:** Admin Edit Product → change Root Class / category → Update → Axios 500 "Failed to update product".
+- **Root cause:** Switching category rebuilt specs (e.g. Origin) as `value: { en: "", "zh-TW": "" }`. Origin is optional (`required: false`) so the form allowed save, but Mongoose `specificationSchema` marked `value.en` / `value.zh-TW` as `required: true`. Empty string fails that validator.
+- **Fix:** Spec values may be empty. Matching spec keys keep their values when the category changes. PUT maps spec strings the same way as create; Mongoose `ValidationError` returns 400 instead of a generic 500.
+
+### 2026-09-05 — next/image `fill` without `sizes` flooded the dev console
+- **Symptom:** Opening a product list printed dozens of `Image with src "…" has "fill" but is missing "sizes" prop` warnings. Cloudinary images still loaded.
+- **Root cause:** `fill` makes Next.js size the file from `sizes`. Missing `sizes` defaults to `100vw`, so every thumbnail was treated as full-viewport.
+- **Fix:** Added layout-accurate `sizes` on `fill` images (product grid/list, admin catalog, galleries, invoices, settings previews). Product detail gallery switched from deprecated `layout="fill"` to `fill` + `sizes`.
+
 ### 2026-09-04 — Category chips overlapped the scroll arrows while scrolling
 - **Symptom:** Scrolling the desktop category strip, a kind button (Fish, Fruit, …) slid on top of the `<` / `>` arrows instead of disappearing at that edge.
 - **Root cause:** Arrows were `absolute` overlays on the same row as the chips (`px-12` padding was not a clip). An earlier pass hid the arrows at the ends — that was the wrong control.
@@ -27,7 +42,7 @@ Append a dated entry under "Fix log" whenever you resolve a root-cause issue. Ch
 ### 2026-09-04 — Mobile products hid the category bar (`hidden md:block`); site-icon rail was the wrong nav
 - **Symptom:** Phone `/products` had no way to pick a product kind without opening the hamburger. A later left icon rail (Home/Blog/About/…) was not what was needed.
 - **Root cause:** `CategoryMenu` on the products page used the desktop-only layout (`hidden md:block`). Categories existed but were invisible below `md`.
-- **Fix:** Removed the site-icon rail. Products page now shows a swipeable category chip bar on all widths (selected chip uses `bg-primary`). Bar is sticky under the mobile header. Hamburger overlay still lists categories as a fallback.
+- **Fix:** Removed the site-icon rail. Products page now shows a swipeable category chip bar on all widths (selected chip uses `bg-primary`). Bar is sticky under the mobile header. Category picking lives on `/products`, not in the hamburger.
 
 ### 2026-09-04 — Desktop add-to-cart ignored theme button color; mobile had no visible left nav
 - **Symptom:** Changing Admin → Theme → Button Color updated mobile list/cart icons (`bg-primary`) but desktop product-grid Add to Cart stayed bright blue. Narrow/mobile view still had only a top hamburger — no persistent left navbar.
