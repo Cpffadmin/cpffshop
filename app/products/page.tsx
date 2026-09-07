@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -11,6 +11,10 @@ import { Button } from "@/components/ui/button";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import type { CartItem, Product } from "@/types";
 import ProductView from "@/components/products/ProductView";
+import {
+  DEFAULT_PRODUCT_PAGE_SIZE,
+  parseProductPageSize,
+} from "@/components/products/ProductPagination";
 import useCartStore from "@/store/cartStore";
 import CategoryMenu from "@/components/ui/CategoryMenu";
 import { useTranslation } from "@/providers/language/LanguageContext";
@@ -72,7 +76,7 @@ export default function Products() {
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = isMobile ? 6 : 12;
+  const [totalCount, setTotalCount] = useState(0);
 
   // Get URL params
   const searchParams = new URLSearchParams(
@@ -82,7 +86,9 @@ export default function Products() {
   const urlCategory = searchParams.get("category") || "All Categories";
   const urlMinPrice = parseFloat(searchParams.get("minPrice") || "0");
   const urlMaxPrice = parseFloat(searchParams.get("maxPrice") || "1000000");
-  const urlPage = Math.max(1, parseInt(searchParams.get("page") || "1"));
+  const urlLimit = parseProductPageSize(searchParams.get("limit"));
+  const [itemsPerPage, setItemsPerPage] = useState(urlLimit);
+  const listPageSize = isMobile ? DEFAULT_PRODUCT_PAGE_SIZE : itemsPerPage;
 
   // Filter states with URL persistence
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -94,6 +100,19 @@ export default function Products() {
     max: urlMaxPrice,
   });
 
+  const skipFilterPageReset = useRef(true);
+
+  useEffect(() => {
+    const page = Math.max(
+      1,
+      parseInt(new URLSearchParams(window.location.search).get("page") || "1", 10) ||
+        1
+    );
+    if (page > 1) {
+      setCurrentPage(page);
+    }
+  }, []);
+
   // Initialize states from URL params if they exist
   useEffect(() => {
     if (urlSort) {
@@ -101,10 +120,18 @@ export default function Products() {
     }
   }, [urlSort]);
 
-  // Reset page when category changes
   useEffect(() => {
+    if (skipFilterPageReset.current) {
+      skipFilterPageReset.current = false;
+      return;
+    }
     setCurrentPage(1);
-  }, [selectedCategory]);
+  }, [selectedCategory, selectedBrand, sortOption]);
+
+  const handlePageSizeChange = useCallback((size: number) => {
+    setItemsPerPage((current) => (current === size ? current : size));
+    setCurrentPage(1);
+  }, []);
 
   // Update URL when filters change
   useEffect(() => {
@@ -115,7 +142,8 @@ export default function Products() {
       sortOption === "newest" &&
       priceRange.min === 0 &&
       priceRange.max === 1000000 &&
-      currentPage === 1
+      currentPage === 1 &&
+      itemsPerPage === DEFAULT_PRODUCT_PAGE_SIZE
     ) {
       // Clear URL if it has any params
       if (window.location.search) {
@@ -145,8 +173,12 @@ export default function Products() {
       params.set("maxPrice", priceRange.max.toString());
     }
 
-    if (currentPage > 1) {
+    if (currentPage > 1 && !isMobile) {
       params.set("page", currentPage.toString());
+    }
+
+    if (itemsPerPage !== DEFAULT_PRODUCT_PAGE_SIZE && !isMobile) {
+      params.set("limit", itemsPerPage.toString());
     }
 
     const queryString = params.toString();
@@ -154,12 +186,7 @@ export default function Products() {
       ? `${window.location.pathname}?${queryString}`
       : window.location.pathname;
     window.history.replaceState({}, "", newUrl);
-  }, [selectedBrand, selectedCategory, sortOption, priceRange, currentPage]);
-
-  // Initialize page from URL
-  useEffect(() => {
-    setCurrentPage(urlPage);
-  }, [urlPage]);
+  }, [selectedBrand, selectedCategory, sortOption, priceRange, currentPage, itemsPerPage, isMobile]);
 
   // Hooks
   const { addItem } = useCart();
@@ -184,7 +211,7 @@ export default function Products() {
     params.append("maxPrice", priceRange.max.toString());
   }
   params.append("page", currentPage.toString());
-  params.append("limit", itemsPerPage.toString());
+  params.append("limit", listPageSize.toString());
   const apiUrl = `/api/products?${params.toString()}`;
   const fetcher = (url: string) => axios.get(url).then((res) => res.data);
   const { data, error, isLoading, isValidating } = useSWR(apiUrl, fetcher, {
@@ -195,23 +222,43 @@ export default function Products() {
   });
 
   useEffect(() => {
-    if (data) {
-      setProducts(data.products);
-      setTotalPages(Math.ceil(data.total / itemsPerPage));
+    if (!data) return;
+    if (typeof data.page === "number" && data.page !== currentPage) {
+      return;
     }
-  }, [data, itemsPerPage]);
 
-  // Handle page recalculation when switching between mobile and desktop
-  useEffect(() => {
-    if (data) {
-      const newTotalPages = Math.ceil(data.total / itemsPerPage);
-      setTotalPages(newTotalPages);
-      // Adjust current page if it exceeds the new total pages
-      if (currentPage > newTotalPages) {
-        setCurrentPage(newTotalPages);
-      }
+    const nextTotalPages = Math.max(
+      1,
+      Math.ceil((Number(data.total) || 0) / listPageSize) || 1
+    );
+    setTotalCount((current) =>
+      current === data.total ? current : data.total
+    );
+    setTotalPages((current) =>
+      current === nextTotalPages ? current : nextTotalPages
+    );
+
+    if (isMobile) {
+      setProducts((prev) => {
+        if (currentPage <= 1) {
+          return data.products;
+        }
+        const seen = new Set(prev.map((product) => product._id));
+        return [
+          ...prev,
+          ...data.products.filter((product: Product) => !seen.has(product._id)),
+        ];
+      });
+      return;
     }
-  }, [isMobile, data, currentPage, itemsPerPage]);
+
+    setProducts(data.products);
+  }, [data, isMobile, listPageSize, currentPage]);
+
+  const handleLoadMore = useCallback(() => {
+    if (!isMobile || isValidating) return;
+    setCurrentPage((page) => (page < totalPages ? page + 1 : page));
+  }, [isMobile, isValidating, totalPages]);
 
   // Cart functionality
   useEffect(() => {
@@ -358,10 +405,17 @@ export default function Products() {
         <div className="mt-4">
           <ProductView
             products={products}
-            isLoading={isValidating}
+            isLoading={isValidating && products.length === 0}
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={setCurrentPage}
+            pageSize={itemsPerPage}
+            onPageSizeChange={isMobile ? undefined : handlePageSizeChange}
+            infiniteScroll={isMobile}
+            hasMore={isMobile && currentPage < totalPages}
+            onLoadMore={handleLoadMore}
+            isLoadingMore={isMobile && isValidating && currentPage > 1}
+            totalCount={totalCount}
             toolbarStart={
               <CategoryMenu
                 selectedCategory={selectedCategory}

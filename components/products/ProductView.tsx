@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, ReactNode } from "react";
+import { useState, useEffect, useRef, ReactNode } from "react";
 import { LayoutGrid, Table } from "lucide-react";
 import { Product } from "@/types";
 import ProductGrid from "./ProductGrid";
@@ -12,6 +12,13 @@ interface ProductViewProps {
   totalPages: number;
   onPageChange: (page: number) => void;
   toolbarStart?: ReactNode;
+  pageSize?: number;
+  onPageSizeChange?: (size: number) => void;
+  infiniteScroll?: boolean;
+  hasMore?: boolean;
+  onLoadMore?: () => void;
+  isLoadingMore?: boolean;
+  totalCount?: number;
 }
 
 const ProductView: React.FC<ProductViewProps> = ({
@@ -21,43 +28,43 @@ const ProductView: React.FC<ProductViewProps> = ({
   totalPages,
   onPageChange,
   toolbarStart,
+  pageSize,
+  onPageSizeChange,
+  infiniteScroll,
+  hasMore,
+  onLoadMore,
+  isLoadingMore,
+  totalCount,
 }) => {
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
-  const [lastWidth, setLastWidth] = useState(0);
+  const lastWidthRef = useRef(0);
   const { t } = useTranslation();
 
-  const updateViewMode = useCallback(() => {
-    const currentWidth = window.innerWidth;
-    const widthDiff = Math.abs(currentWidth - lastWidth);
-
-    // Only update if width change is significant (more than 20px)
-    // This prevents changes from minor UI shifts like address bar collapse
-    if (widthDiff > 20) {
-      setLastWidth(currentWidth);
-      const isMobile = currentWidth < 640;
-      setViewMode(isMobile ? "table" : "grid");
-    }
-  }, [lastWidth]);
-
   useEffect(() => {
-    // Set initial width
-    setLastWidth(window.innerWidth);
+    const applyViewMode = (force = false) => {
+      const width = window.innerWidth;
+      if (!force && Math.abs(width - lastWidthRef.current) <= 20) {
+        return;
+      }
+      lastWidthRef.current = width;
+      const nextMode = width < 640 ? "table" : "grid";
+      setViewMode((current) => (current === nextMode ? current : nextMode));
+    };
 
-    // Debounce the resize handler
+    applyViewMode(true);
+
     let timeoutId: NodeJS.Timeout;
     const handleResize = () => {
       clearTimeout(timeoutId);
-      timeoutId = setTimeout(updateViewMode, 150);
+      timeoutId = setTimeout(() => applyViewMode(false), 150);
     };
 
     window.addEventListener("resize", handleResize);
-    updateViewMode(); // Initial check
-
     return () => {
       window.removeEventListener("resize", handleResize);
       clearTimeout(timeoutId);
     };
-  }, [updateViewMode]);
+  }, []);
 
   const viewToggleClass = (active: boolean) =>
     `h-10 w-10 flex items-center justify-center rounded-md transition-colors ${
@@ -120,6 +127,13 @@ const ProductView: React.FC<ProductViewProps> = ({
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={onPageChange}
+          pageSize={pageSize}
+          onPageSizeChange={onPageSizeChange}
+          infiniteScroll={infiniteScroll}
+          hasMore={hasMore}
+          onLoadMore={onLoadMore}
+          isLoadingMore={isLoadingMore}
+          totalCount={totalCount}
         />
       ) : (
         <ProductTable
@@ -128,6 +142,13 @@ const ProductView: React.FC<ProductViewProps> = ({
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={onPageChange}
+          pageSize={pageSize}
+          onPageSizeChange={onPageSizeChange}
+          infiniteScroll={infiniteScroll}
+          hasMore={hasMore}
+          onLoadMore={onLoadMore}
+          isLoadingMore={isLoadingMore}
+          totalCount={totalCount}
         />
       )}
     </div>

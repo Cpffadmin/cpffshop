@@ -15,6 +15,7 @@ import useSWR from "swr";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { SpecificationsModal } from "../ui/SpecificationsModal";
+import ProductPagination from "./ProductPagination";
 
 interface ProductTableProps {
   products: Product[];
@@ -22,6 +23,13 @@ interface ProductTableProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  pageSize?: number;
+  onPageSizeChange?: (size: number) => void;
+  infiniteScroll?: boolean;
+  hasMore?: boolean;
+  onLoadMore?: () => void;
+  isLoadingMore?: boolean;
+  totalCount?: number;
 }
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
@@ -200,8 +208,14 @@ const ProductTable: React.FC<ProductTableProps> = ({
   currentPage,
   totalPages,
   onPageChange,
+  pageSize,
+  onPageSizeChange,
+  infiniteScroll,
+  hasMore,
+  onLoadMore,
+  isLoadingMore,
+  totalCount,
 }) => {
-  const { t } = useTranslation();
   if (isLoading && products.length === 0) {
     return (
       <div className="space-y-4">
@@ -220,31 +234,19 @@ const ProductTable: React.FC<ProductTableProps> = ({
         ))}
       </div>
 
-      {/* Pagination */}
-      {onPageChange && totalPages > 1 && (
-        <div className="flex justify-center items-center gap-4 mt-8">
-          <button
-            onClick={() => onPageChange(Math.max(currentPage - 1, 1))}
-            disabled={currentPage === 1}
-            className="px-4 py-2 rounded-md border border-border bg-card text-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {t("common.previous")}
-          </button>
-          <span className="text-sm text-muted-foreground">
-            {t("common.pagination", {
-              current: currentPage,
-              total: totalPages,
-            })}
-          </span>
-          <button
-            onClick={() => onPageChange(Math.min(currentPage + 1, totalPages))}
-            disabled={currentPage === totalPages}
-            className="px-4 py-2 rounded-md border border-border bg-card text-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {t("common.next")}
-          </button>
-        </div>
-      )}
+      <ProductPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+        pageSize={pageSize}
+        onPageSizeChange={onPageSizeChange}
+        infiniteScroll={infiniteScroll}
+        hasMore={hasMore}
+        onLoadMore={onLoadMore}
+        isLoadingMore={isLoadingMore}
+        loadedCount={products.length}
+        totalCount={totalCount}
+      />
     </div>
   );
 };

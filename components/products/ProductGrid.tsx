@@ -1,7 +1,7 @@
 import { Product } from "@/types";
 import ProductCard from "./ProductCard";
 import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
-import { useTranslation } from "@/providers/language/LanguageContext";
+import ProductPagination from "./ProductPagination";
 
 interface ProductGridProps {
   products: Product[];
@@ -9,6 +9,13 @@ interface ProductGridProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  pageSize?: number;
+  onPageSizeChange?: (size: number) => void;
+  infiniteScroll?: boolean;
+  hasMore?: boolean;
+  onLoadMore?: () => void;
+  isLoadingMore?: boolean;
+  totalCount?: number;
 }
 
 const ProductGrid: React.FC<ProductGridProps> = ({
@@ -17,9 +24,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({
   currentPage,
   totalPages,
   onPageChange,
+  pageSize,
+  onPageSizeChange,
+  infiniteScroll,
+  hasMore,
+  onLoadMore,
+  isLoadingMore,
+  totalCount,
 }) => {
-  const { t } = useTranslation();
-
   if (isLoading && products.length === 0) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -42,31 +54,19 @@ const ProductGrid: React.FC<ProductGridProps> = ({
         ))}
       </div>
 
-      {/* Pagination - Show regardless of number of pages */}
-      <div className="flex justify-center items-center gap-4 mt-8">
-        <button
-          onClick={() => onPageChange(Math.max(currentPage - 1, 1))}
-          disabled={currentPage === 1}
-          className="px-4 py-2 rounded-md border border-border bg-card text-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          {t("common.previous")}
-        </button>
-        <span className="text-sm text-muted-foreground">
-          {t("common.pagination", {
-            current: currentPage,
-            total: Math.max(totalPages, 1),
-          })}
-        </span>
-        <button
-          onClick={() =>
-            onPageChange(Math.min(currentPage + 1, Math.max(totalPages, 1)))
-          }
-          disabled={currentPage === Math.max(totalPages, 1)}
-          className="px-4 py-2 rounded-md border border-border bg-card text-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          {t("common.next")}
-        </button>
-      </div>
+      <ProductPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+        pageSize={pageSize}
+        onPageSizeChange={onPageSizeChange}
+        infiniteScroll={infiniteScroll}
+        hasMore={hasMore}
+        onLoadMore={onLoadMore}
+        isLoadingMore={isLoadingMore}
+        loadedCount={products.length}
+        totalCount={totalCount}
+      />
     </div>
   );
 };

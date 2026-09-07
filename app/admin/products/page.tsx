@@ -34,7 +34,7 @@ import {
 
 const ADMIN_LIST_FETCH_LIMIT = 100;
 const PAGE_SIZE_OPTIONS = [20, 50, 100] as const;
-const DEFAULT_PAGE_SIZE = 50;
+const DEFAULT_PAGE_SIZE = 100;
 
 interface Product {
   _id: string;

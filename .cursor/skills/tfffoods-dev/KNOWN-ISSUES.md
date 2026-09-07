@@ -4,6 +4,16 @@ Append a dated entry under "Fix log" whenever you resolve a root-cause issue. Ch
 
 ## Fix log
 
+### 2026-09-07 — `/products` crashed with Maximum update depth exceeded
+- **Symptom:** Red error overlay, stacked "Failed to fetch wishlist" toasts, console pointed at `SelectTrigger` in `ProductPagination`.
+- **Root cause:** Two `useEffect`s both called `setCurrentPage` on mount (always reset to 1, then sync from the URL). `listPageSize` flipping with `useIsMobile` kept those effects fighting. Each pass remounted the list; every row's `useWishlist()` fetched again and toasted. `ProductView`'s resize effect also chained `lastWidth` → callback → `setLastWidth`.
+- **Fix:** Reset page only when filters actually change (skip first mount). Read `?page=` once. Resize logic uses a ref and only updates view mode when the breakpoint changes.
+
+### 2026-09-07 — Mobile products required tapping Next dozens of times
+- **Symptom:** Phone `/products` was Previous / Next only (6–12 items per page → 50+ taps to browse ~300 products). Loading 100 at once would fire ~100 extra `/api/product/[id]` calls per card.
+- **Root cause:** Shop pagination replaced the list each page. That is a desktop pattern; it does not match how people browse a catalog on a phone.
+- **Fix:** Below `md`, the shop appends the next batch of 12 as you scroll (Load more as fallback). Desktop keeps page numbers + per-page size. Admin default stays 100.
+
 ### 2026-09-05 — Mobile hamburger listed product kinds; All Categories had no prompt
 - **Symptom:** Phone menu showed 所有類別 / 魚類 / … under Contact. The products category + grid/list bar scrolled away. Staying on All Categories looked like a finished filter.
 - **Root cause:** `MobileMenu` rendered `CategoryMenu`. The products toolbar used `md:static`, so it did not stay under the header. There was no hint when the catch-all category was selected.
