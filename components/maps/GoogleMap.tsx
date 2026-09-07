@@ -18,6 +18,7 @@ interface GoogleMapProps {
 
 const GoogleMap = ({ locations, defaultZoom = 15 }: GoogleMapProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<google.maps.Map | null>(null);
 
   useEffect(() => {
     // Safety checks
@@ -34,24 +35,22 @@ const GoogleMap = ({ locations, defaultZoom = 15 }: GoogleMapProps) => {
       return;
     }
 
-    console.log("Initializing map with locations:", locations);
-
-    // Force destroy any existing map instance
-    while (mapRef.current.firstChild) {
-      mapRef.current.removeChild(mapRef.current.firstChild);
-    }
-
     try {
-      // Create a new map instance
-      const map = new window.google.maps.Map(mapRef.current, {
-        zoom: defaultZoom,
-        center: locations[0].coordinates,
-        mapTypeId: "roadmap",
-        fullscreenControl: false,
-        mapTypeControl: false,
-        streetViewControl: false,
-        zoomControl: true,
-      });
+      // One Map instance per mount: every `new Map()` is a billable load, and
+      // recreating it on each render exhausted the daily quota.
+      if (!mapInstanceRef.current) {
+        mapInstanceRef.current = new window.google.maps.Map(mapRef.current, {
+          zoom: defaultZoom,
+          center: locations[0].coordinates,
+          mapTypeId: "roadmap",
+          fullscreenControl: false,
+          mapTypeControl: false,
+          streetViewControl: false,
+          zoomControl: true,
+        });
+      }
+
+      const map = mapInstanceRef.current;
 
       // Create bounds object
       const bounds = new google.maps.LatLngBounds();
@@ -62,11 +61,6 @@ const GoogleMap = ({ locations, defaultZoom = 15 }: GoogleMapProps) => {
 
       // Add markers for all locations
       locations.forEach((location) => {
-        console.log(
-          `Creating marker for ${location.name}:`,
-          location.coordinates
-        );
-
         const marker = new google.maps.Marker({
           position: location.coordinates,
           map: map,
@@ -106,7 +100,7 @@ const GoogleMap = ({ locations, defaultZoom = 15 }: GoogleMapProps) => {
       });
 
       // Adjust zoom level after a short delay
-      setTimeout(() => {
+      const zoomTimeout = window.setTimeout(() => {
         const currentZoom = map.getZoom();
         if (
           locations.length === 1 &&
@@ -124,6 +118,7 @@ const GoogleMap = ({ locations, defaultZoom = 15 }: GoogleMapProps) => {
 
       // Cleanup function
       return () => {
+        window.clearTimeout(zoomTimeout);
         markers.forEach((marker) => marker.setMap(null));
         infoWindows.forEach((iw) => iw.close());
       };

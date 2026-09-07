@@ -4,6 +4,17 @@ Append a dated entry under "Fix log" whenever you resolve a root-cause issue. Ch
 
 ## Fix log
 
+### 2026-09-07 — Contact map showed Google's "Oops! Something went wrong" on desktop
+- **Symptom:** `/contact` rendered the grey Google box "This page didn't load Google Maps correctly" on desktop while a quick phone visit still drew the map. The API key was present in the deployed bundle, so the script itself was loading.
+- **Root cause:** The map was rebuilt on every render of the page, twice over: the wrapper used `key={\`map-container-${Date.now()}\`}` (a new key each render remounts `MapComponent`), and `locations` was built with an inline `.map()` so its identity changed each render, re-firing `GoogleMap`'s `useEffect` and calling `new google.maps.Map()` again. Each instance is a billable Dynamic Maps load, so a desktop session that re-renders while you interact burns through the rate limit and Google returns the auth error overlay.
+- **Fix:** `locations` is a `useMemo` keyed on `contactSettings` + `language` (hoisted above the early returns), the wrapper `div` has no key, and `GoogleMap` keeps its `google.maps.Map` in a ref — later runs only rebuild markers. Debug `console.log`s in the map path removed and the zoom `setTimeout` is cleared on unmount.
+- **If it still fails:** read the exact code after "Google Maps JavaScript API error:" in the console. `RefererNotAllowedMapError` = add the site's host to the key's HTTP referrer list; `BillingNotEnabledMapError` / `OverQuotaMapError` = Google Cloud billing or quota; `ApiNotActivatedMapError` = enable Maps JavaScript API. Those are console settings, not code.
+
+### 2026-09-07 — Shop "Per page" jumped back to 12 and never persisted
+- **Symptom:** Picking 48 on `/products` snapped back to 12; the choice was lost on reload. Reproduced while logged out.
+- **Root cause:** `listPageSize = isMobile ? DEFAULT_PRODUCT_PAGE_SIZE : itemsPerPage` forced 12 below `md` (`useIsMobile` = 768px, so narrow desktop windows counted as mobile), and the URL effect skipped `limit` on mobile. Nothing stored the value, so a guest had nowhere to keep it.
+- **Fix:** The selected size drives the fetch at every width (it is the batch size for mobile infinite scroll). `limit` always goes in the URL when non-default, and `readStoredProductPageSize` / `storeProductPageSize` keep it in `localStorage` under `products-per-page` for guests.
+
 ### 2026-09-07 — `/products` crashed with Maximum update depth exceeded
 - **Symptom:** Red error overlay, stacked "Failed to fetch wishlist" toasts, console pointed at `SelectTrigger` in `ProductPagination`.
 - **Root cause:** Two `useEffect`s both called `setCurrentPage` on mount (always reset to 1, then sync from the URL). `listPageSize` flipping with `useIsMobile` kept those effects fighting. Each pass remounted the list; every row's `useWishlist()` fetched again and toasted. `ProductView`'s resize effect also chained `lastWidth` → callback → `setLastWidth`.

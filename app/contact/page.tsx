@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   MapPin,
   Phone,
@@ -48,6 +48,15 @@ const MapComponent = dynamic(
     },
   }
 );
+
+const toCoordinate = (value: unknown, fallback: number) => {
+  if (typeof value === "number") return value;
+  if (typeof value === "string") {
+    const parsed = parseFloat(value);
+    if (!Number.isNaN(parsed)) return parsed;
+  }
+  return fallback;
+};
 
 const ContactPage = () => {
   const { contactSettings, isLoading, error } = useContactPage();
@@ -101,6 +110,21 @@ const ContactPage = () => {
     };
   }, []);
 
+  // Memoised so the map keeps its instance instead of re-initialising on every
+  // render of this page.
+  const locations = useMemo(
+    () =>
+      (contactSettings?.contactInfo?.officeLocations ?? []).map((location) => ({
+        name: location.name[language],
+        address: location.address[language],
+        coordinates: {
+          lat: toCoordinate(location.coordinates?.lat, 22.3927),
+          lng: toCoordinate(location.coordinates?.lng, 113.9735),
+        },
+      })),
+    [contactSettings, language]
+  );
+
   if (isLoading || error) {
     return <LoadingErrorComponent loading={isLoading} error={error} />;
   }
@@ -129,50 +153,9 @@ const ContactPage = () => {
     Headphones,
   };
 
-  const locations = contactSettings.contactInfo.officeLocations.map(
-    (location, index) => {
-      const coordinates = {
-        lat:
-          typeof location.coordinates?.lat === "number"
-            ? location.coordinates.lat
-            : typeof location.coordinates?.lat === "string"
-            ? parseFloat(location.coordinates.lat)
-            : 22.3927,
-        lng:
-          typeof location.coordinates?.lng === "number"
-            ? location.coordinates.lng
-            : typeof location.coordinates?.lng === "string"
-            ? parseFloat(location.coordinates.lng)
-            : 113.9735,
-      };
-
-      console.log(`Location ${index} (${location.name[language]}):`, {
-        name: location.name[language],
-        address: location.address[language],
-        coordinates,
-      });
-
-      return {
-        name: location.name[language],
-        address: location.address[language],
-        coordinates,
-      };
-    }
-  );
-
-  console.log("All locations:", locations);
-
   const handleLocationSelect = (index: number) => {
-    console.log(`Tab selected: ${index}`);
     setSelectedLocationIndex(index);
   };
-
-  // Get the currently selected location
-  const selectedLocation = locations[selectedLocationIndex];
-  console.log("Currently selected location:", selectedLocation);
-
-  // Always show all locations on the map
-  console.log("Showing all locations on map:", locations);
 
   const toggleFaq = (index: number) => {
     setOpenFaqIndex(openFaqIndex === index ? null : index);
@@ -220,10 +203,7 @@ const ContactPage = () => {
                   style={{ position: "relative", minHeight: "400px" }}
                 >
                   {isMapScriptLoaded && locations.length > 0 && (
-                    <div
-                      key={`map-container-${Date.now()}`}
-                      className="absolute inset-0"
-                    >
+                    <div className="absolute inset-0">
                       <MapComponent locations={locations} defaultZoom={15} />
                     </div>
                   )}

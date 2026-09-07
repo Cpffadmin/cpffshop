@@ -14,6 +14,8 @@ import ProductView from "@/components/products/ProductView";
 import {
   DEFAULT_PRODUCT_PAGE_SIZE,
   parseProductPageSize,
+  readStoredProductPageSize,
+  storeProductPageSize,
 } from "@/components/products/ProductPagination";
 import useCartStore from "@/store/cartStore";
 import CategoryMenu from "@/components/ui/CategoryMenu";
@@ -88,7 +90,6 @@ export default function Products() {
   const urlMaxPrice = parseFloat(searchParams.get("maxPrice") || "1000000");
   const urlLimit = parseProductPageSize(searchParams.get("limit"));
   const [itemsPerPage, setItemsPerPage] = useState(urlLimit);
-  const listPageSize = isMobile ? DEFAULT_PRODUCT_PAGE_SIZE : itemsPerPage;
 
   // Filter states with URL persistence
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -103,13 +104,20 @@ export default function Products() {
   const skipFilterPageReset = useRef(true);
 
   useEffect(() => {
+    const currentParams = new URLSearchParams(window.location.search);
     const page = Math.max(
       1,
-      parseInt(new URLSearchParams(window.location.search).get("page") || "1", 10) ||
-        1
+      parseInt(currentParams.get("page") || "1", 10) || 1
     );
     if (page > 1) {
       setCurrentPage(page);
+    }
+
+    if (!currentParams.get("limit")) {
+      const stored = readStoredProductPageSize();
+      if (stored) {
+        setItemsPerPage(stored);
+      }
     }
   }, []);
 
@@ -129,6 +137,7 @@ export default function Products() {
   }, [selectedCategory, selectedBrand, sortOption]);
 
   const handlePageSizeChange = useCallback((size: number) => {
+    storeProductPageSize(size);
     setItemsPerPage((current) => (current === size ? current : size));
     setCurrentPage(1);
   }, []);
@@ -177,7 +186,7 @@ export default function Products() {
       params.set("page", currentPage.toString());
     }
 
-    if (itemsPerPage !== DEFAULT_PRODUCT_PAGE_SIZE && !isMobile) {
+    if (itemsPerPage !== DEFAULT_PRODUCT_PAGE_SIZE) {
       params.set("limit", itemsPerPage.toString());
     }
 
@@ -211,7 +220,7 @@ export default function Products() {
     params.append("maxPrice", priceRange.max.toString());
   }
   params.append("page", currentPage.toString());
-  params.append("limit", listPageSize.toString());
+  params.append("limit", itemsPerPage.toString());
   const apiUrl = `/api/products?${params.toString()}`;
   const fetcher = (url: string) => axios.get(url).then((res) => res.data);
   const { data, error, isLoading, isValidating } = useSWR(apiUrl, fetcher, {
@@ -229,7 +238,7 @@ export default function Products() {
 
     const nextTotalPages = Math.max(
       1,
-      Math.ceil((Number(data.total) || 0) / listPageSize) || 1
+      Math.ceil((Number(data.total) || 0) / itemsPerPage) || 1
     );
     setTotalCount((current) =>
       current === data.total ? current : data.total
@@ -253,7 +262,7 @@ export default function Products() {
     }
 
     setProducts(data.products);
-  }, [data, isMobile, listPageSize, currentPage]);
+  }, [data, isMobile, itemsPerPage, currentPage]);
 
   const handleLoadMore = useCallback(() => {
     if (!isMobile || isValidating) return;
@@ -410,7 +419,7 @@ export default function Products() {
             totalPages={totalPages}
             onPageChange={setCurrentPage}
             pageSize={itemsPerPage}
-            onPageSizeChange={isMobile ? undefined : handlePageSizeChange}
+            onPageSizeChange={handlePageSizeChange}
             infiniteScroll={isMobile}
             hasMore={isMobile && currentPage < totalPages}
             onLoadMore={handleLoadMore}
