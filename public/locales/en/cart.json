@@ -4,6 +4,7 @@
   "addToCart": "Add to Cart",
   "removeFromCart": "Remove from Cart",
   "addedToCart": "Added to cart",
+  "itemsAdded": "{{count}} items added to cart",
   "removedFromCart": "Removed from cart",
   "quantity": "Quantity",
   "subtotal": "Subtotal",
@@ -43,6 +44,10 @@
       "title": "Delivery Type"
     }
   },
+  "loginRequired": "Please log in to add items to your cart",
+  "loadFailed": "Failed to load cart",
+  "cartCleared": "Cart cleared",
+  "clearFailed": "Cart cleared here, but saving to your account failed",
   "errors": {
     "addFailed": "Failed to add item to cart",
     "removeFailed": "Failed to remove item from cart",

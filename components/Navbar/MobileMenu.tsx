@@ -9,7 +9,7 @@ import {
 } from "react-icons/io5";
 import { FaBlogger } from "react-icons/fa";
 import { FaShop } from "react-icons/fa6";
-import { MdContactSupport } from "react-icons/md";
+import { MdContactSupport, MdOutlineChecklist } from "react-icons/md";
 import Link from "next/link";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
@@ -29,7 +29,6 @@ import { signOut } from "next-auth/react";
 import { useCartUI } from "@/components/ui/CartUIContext";
 import Cart from "@/components/ui/Cart";
 import { clearClientStorageOnLogout } from "@/utils/clientLogout";
-
 interface MobileMenuProps {
   isOpen: boolean;
   setMenuClose: () => void;
@@ -267,6 +266,15 @@ const MobileMenu = ({
                 >
                   <FaShop size={20} />
                   {t("navigation.products")}
+                </NavLink>
+                <NavLink
+                  href="/quick-order"
+                  onClick={closeNav}
+                  variant={pathname === "/quick-order" ? "active" : "default"}
+                  className={navbarButtonStyles.withIcon}
+                >
+                  <MdOutlineChecklist size={22} />
+                  {t("navigation.quickOrder")}
                 </NavLink>
                 <NavLink
                   href="/blog"

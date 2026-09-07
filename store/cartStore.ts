@@ -4,121 +4,101 @@ import type { CartItem, CartStore, AddToCartItem } from "@/types";
 import axios from "axios";
 import { cachedGet, invalidateCache } from "@/utils/services/clientCache";
 
+// Two cart lines are the same product only when their chosen options match too,
+// because option values can carry their own price.
+const sameSpecifications = (
+  current: Record<string, any> = {},
+  incoming: Record<string, any> = {}
+) => {
+  const currentKeys = Object.keys(current).sort();
+  const incomingKeys = Object.keys(incoming).sort();
+
+  if (currentKeys.length !== incomingKeys.length) return false;
+  if (!currentKeys.every((key, idx) => key === incomingKeys[idx])) return false;
+
+  return currentKeys.every((key) => {
+    const currentValue = current[key];
+    const incomingValue = incoming[key];
+
+    // Multilingual option values
+    if (
+      typeof currentValue === "object" &&
+      typeof incomingValue === "object" &&
+      currentValue !== null &&
+      incomingValue !== null
+    ) {
+      return (
+        currentValue.en === incomingValue.en &&
+        currentValue["zh-TW"] === incomingValue["zh-TW"]
+      );
+    }
+
+    return currentValue === incomingValue;
+  });
+};
+
+// Shared by addItem and addItems so a single add and a bulk add merge identically.
+const mergeCartItem = (
+  items: CartItem[],
+  item: AddToCartItem
+): CartItem[] => {
+  const existingIndex = items.findIndex(
+    (existing) =>
+      existing._id === item._id &&
+      sameSpecifications(
+        existing.selectedSpecifications,
+        item.selectedSpecifications
+      )
+  );
+
+  if (existingIndex !== -1) {
+    const merged = [...items];
+    merged[existingIndex] = {
+      ...merged[existingIndex],
+      price: item.price,
+      basePrice: item.basePrice,
+      quantity: (merged[existingIndex].quantity || 1) + (item.quantity || 1),
+    };
+    return merged;
+  }
+
+  return [
+    ...items,
+    {
+      _id: item._id,
+      name: item.name,
+      displayNames: item.displayNames,
+      images: item.images,
+      price: item.price,
+      basePrice: item.basePrice,
+      brand: item.brand,
+      category: item.category,
+      quantity: item.quantity || 1,
+      selectedSpecifications: item.selectedSpecifications || {},
+    },
+  ];
+};
+
 const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
       selectedDeliveryType: 0,
       addItem: (item: AddToCartItem) =>
-        set((state) => {
-          console.log("CartStore - Starting addItem:", {
-            itemId: item._id,
-            itemName: item.name,
-            specifications: item.selectedSpecifications,
-            currentCartLength: state.items.length,
-          });
-
-          // Create the cart item first
-          const cartItem: CartItem = {
-            _id: item._id,
-            name: item.name,
-            displayNames: item.displayNames,
-            images: item.images,
-            price: item.price,
-            basePrice: item.basePrice,
-            brand: item.brand,
-            category: item.category,
-            quantity: item.quantity || 1,
-            selectedSpecifications: item.selectedSpecifications || {},
-          };
-
-          console.log("CartStore - Created cart item:", {
-            ...cartItem,
-            basePrice: cartItem.basePrice,
-            price: cartItem.price,
-            priceCheck: cartItem.price - (cartItem.basePrice || 0),
-          });
-
-          // Check for existing item with same specs
-          const existingItemIndex = state.items.findIndex((i) => {
-            if (i._id !== item._id) return false;
-
-            // Compare specifications
-            const currentSpecs = i.selectedSpecifications || {};
-            const newSpecs = item.selectedSpecifications || {};
-            const currentKeys = Object.keys(currentSpecs).sort();
-            const newKeys = Object.keys(newSpecs).sort();
-
-            console.log("CartStore - Comparing specs:", {
-              currentSpecs,
-              newSpecs,
-              currentKeys,
-              newKeys,
-            });
-
-            // If different number of specs, not the same
-            if (currentKeys.length !== newKeys.length) {
-              console.log("CartStore - Different number of specs");
-              return false;
-            }
-
-            // Check if all keys match
-            if (!currentKeys.every((key, idx) => key === newKeys[idx])) {
-              console.log("CartStore - Keys don't match");
-              return false;
-            }
-
-            // Check each specification value
-            const specsMatch = currentKeys.every((key) => {
-              const currentValue = currentSpecs[key];
-              const newValue = newSpecs[key];
-
-              // If both values are objects (multilingual values)
-              if (
-                typeof currentValue === "object" &&
-                typeof newValue === "object" &&
-                currentValue !== null &&
-                newValue !== null
-              ) {
-                return (
-                  currentValue.en === newValue.en &&
-                  currentValue["zh-TW"] === newValue["zh-TW"]
-                );
-              }
-
-              // For simple values
-              return currentValue === newValue;
-            });
-            console.log("CartStore - Specs match:", specsMatch);
-            return specsMatch;
-          });
-
-          console.log("CartStore - Existing item index:", existingItemIndex);
-
-          // If item exists, update quantity
-          if (existingItemIndex !== -1) {
-            const newItems = [...state.items];
-            newItems[existingItemIndex] = {
-              ...newItems[existingItemIndex],
-              price: item.price,
-              basePrice: item.basePrice,
-              quantity:
-                (newItems[existingItemIndex].quantity || 1) +
-                (item.quantity || 1),
-            };
-            console.log("CartStore - Updated items:", newItems);
-            return { ...state, items: newItems };
-          }
-
-          // If item doesn't exist, add new item
-          const newState = { ...state, items: [...state.items, cartItem] };
-          console.log("CartStore - New cart state:", {
-            oldLength: state.items.length,
-            newLength: newState.items.length,
-            newItems: newState.items,
-          });
-          return newState;
-        }),
+        set((state) => ({
+          ...state,
+          items: mergeCartItem(state.items, item),
+        })),
+      // One state update for a whole order sheet, so the cart does not re-render
+      // and re-sync once per line.
+      addItems: (newItems: AddToCartItem[]) =>
+        set((state) => ({
+          ...state,
+          items: newItems.reduce(
+            (items, item) => mergeCartItem(items, item),
+            state.items
+          ),
+        })),
       removeItem: (itemId: string, selectedSpecs?: Record<string, any>) =>
         set((state) => ({
           ...state,

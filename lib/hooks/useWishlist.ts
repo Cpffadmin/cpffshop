@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { toast } from "react-hot-toast";
+import useSWR from "swr";
 
 interface MultiLangString {
   en: string;
@@ -16,38 +16,38 @@ interface WishlistItem {
   price: number;
 }
 
+const WISHLIST_KEY = "/api/wishlist";
+
+const fetchWishlist = async (url: string): Promise<WishlistItem[]> => {
+  const response = await axios.get(url);
+  if (!response.data.success) {
+    throw new Error(response.data.error || "Failed to fetch wishlist");
+  }
+  return response.data.wishlist;
+};
+
+/**
+ * Shared wishlist state. Every `WishlistButton` calls this hook, and product
+ * grids render one button per product, so the previous version — local state
+ * plus its own `useEffect` fetch — issued one identical request per card (~100
+ * on a full product page). SWR keys them all to one cache entry, so it is a
+ * single request, and a toggle in one button updates every other button.
+ */
 export function useWishlist() {
   const { data: session } = useSession();
-  const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (session) {
-      fetchWishlist();
-    } else {
-      setWishlist([]);
-      setLoading(false);
+  const { data, error, isLoading, mutate } = useSWR<WishlistItem[]>(
+    session ? WISHLIST_KEY : null,
+    fetchWishlist,
+    {
+      revalidateOnFocus: false,
+      // A fixed toast id collapses the one-per-subscriber error into one toast.
+      onError: () =>
+        toast.error("Failed to fetch wishlist", { id: "wishlist-error" }),
     }
-  }, [session]);
+  );
 
-  const fetchWishlist = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await axios.get("/api/wishlist");
-      if (!response.data.success) {
-        throw new Error(response.data.error || "Failed to fetch wishlist");
-      }
-      setWishlist(response.data.wishlist);
-    } catch (err) {
-      console.error("Error fetching wishlist:", err);
-      setError(err instanceof Error ? err.message : "Failed to fetch wishlist");
-      toast.error("Failed to fetch wishlist");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const wishlist = data ?? [];
 
   const toggleWishlist = async (productId: string) => {
     if (!session) {
@@ -56,15 +56,15 @@ export function useWishlist() {
     }
 
     try {
-      const response = await axios.post("/api/wishlist", { productId });
+      const response = await axios.post(WISHLIST_KEY, { productId });
       if (!response.data.success) {
         throw new Error(response.data.error || "Failed to update wishlist");
       }
 
-      // Update local state based on server response
-      setWishlist(response.data.wishlist);
+      // The route returns the new list, so write it to the shared cache instead
+      // of re-fetching.
+      await mutate(response.data.wishlist, { revalidate: false });
 
-      // Show success message
       toast.success(
         response.data.action === "removed"
           ? "Removed from wishlist"
@@ -78,16 +78,15 @@ export function useWishlist() {
     }
   };
 
-  const isInWishlist = (productId: string) => {
-    return wishlist.some((item) => item._id === productId);
-  };
+  const isInWishlist = (productId: string) =>
+    wishlist.some((item) => item._id === productId);
 
   return {
     wishlist,
-    loading,
-    error,
+    loading: isLoading,
+    error: error instanceof Error ? error.message : null,
     toggleWishlist,
     isInWishlist,
-    refreshWishlist: fetchWishlist,
+    refreshWishlist: () => mutate(),
   };
 }

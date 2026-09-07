@@ -20,6 +20,7 @@ import { invalidateCache } from "@/utils/services/clientCache";
 type CartContextType = {
   items: CartItem[];
   addItem: (item: AddToCartItem) => void;
+  addItems: (items: AddToCartItem[]) => boolean;
   removeItem: (itemId: string, selectedSpecs?: Record<string, any>) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
   clearCart: () => Promise<void>;
@@ -30,9 +31,10 @@ type CartContextType = {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const { language } = useTranslation();
+  const { language, t } = useTranslation();
   const items = useCartStore((state) => state.items);
   const addStoreItem = useCartStore((state) => state.addItem);
+  const addStoreItems = useCartStore((state) => state.addItems);
   const removeStoreItem = useCartStore((state) => state.removeItem);
   const updateStoreItemQuantity = useCartStore(
     (state) => state.updateItemQuantity
@@ -69,7 +71,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         } catch (error) {
           console.error("Failed to load cart:", error);
           if (status === "authenticated") {
-            toast.error("Failed to load cart");
+            toast.error(t("cart.loadFailed"));
           }
         } finally {
           isSyncing.current = false;
@@ -158,20 +160,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     };
   }, [items, session, status, userLoading, userData, loadStoreServerCart]);
 
+  // Require authentication before adding to cart
+  const isAuthenticated = () =>
+    Boolean(session?.user) &&
+    status === "authenticated" &&
+    !userLoading &&
+    Boolean(userData);
+
   const addItem = (item: AddToCartItem) => {
-    console.log("Adding item to cart (provider):", item);
-
-    // Require authentication before adding to cart
-    const isAuthenticated =
-      Boolean(session?.user) &&
-      status === "authenticated" &&
-      !userLoading &&
-      Boolean(userData);
-
-    if (!isAuthenticated) {
+    if (!isAuthenticated()) {
       setPendingItem(item as unknown as Product);
       setShowAuthDialog(true);
-      toast.error("Please log in to add items to your cart");
+      toast.error(t("cart.loginRequired"));
       return;
     }
 
@@ -179,12 +179,28 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     addStoreItem(item);
 
     // Show success message
-    toast.success("Item added to cart");
+    toast.success(t("cart.addedToCart"));
+  };
+
+  // Bulk add for the quick order form: one store update, one toast, one sync.
+  // Returns false when the items were not added, so callers can hold their place.
+  const addItems = (newItems: AddToCartItem[]) => {
+    if (newItems.length === 0) return false;
+
+    if (!isAuthenticated()) {
+      setShowAuthDialog(true);
+      toast.error(t("cart.loginRequired"));
+      return false;
+    }
+
+    addStoreItems(newItems);
+    toast.success(t("cart.itemsAdded", { count: newItems.length }));
+    return true;
   };
 
   const removeItem = (itemId: string, selectedSpecs?: Record<string, any>) => {
     removeStoreItem(itemId, selectedSpecs);
-    toast.success("Item removed from cart");
+    toast.success(t("cart.removedFromCart"));
   };
 
   const updateQuantity = (itemId: string, quantity: number) => {
@@ -194,9 +210,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const clearCart = async () => {
     const cleared = await clearStoreCart();
     if (cleared) {
-      toast.success("Cart cleared");
+      toast.success(t("cart.cartCleared"));
     } else {
-      toast.error("Cart cleared here, but saving to your account failed");
+      toast.error(t("cart.clearFailed"));
     }
   };
 
@@ -210,6 +226,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       value={{
         items,
         addItem,
+        addItems,
         removeItem,
         updateQuantity,
         clearCart,

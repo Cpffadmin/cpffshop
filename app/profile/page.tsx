@@ -41,7 +41,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatAddress } from "@/utils/formatAddress";
-import { useWishlist } from "@/lib/hooks/useWishlist";
 import { WishlistButton } from "@/components/ui/WishlistButton";
 import type { AddressComponents } from "@/utils/formatAddress";
 import type { CustomUser } from "@/types";

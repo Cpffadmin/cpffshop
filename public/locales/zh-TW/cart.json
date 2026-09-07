@@ -4,6 +4,7 @@
   "addToCart": "加入購物車",
   "removeFromCart": "從購物車移除",
   "addedToCart": "已加入購物車",
+  "itemsAdded": "已將 {{count}} 項產品加入購物車",
   "removedFromCart": "已從購物車移除",
   "quantity": "數量",
   "subtotal": "小計",
@@ -43,6 +44,10 @@
       "title": "配送方式"
     }
   },
+  "loginRequired": "請先登入才能加入購物車",
+  "loadFailed": "無法載入購物車",
+  "cartCleared": "已清空購物車",
+  "clearFailed": "購物車已在此清空，但未能同步至您的帳戶",
   "errors": {
     "addFailed": "加入購物車失敗",
     "removeFailed": "移除商品失敗",

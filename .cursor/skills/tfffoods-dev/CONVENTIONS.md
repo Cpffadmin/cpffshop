@@ -77,6 +77,8 @@ The repo root `proxy.ts` is Next 16's renamed middleware (uses `withAuth`). **Ne
 
 ## i18n
 
+- Any `onKeyDown` that submits on Enter must check `event.nativeEvent.isComposing` first. Enter also commits an IME candidate, so Chinese input otherwise submits half-typed text (hit on the quick-order list name and the saved-list rename).
+
 - User-facing strings: `const { t, language } = useTranslation()` then `t("namespace.key")`.
 - Add keys to both `public/locales/en/*.json` and `public/locales/zh-TW/*.json`.
 - For content from the DB: render `obj.displayNames[language] || obj.displayNames.en`.

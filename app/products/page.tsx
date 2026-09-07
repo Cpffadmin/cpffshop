@@ -70,7 +70,7 @@ export default function Products() {
 
   // Core states
   const [products, setProducts] = useState<Product[]>([]);
-  const { wishlistItems, toggleWishlist } = useWishlist();
+  const { toggleWishlist } = useWishlist();
 
   // Import mobile hook
   const isMobile = useIsMobile();

@@ -65,6 +65,19 @@ export interface CustomUser {
     orderUpdates: boolean;
     promotions: boolean;
   };
+  orderTemplates?: OrderTemplate[];
+}
+
+// A saved quick-order list: product ids + quantities only, resolved against the
+// live catalogue when loaded.
+export interface OrderTemplate {
+  _id: string;
+  /** Fallback / legacy name. Prefer `displayNames` via `templateLabel()`. */
+  name: string;
+  displayNames?: { en?: string; "zh-TW"?: string };
+  items: { product: string; quantity: number }[];
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 // Brand interface
@@ -238,6 +251,7 @@ export interface CartStore {
   items: CartItem[];
   selectedDeliveryType: number;
   addItem: (item: AddToCartItem) => void;
+  addItems: (items: AddToCartItem[]) => void;
   removeItem: (id: string, selectedSpecs?: Record<string, any>) => void;
   clearCart: () => Promise<boolean>;
   clearLocalCart: () => void;

@@ -372,6 +372,72 @@
   }
 }
 
+/* Reminds a returning customer that they have saved quick-order lists. Runs for a
+   few seconds on the homepage — see hooks/useQuickOrderReminder.ts. Yellow rather
+   than a theme token so it reads as a notice against any theme colour. */
+/* Animates opacity and box-shadow only. `.navbar-button` sets its own background
+   and text colour through `@apply` (including hover and per-breakpoint icon
+   rules), so the static declarations below need `!important` to win — which
+   keyframes cannot provide, as `!important` is ignored inside them. */
+@keyframes quick-order-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgb(250 204 21 / 0.9);
+  }
+  50% {
+    opacity: 0.4;
+    box-shadow: 0 0 0 8px rgb(250 204 21 / 0);
+  }
+}
+
+.quick-order-pulse {
+  background-color: rgb(250 204 21) !important;
+  border-radius: 0.5rem;
+  animation: quick-order-pulse 1s ease-in-out infinite;
+}
+
+.quick-order-pulse .navbar-button-text,
+.quick-order-pulse .navbar-button-icon,
+.quick-order-pulse svg {
+  color: rgb(38 38 38) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quick-order-pulse {
+    animation: none;
+    box-shadow: 0 0 0 2px rgb(250 204 21);
+  }
+}
+
+/* "Add products" on the quick order list view. Blinks until it is clicked once,
+   then stays quiet for good (flag in localStorage). */
+@keyframes quick-order-blink {
+  0%,
+  100% {
+    background-color: rgb(250 204 21 / 0.15);
+    border-color: rgb(250 204 21);
+    box-shadow: 0 0 0 0 rgb(250 204 21 / 0.7);
+  }
+  50% {
+    background-color: rgb(250 204 21 / 0.6);
+    border-color: rgb(250 204 21);
+    box-shadow: 0 0 0 6px rgb(250 204 21 / 0);
+  }
+}
+
+.quick-order-blink {
+  animation: quick-order-blink 1.1s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quick-order-blink {
+    animation: none;
+    background-color: rgb(250 204 21 / 0.3);
+    border-color: rgb(250 204 21);
+  }
+}
+
 @keyframes slideIn {
   from {
     transform: translateY(20px);

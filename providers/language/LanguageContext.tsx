@@ -179,6 +179,7 @@ const availableModules = [
   "checkout-page",
   "auth",
   "product",
+  "quick-order",
   "admin",
   "admin-logistics",
   "admin-orders",

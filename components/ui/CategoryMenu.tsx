@@ -23,11 +23,18 @@ interface Category {
 interface CategoryMenuProps {
   selectedCategory: string;
   onCategorySelect: (category: string) => void;
+  /**
+   * Blinks the control and shows the "pick a product type" bubble while nothing
+   * is filtered. Wanted on the product list, unwanted where browsing the whole
+   * catalogue is a normal end state (the quick order form).
+   */
+  hintWhenUnfiltered?: boolean;
 }
 
 const CategoryMenu: React.FC<CategoryMenuProps> = ({
   selectedCategory,
   onCategorySelect,
+  hintWhenUnfiltered = true,
 }) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -126,7 +133,8 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
     setIsExpanded(false);
   };
 
-  const showSelectHint = selectedCategory === "All Categories";
+  const showSelectHint =
+    hintWhenUnfiltered && selectedCategory === "All Categories";
 
   useEffect(() => {
     if (!showSelectHint || loading) {

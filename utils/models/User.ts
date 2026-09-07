@@ -19,9 +19,46 @@ interface UserDocument extends mongoose.Document {
   };
   wishlist: mongoose.Types.ObjectId[];
   cart: Record<string, unknown>[];
+  orderTemplates: {
+    name: string;
+    displayNames?: { en?: string; "zh-TW"?: string };
+    items: { product: mongoose.Types.ObjectId; quantity: number }[];
+  }[];
   createdAt: Date;
   updatedAt: Date;
 }
+
+// Saved quick-order lists. Unlike `cart`, these store only product ids and
+// quantities: names, images and prices are resolved from the live catalogue on
+// load, so a saved list can never show a stale price or resurrect a product
+// that was deleted (the trap `removeDeletedProductsFromCart` exists to clean up).
+const orderTemplateSchema = new mongoose.Schema(
+  {
+    // `name` stays the single source of truth for sorting and legacy lists saved
+    // before bilingual names existed; `displayNames` is what the UI renders.
+    name: {
+      type: String,
+      required: [true, "List name is required"],
+      trim: true,
+      maxlength: 60,
+    },
+    displayNames: {
+      en: { type: String, trim: true, maxlength: 60, default: "" },
+      "zh-TW": { type: String, trim: true, maxlength: 60, default: "" },
+    },
+    items: [
+      {
+        product: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Product",
+          required: true,
+        },
+        quantity: { type: Number, required: true, min: 1 },
+      },
+    ],
+  },
+  { timestamps: true }
+);
 
 const userSchema = new mongoose.Schema<UserDocument>(
   {
@@ -92,6 +129,10 @@ const userSchema = new mongoose.Schema<UserDocument>(
     // multilingual { en, "zh-TW" } values) that a strict schema would strip.
     cart: {
       type: [mongoose.Schema.Types.Mixed],
+      default: [],
+    },
+    orderTemplates: {
+      type: [orderTemplateSchema],
       default: [],
     },
   },

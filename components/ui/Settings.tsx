@@ -14,13 +14,21 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import toast from "react-hot-toast";
-import { User, Lock, Bell, Trash } from "lucide-react";
+import { User, Lock, Bell, Trash, ClipboardList } from "lucide-react";
+import Link from "next/link";
 import { useTranslation } from "@/providers/language/LanguageContext";
 import { useConfirm } from "@/components/ui/confirm-provider";
 import { NotificationSettings } from "./NotificationSettings";
 import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
 import useCartStore from "@/store/cartStore";
 import { useUser } from "@/providers/user/UserContext";
+import { MultiLangInput } from "@/components/MultiLangInput/MultiLangInput";
+import {
+  hasAnyName,
+  templateLabel,
+  templateNames,
+  type TemplateNames,
+} from "@/lib/orderTemplates";
 
 // Add this component before the SettingsComponent
 const SettingsSkeleton = () => {
@@ -57,7 +65,7 @@ const SettingsSkeleton = () => {
 };
 
 const Settings = () => {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const confirm = useConfirm();
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -75,6 +83,50 @@ const Settings = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [renamingListId, setRenamingListId] = useState<string | null>(null);
+  const [renameNames, setRenameNames] = useState<TemplateNames>({
+    en: "",
+    "zh-TW": "",
+  });
+
+  const orderTemplates = userData?.orderTemplates ?? [];
+
+  const renameList = async (id: string) => {
+    if (!hasAnyName(renameNames)) return;
+
+    try {
+      await axios.put("/api/order-templates", {
+        id,
+        displayNames: renameNames,
+      });
+      await refreshUserData();
+      setRenamingListId(null);
+      setRenameNames({ en: "", "zh-TW": "" });
+      toast.success(t("quick-order.listSaved"));
+    } catch (error) {
+      console.error("Error renaming saved list:", error);
+      toast.error(t("quick-order.listSaveFailed"));
+    }
+  };
+
+  const deleteList = async (id: string, name: string) => {
+    const confirmed = await confirm({
+      title: t("common.delete"),
+      description: t("quick-order.deleteConfirm", { name }),
+      confirmText: t("common.delete"),
+      cancelText: t("common.cancel"),
+    });
+    if (!confirmed) return;
+
+    try {
+      await axios.delete(`/api/order-templates?id=${id}`);
+      await refreshUserData();
+      toast.success(t("quick-order.listDeleted"));
+    } catch (error) {
+      console.error("Error deleting saved list:", error);
+      toast.error(t("quick-order.listSaveFailed"));
+    }
+  };
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -197,6 +249,13 @@ const Settings = () => {
             >
               <Bell className="w-4 h-4" />
               <span>{t("profile.settings.notificationSettings")}</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="orderLists"
+              className="flex items-center space-x-2 px-6 py-4 ml-0 rounded-none border-b-2 border-transparent data-[state=active]:border-[#535C91] data-[state=active]:bg-transparent"
+            >
+              <ClipboardList className="w-4 h-4" />
+              <span>{t("quick-order.savedLists")}</span>
             </TabsTrigger>
             <TabsTrigger
               value="delete"
@@ -359,6 +418,106 @@ const Settings = () => {
                 <CardContent>
                   <NotificationSettings />
                 </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="orderLists">
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t("quick-order.savedLists")}</CardTitle>
+                  <CardDescription>
+                    {t("quick-order.subtitle")}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {orderTemplates.length === 0 ? (
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {t("quick-order.noSavedLists")}
+                    </p>
+                  ) : (
+                    orderTemplates.map((template) => (
+                      <div
+                        key={template._id}
+                        className="flex flex-wrap items-center gap-2 rounded-lg border border-border p-3"
+                      >
+                        {renamingListId === template._id ? (
+                          <>
+                            <div className="w-full">
+                              <MultiLangInput
+                                value={renameNames}
+                                onChange={setRenameNames}
+                                placeholder={{
+                                  en: t("quick-order.listNamePlaceholderEn"),
+                                  "zh-TW": t("quick-order.listNamePlaceholderZh"),
+                                }}
+                              />
+                              <p className="mt-1 text-xs text-muted-foreground">
+                                {t("quick-order.listNameBothHint")}
+                              </p>
+                            </div>
+                            <Button
+                              size="sm"
+                              onClick={() => renameList(template._id)}
+                              disabled={!hasAnyName(renameNames)}
+                            >
+                              {t("common.save")}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => setRenamingListId(null)}
+                            >
+                              {t("common.cancel")}
+                            </Button>
+                          </>
+                        ) : (
+                          <>
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate font-medium text-foreground">
+                                {templateLabel(template, language)}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {t("quick-order.listItemCount", {
+                                  count: template.items.length,
+                                })}
+                              </p>
+                            </div>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                setRenamingListId(template._id);
+                                setRenameNames(templateNames(template));
+                              }}
+                            >
+                              {t("quick-order.rename")}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() =>
+                                deleteList(
+                                  template._id,
+                                  templateLabel(template, language)
+                                )
+                              }
+                            >
+                              {t("common.delete")}
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </CardContent>
+                <CardFooter>
+                  <Link
+                    href="/quick-order"
+                    className="text-sm text-primary hover:underline"
+                  >
+                    {t("quick-order.openQuickOrder")}
+                  </Link>
+                </CardFooter>
               </Card>
             </TabsContent>
 

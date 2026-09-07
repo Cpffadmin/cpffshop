@@ -4,6 +4,7 @@ export interface CartStore {
   items: CartItem[];
   selectedDeliveryType: number;
   addItem: (item: AddToCartItem) => void;
+  addItems: (items: AddToCartItem[]) => void;
   removeItem: (id: string) => void;
   clearCart: () => Promise<boolean>;
   clearLocalCart: () => void;
