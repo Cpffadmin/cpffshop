@@ -61,6 +61,7 @@
   "noDescription": "No description available",
   "previous": "Previous",
   "next": "Next",
+  "goToPage": "Go to page {{page}}",
   "back": "Back",
   "menu": "Menu",
   "close": "Close",
