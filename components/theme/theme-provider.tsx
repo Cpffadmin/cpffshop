@@ -187,6 +187,13 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
         "--ring",
         `${buttonHSL.h} ${buttonHSL.s}% ${buttonHSL.l}%`
       );
+      // Lighter stop for text gradients (same hue as the theme button color).
+      const softL = Math.min(buttonHSL.l + 28, isDark ? 88 : 82);
+      const softS = Math.max(buttonHSL.s - 12, 18);
+      document.documentElement.style.setProperty(
+        "--primary-soft",
+        `${buttonHSL.h} ${softS}% ${softL}%`
+      );
 
       // Apply text colors
       const textHSL = hexToHSL(colors.text);

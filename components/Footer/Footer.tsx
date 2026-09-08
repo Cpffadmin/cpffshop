@@ -83,7 +83,7 @@ const Footer = () => {
               </>
             ) : (
               <>
-                <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-200">
+                <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-[hsl(var(--primary-soft))]">
                   <MultiLangDisplay
                     value={settings?.storeName}
                     currentLang={language}
@@ -229,7 +229,7 @@ const Footer = () => {
                   <button
                     type="submit"
                     disabled={isSubscribing}
-                    className="flex-shrink-0 bg-blue-500 hover:bg-blue-600 text-gray-900 font-bold py-2 px-4 rounded-r-md transition duration-300 disabled:opacity-50"
+                    className="flex-shrink-0 bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-2 px-4 rounded-r-md transition duration-300 disabled:opacity-50"
                   >
                     <HiOutlineMail className="w-6 h-6" />
                   </button>

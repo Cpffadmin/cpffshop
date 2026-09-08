@@ -223,7 +223,7 @@ const NewsletterComponent = ({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={t("newsletter.emailPlaceholder")}
-              className="w-full px-6 py-3 text-base text-gray-700 dark:text-gray-300 placeholder-gray-500 dark:placeholder-gray-400 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#535C91] dark:focus:ring-[#6B74A9] focus:border-transparent"
+              className="w-full px-6 py-3 text-base text-gray-700 dark:text-gray-300 placeholder-gray-500 dark:placeholder-gray-400 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               required
             />
           </motion.div>
@@ -235,7 +235,7 @@ const NewsletterComponent = ({
           >
             <button
               type="submit"
-              className="w-full px-6 py-3 text-sm font-medium text-white bg-[#535C91] hover:bg-[#424874] dark:bg-[#6B74A9] dark:hover:bg-[#535C91] rounded-md transition-colors disabled:opacity-50"
+              className="w-full px-6 py-3 text-sm font-medium text-primary-foreground bg-primary hover:bg-primary/90 rounded-md transition-colors disabled:opacity-50"
             >
               {isSubscribing ? (
                 t("common.loading")
