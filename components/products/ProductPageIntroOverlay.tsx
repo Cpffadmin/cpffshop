@@ -106,13 +106,16 @@ export default function ProductPageIntroOverlay() {
   useLayoutEffect(() => {
     const requested = consumeNavIntroRequest();
     const pathKey = getNavKeyFromPath(pathname);
-    const key = requested || pathKey;
+    // A stored request only counts on the page it was made for, otherwise a
+    // leftover flag would play one button's clip on an unrelated page.
+    const key = requested === pathKey ? requested : pathKey;
     if (!key) return;
     if (!navIntroHasVideo(navIntros[key]) || prefersReducedMotion()) {
-      if (requested) markNavIntroRequested(requested);
+      if (requested === key) markNavIntroRequested(requested);
       return;
     }
     if (requested === key || consumeDocumentLoadPlay(key)) {
+      markNavIntroPlayed(key);
       fadingOutRef.current = false;
       reachedPageRef.current = true;
       setActiveKey(key);

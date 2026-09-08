@@ -213,10 +213,14 @@ export function consumeNavIntroRequest(): NavIntroKey | null {
   }
 }
 
+/**
+ * Play a button's clip at most once per browser page load, so repeated clicks
+ * just navigate. A full refresh resets this module state and arms it again.
+ */
 export function requestNavIntro(key: NavIntroKey) {
   if (typeof window === "undefined") return;
+  if (playedKeys.has(key)) return;
   markNavIntroRequested(key);
-  markNavIntroPlayed(key);
   window.dispatchEvent(new CustomEvent(NAV_INTRO_EVENT, { detail: key }));
 }
 
