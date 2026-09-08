@@ -29,6 +29,7 @@ import { signOut } from "next-auth/react";
 import { useCartUI } from "@/components/ui/CartUIContext";
 import Cart from "@/components/ui/Cart";
 import { clearClientStorageOnLogout } from "@/utils/clientLogout";
+import { requestNavIntro } from "@/lib/productPageIntro";
 interface MobileMenuProps {
   isOpen: boolean;
   setMenuClose: () => void;
@@ -247,7 +248,10 @@ const MobileMenu = ({
               <ul className="space-y-1 list-none">
                 <NavLink
                   href="/"
-                  onClick={closeNav}
+                  onClick={() => {
+                    requestNavIntro("home");
+                    closeNav();
+                  }}
                   variant={pathname === "/" ? "active" : "default"}
                   className={navbarButtonStyles.withIcon}
                 >
@@ -256,7 +260,10 @@ const MobileMenu = ({
                 </NavLink>
                 <NavLink
                   href="/products"
-                  onClick={closeNav}
+                  onClick={() => {
+                    requestNavIntro("products");
+                    closeNav();
+                  }}
                   variant={
                     pathname === "/products" || pathname.startsWith("/product")
                       ? "active"
@@ -269,7 +276,10 @@ const MobileMenu = ({
                 </NavLink>
                 <NavLink
                   href="/quick-order"
-                  onClick={closeNav}
+                  onClick={() => {
+                    requestNavIntro("quickOrder");
+                    closeNav();
+                  }}
                   variant={pathname === "/quick-order" ? "active" : "default"}
                   className={navbarButtonStyles.withIcon}
                 >
@@ -278,7 +288,10 @@ const MobileMenu = ({
                 </NavLink>
                 <NavLink
                   href="/blog"
-                  onClick={closeNav}
+                  onClick={() => {
+                    requestNavIntro("blog");
+                    closeNav();
+                  }}
                   variant={pathname.startsWith("/blog") ? "active" : "default"}
                   className={navbarButtonStyles.withIcon}
                 >
@@ -287,7 +300,10 @@ const MobileMenu = ({
                 </NavLink>
                 <NavLink
                   href="/about"
-                  onClick={closeNav}
+                  onClick={() => {
+                    requestNavIntro("about");
+                    closeNav();
+                  }}
                   variant={pathname === "/about" ? "active" : "default"}
                   className={navbarButtonStyles.withIcon}
                 >
@@ -296,7 +312,10 @@ const MobileMenu = ({
                 </NavLink>
                 <NavLink
                   href="/contact"
-                  onClick={closeNav}
+                  onClick={() => {
+                    requestNavIntro("contact");
+                    closeNav();
+                  }}
                   variant={pathname === "/contact" ? "active" : "default"}
                   className={navbarButtonStyles.withIcon}
                 >

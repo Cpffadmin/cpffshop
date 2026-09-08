@@ -50,6 +50,25 @@ interface StoreSettings {
     buttonText: MultiLangValue;
     disclaimer: MultiLangValue;
   };
+  productPageIntro?: {
+    enabled: boolean;
+    videoUrl: string;
+    message: MultiLangValue;
+  };
+  navIntros?: {
+    home?: ProductPageIntroSettings;
+    products?: ProductPageIntroSettings;
+    quickOrder?: ProductPageIntroSettings;
+    blog?: ProductPageIntroSettings;
+    about?: ProductPageIntroSettings;
+    contact?: ProductPageIntroSettings;
+  };
+}
+
+interface ProductPageIntroSettings {
+  enabled: boolean;
+  videoUrl: string;
+  message: MultiLangValue;
 }
 
 export type { StoreSettings, MultiLangValue };

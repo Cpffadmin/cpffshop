@@ -94,7 +94,8 @@
     "title": "Settings",
     "manage": "Manage Settings",
     "description": "Configure system settings",
-    "theme": "Theme"
+    "theme": "Theme",
+    "productIntro": "Navbar intros"
   },
   "delivery": {
     "title": "Delivery Settings",

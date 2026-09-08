@@ -21,6 +21,7 @@ import {
   LayoutDashboard,
   ImageIcon,
   Palette,
+  Video,
 } from "lucide-react";
 import { useTranslation } from "@/providers/language/LanguageContext";
 
@@ -363,6 +364,16 @@ const AdminDrawer = ({
                   >
                     <ImageIcon className="h-4 w-4 mr-2" />
                     {t("admin-hero.title")}
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/admin/settings?tab=productIntro"
+                    onClick={handleClose}
+                    className="flex items-center rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground"
+                  >
+                    <Video className="h-4 w-4 mr-2" />
+                    {t("admin.settings.productIntro")}
                   </Link>
                 </li>
                 <li>

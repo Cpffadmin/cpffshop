@@ -12,6 +12,7 @@ import { LanguageProvider } from "@/providers/language/LanguageContext";
 import { CartUIProvider } from "@/components/ui/CartUIContext";
 import { WishlistProvider } from "@/providers/WishlistProvider";
 import { ConfirmProvider } from "@/components/ui/confirm-provider";
+import ProductPageIntroOverlay from "@/components/products/ProductPageIntroOverlay";
 
 // Dynamically import components with loading fallbacks
 const Navbar = dynamic(() => import("@/components/Navbar/Navbar"), {
@@ -145,6 +146,7 @@ export default function RootLayout({
                                             </main>
                                             <Footer />
                                           </div>
+                                          <ProductPageIntroOverlay />
                                           <Toaster position="top-right" />
                                         </ConfirmProvider>
                                       </CartUIProvider>

@@ -165,6 +165,21 @@
         "getCoordinates": "取得座標",
         "delete": "刪除地點"
       }
+    },
+    "productIntro": {
+      "title": "導覽列開場影片",
+      "description": "每個導覽列按鈕都可以有自己的短片和訊息。尚未上傳影片時，會直接進入頁面。短片只在第一次點該按鈕，或重新整理該頁時播放。",
+      "enabled": "播放開場影片",
+      "enabledHelp": "關閉或尚未上傳影片時，會直接進入頁面。",
+      "video": "開場影片",
+      "videoHelp": "準備好時再上傳 MP4 或 MOV。可以先留空。",
+      "uploadVideo": "上傳影片",
+      "changeVideo": "更換影片",
+      "clearVideo": "移除影片",
+      "noVideo": "尚未上傳影片",
+      "useDefault": "使用預設短片",
+      "message": "訊息氣泡",
+      "messageHelp": "顯示在影片上方。留空則不顯示氣泡。"
     }
   },
   "actions": {

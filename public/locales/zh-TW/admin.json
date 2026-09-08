@@ -94,7 +94,8 @@
     "title": "設定",
     "manage": "管理設定",
     "description": "配置系統設定",
-    "theme": "主題"
+    "theme": "主題",
+    "productIntro": "導覽開場"
   },
   "delivery": {
     "title": "配送設定",

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { LayoutDashboard, Settings as SettingsIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,12 @@ import GeneralTab from "./tabs/GeneralTab";
 import NewsletterTab from "./tabs/NewsletterTab";
 import AboutTab from "./tabs/AboutTab";
 import ContactTab from "./tabs/ContactTab";
+import ProductIntroTab from "./tabs/ProductIntroTab";
+import {
+  DEFAULT_NAV_INTROS,
+  DEFAULT_PRODUCT_PAGE_INTRO,
+  mergeNavIntros,
+} from "@/lib/productPageIntro";
 import type {
   MultiLangValue,
   StoreSettings,
@@ -49,10 +55,15 @@ function isCloudinarySuccess(
 export default function AdminSettingsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { t, getMultiLangValue } = useTranslation();
   const { refreshSettings } = useStore();
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("general"); // Add state for active tab
+  const [isSaving, setIsSaving] = useState(false);
+  const requestedTab = searchParams.get("tab");
+  const [activeTab, setActiveTab] = useState(
+    requestedTab === "productIntro" ? "productIntro" : "general"
+  );
   const [settings, setSettings] = useState<StoreSettings>({
     storeName: {
       en: "EcomWatch",
@@ -292,6 +303,8 @@ export default function AdminSettingsPage() {
         ],
       },
     },
+    productPageIntro: DEFAULT_PRODUCT_PAGE_INTRO,
+    navIntros: DEFAULT_NAV_INTROS,
   });
 
   const breadcrumbItems = [
@@ -332,6 +345,11 @@ export default function AdminSettingsPage() {
               data.newsletterSettings?.confirmationEmail ??
               DEFAULT_CONFIRMATION_EMAIL,
           },
+          navIntros: mergeNavIntros(data.navIntros, data.productPageIntro),
+          productPageIntro: mergeNavIntros(
+            data.navIntros,
+            data.productPageIntro
+          ).products,
         });
       } catch (error) {
         console.error("Error fetching settings:", error);
@@ -623,22 +641,33 @@ export default function AdminSettingsPage() {
     }
   };
 
-  const saveSettingsWithSync = async (settingsType: string) => {
+  const saveSettingsWithSync = async (
+    settingsType: string,
+    payload?: Partial<StoreSettings>
+  ) => {
     try {
-      setIsLoading(true);
+      setIsSaving(true);
 
-      // Validate settings before sending
-      if (!settings) {
+      if (!settings && !payload) {
         toast.error(`Invalid settings data`);
         return;
       }
 
       const response = await axios.post("/api/store-settings", {
-        settings: settings,
+        settings: payload ?? settings,
       });
 
       if (response.status === 200 && response.data) {
-        setSettings(response.data.settings || response.data);
+        const saved = response.data.settings || response.data;
+        setSettings((prev) => ({
+          ...prev,
+          ...saved,
+          navIntros: mergeNavIntros(saved.navIntros, saved.productPageIntro),
+          productPageIntro: mergeNavIntros(
+            saved.navIntros,
+            saved.productPageIntro
+          ).products,
+        }));
         await refreshSettings();
         toast.success(`${settingsType} settings saved successfully`);
       } else {
@@ -650,18 +679,30 @@ export default function AdminSettingsPage() {
     } catch (error: any) {
       console.error(`Error saving ${settingsType} settings:`, error);
       const errorMessage =
+        error.response?.data?.details ||
+        error.response?.data?.error ||
         error.response?.data?.message ||
         error.message ||
         `Failed to save ${settingsType} settings`;
       toast.error(errorMessage);
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
 
   const saveSettings = () => saveSettingsWithSync("Store");
   const saveNewsletterSettings = () => saveSettingsWithSync("Newsletter");
   const saveAboutPageSettings = () => saveSettingsWithSync("About page");
+  const saveProductIntroSettings = () => {
+    const navIntros = mergeNavIntros(
+      settings.navIntros,
+      settings.productPageIntro
+    );
+    return saveSettingsWithSync("Navbar intros", {
+      navIntros,
+      productPageIntro: navIntros.products,
+    });
+  };
   const saveContactPageSettings = async () => {
     try {
       setIsLoading(true);
@@ -910,10 +951,20 @@ export default function AdminSettingsPage() {
         <Tabs
           defaultValue="general"
           value={activeTab}
-          onValueChange={setActiveTab}
+          onValueChange={(value) => {
+            setActiveTab(value);
+            const next = new URLSearchParams(searchParams.toString());
+            if (value === "general") {
+              next.delete("tab");
+            } else {
+              next.set("tab", value);
+            }
+            const query = next.toString();
+            router.replace(query ? `/admin/settings?${query}` : "/admin/settings");
+          }}
           className="space-y-4"
         >
-          <TabsList>
+          <TabsList className="flex-wrap h-auto">
             <TabsTrigger value="general">
               {t("settings.tabs.general")}
             </TabsTrigger>
@@ -924,6 +975,9 @@ export default function AdminSettingsPage() {
             <TabsTrigger value="contact">
               {t("settings.tabs.contact")}
             </TabsTrigger>
+            <TabsTrigger value="productIntro">
+              {t("settings.tabs.productIntro")}
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="general">
@@ -933,7 +987,7 @@ export default function AdminSettingsPage() {
               handleInputChange={handleInputChange}
               handleLogoUpload={handleLogoUpload}
               saveSettings={saveSettings}
-              isLoading={isLoading}
+              isLoading={isSaving}
             />
           </TabsContent>
 
@@ -944,7 +998,7 @@ export default function AdminSettingsPage() {
               handleInputChange={handleInputChange}
               handleNewsletterBannerUpload={handleNewsletterBannerUpload}
               saveNewsletterSettings={saveNewsletterSettings}
-              isLoading={isLoading}
+              isLoading={isSaving}
             />
           </TabsContent>
 
@@ -958,7 +1012,7 @@ export default function AdminSettingsPage() {
               handleStoryImageUpload={handleStoryImageUpload}
               handleTeamMemberImageUpload={handleTeamMemberImageUpload}
               saveAboutPageSettings={saveAboutPageSettings}
-              isLoading={isLoading}
+              isLoading={isSaving}
             />
           </TabsContent>
 
@@ -973,8 +1027,17 @@ export default function AdminSettingsPage() {
               handleRemoveArrayItem={handleRemoveArrayItem}
               handleCoordinateUpdate={handleCoordinateUpdate}
               saveContactPageSettings={saveContactPageSettings}
-              isLoading={isLoading}
+              isLoading={isSaving}
               mapsLoaded={mapsLoaded}
+            />
+          </TabsContent>
+
+          <TabsContent value="productIntro">
+            <ProductIntroTab
+              settings={settings}
+              setSettings={setSettings}
+              saveSettings={saveProductIntroSettings}
+              isLoading={isSaving}
             />
           </TabsContent>
         </Tabs>

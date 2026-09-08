@@ -7,7 +7,8 @@
     "general": "General Settings",
     "newsletter": "Newsletter Management",
     "about": "About Page",
-    "contact": "Contact Page"
+    "contact": "Contact Page",
+    "productIntro": "Navbar intros"
   },
   "general": {
     "storeInfo": {

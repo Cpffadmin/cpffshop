@@ -117,6 +117,25 @@ export interface StoreSettings {
   };
   slogan: MultiLangValue;
   copyright: MultiLangValue;
+  productPageIntro: {
+    enabled: boolean;
+    videoUrl: string;
+    message: MultiLangValue;
+  };
+  navIntros: {
+    home: ProductPageIntroFields;
+    products: ProductPageIntroFields;
+    quickOrder: ProductPageIntroFields;
+    blog: ProductPageIntroFields;
+    about: ProductPageIntroFields;
+    contact: ProductPageIntroFields;
+  };
+}
+
+export interface ProductPageIntroFields {
+  enabled: boolean;
+  videoUrl: string;
+  message: MultiLangValue;
 }
 
 export interface AboutPageStory {

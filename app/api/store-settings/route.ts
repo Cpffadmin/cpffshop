@@ -93,22 +93,41 @@ export async function POST(request: Request) {
         throw new Error("Database connection timeout");
       }
 
-      // Update settings
-      const updatedSettings = await StoreSettings.findOneAndUpdate(
-        {},
-        { $set: settings },
-        {
-          upsert: true,
-          new: true,
-          runValidators: true,
-        }
-      );
+      const payload = { ...(settings as Record<string, unknown>) };
+      delete payload._id;
+      delete payload.__v;
+      delete payload.createdAt;
+      delete payload.updatedAt;
+      delete payload.id;
 
-      console.log(
-        "Updated settings:",
-        JSON.stringify(updatedSettings, null, 2)
-      );
-      return NextResponse.json(updatedSettings);
+      let doc = await StoreSettings.findOne();
+      if (!doc) {
+        doc = new StoreSettings(payload);
+      } else {
+        doc.set(payload);
+      }
+      if (payload.navIntros) doc.markModified("navIntros");
+      if (payload.productPageIntro) doc.markModified("productPageIntro");
+      await doc.save();
+
+      if (payload.navIntros || payload.productPageIntro) {
+        await StoreSettings.collection.updateOne(
+          { _id: doc._id },
+          {
+            $set: {
+              ...(payload.navIntros
+                ? { navIntros: payload.navIntros }
+                : {}),
+              ...(payload.productPageIntro
+                ? { productPageIntro: payload.productPageIntro }
+                : {}),
+            },
+          }
+        );
+        doc = await StoreSettings.findById(doc._id);
+      }
+
+      return NextResponse.json(doc.toObject());
     } catch (error) {
       console.error(
         `Failed to save store settings (retries left: ${retries - 1}):`,

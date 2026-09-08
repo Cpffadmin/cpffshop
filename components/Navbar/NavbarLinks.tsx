@@ -10,6 +10,7 @@ import { MdContactSupport, MdOutlineChecklist } from "react-icons/md";
 import { RiAdminLine } from "react-icons/ri";
 import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
 import { useQuickOrderReminder } from "@/hooks/useQuickOrderReminder";
+import { requestNavIntro } from "@/lib/productPageIntro";
 
 interface NavbarLinksProps {
   session: Session | null;
@@ -22,7 +23,11 @@ const NavbarLinks = ({ session, setAdmin }: NavbarLinksProps) => {
 
   return (
     <>
-      <Link href="/" className="navbar-button">
+      <Link
+        href="/"
+        className="navbar-button"
+        onClick={() => requestNavIntro("home")}
+      >
         {isLoading ? (
           <LoadingSkeleton width="w-20" height="h-4" />
         ) : (
@@ -31,7 +36,11 @@ const NavbarLinks = ({ session, setAdmin }: NavbarLinksProps) => {
         <AiOutlineHome className="navbar-button-icon" aria-hidden="true" />
       </Link>
 
-      <Link href="/products" className="navbar-button">
+      <Link
+        href="/products"
+        className="navbar-button"
+        onClick={() => requestNavIntro("products")}
+      >
         {isLoading ? (
           <LoadingSkeleton width="w-20" height="h-4" />
         ) : (
@@ -45,6 +54,7 @@ const NavbarLinks = ({ session, setAdmin }: NavbarLinksProps) => {
         className={`navbar-button relative ${
           pulse ? "quick-order-pulse" : ""
         }`}
+        onClick={() => requestNavIntro("quickOrder")}
       >
         {isLoading ? (
           <LoadingSkeleton width="w-20" height="h-4" />
@@ -56,7 +66,11 @@ const NavbarLinks = ({ session, setAdmin }: NavbarLinksProps) => {
         <MdOutlineChecklist className="navbar-button-icon" aria-hidden="true" />
       </Link>
 
-      <Link href="/blog" className="navbar-button">
+      <Link
+        href="/blog"
+        className="navbar-button"
+        onClick={() => requestNavIntro("blog")}
+      >
         {isLoading ? (
           <LoadingSkeleton width="w-20" height="h-4" />
         ) : (
@@ -65,7 +79,11 @@ const NavbarLinks = ({ session, setAdmin }: NavbarLinksProps) => {
         <FaBlogger className="navbar-button-icon" aria-hidden="true" />
       </Link>
 
-      <Link href="/about" className="navbar-button">
+      <Link
+        href="/about"
+        className="navbar-button"
+        onClick={() => requestNavIntro("about")}
+      >
         {isLoading ? (
           <LoadingSkeleton width="w-20" height="h-4" />
         ) : (
@@ -74,7 +92,11 @@ const NavbarLinks = ({ session, setAdmin }: NavbarLinksProps) => {
         <BsInfoCircle className="navbar-button-icon" aria-hidden="true" />
       </Link>
 
-      <Link href="/contact" className="navbar-button">
+      <Link
+        href="/contact"
+        className="navbar-button"
+        onClick={() => requestNavIntro("contact")}
+      >
         {isLoading ? (
           <LoadingSkeleton width="w-20" height="h-4" />
         ) : (

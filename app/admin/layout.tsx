@@ -22,6 +22,7 @@ import {
   Receipt,
   ImageIcon,
   Palette,
+  Video,
 } from "lucide-react";
 import { shouldShowBrandAdmin } from "@/utils/config/featureFlags";
 
@@ -114,6 +115,11 @@ export default function AdminLayout({
       href: "/admin/settings/hero",
       label: t("admin-hero.title"),
       icon: ImageIcon,
+    },
+    {
+      href: "/admin/settings?tab=productIntro",
+      label: t("admin.settings.productIntro"),
+      icon: Video,
     },
     {
       href: "/admin/delivery",

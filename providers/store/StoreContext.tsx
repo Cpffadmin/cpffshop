@@ -2,6 +2,11 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { cachedGet } from "@/utils/services/clientCache";
+import {
+  DEFAULT_NAV_INTROS,
+  DEFAULT_PRODUCT_PAGE_INTRO,
+  mergeNavIntros,
+} from "@/lib/productPageIntro";
 
 interface StoreSettings {
   storeName: {
@@ -225,6 +230,15 @@ interface StoreSettings {
       }>;
     };
   };
+  productPageIntro: {
+    enabled: boolean;
+    videoUrl: string;
+    message: {
+      en: string;
+      "zh-TW": string;
+    };
+  };
+  navIntros: typeof DEFAULT_NAV_INTROS;
 }
 
 interface StoreContextType {
@@ -394,6 +408,8 @@ const defaultSettings: StoreSettings = {
       questions: [],
     },
   },
+  productPageIntro: DEFAULT_PRODUCT_PAGE_INTRO,
+  navIntros: DEFAULT_NAV_INTROS,
 };
 
 const StoreContext = createContext<StoreContextType>({
@@ -608,6 +624,11 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
             ),
           },
         },
+        navIntros: mergeNavIntros(res.data.navIntros, res.data.productPageIntro),
+        productPageIntro: mergeNavIntros(
+          res.data.navIntros,
+          res.data.productPageIntro
+        ).products,
       };
 
       console.log("Merged settings:", mergedSettings); // Debug log

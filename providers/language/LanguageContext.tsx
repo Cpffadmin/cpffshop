@@ -206,6 +206,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [language, setLanguage] = useState<Language>("en");
+  const [hasRestoredLanguage, setHasRestoredLanguage] = useState(false);
   const [translations, setTranslations] = useState<
     Record<ModuleName, TranslationsType>
   >(defaultTranslations as Record<ModuleName, TranslationsType>);
@@ -298,6 +299,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({
             : "en";
 
         setLanguage(initialLang);
+        setHasRestoredLanguage(true);
         await loadAllModules(initialLang);
       }
     };
@@ -305,12 +307,12 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({
     initializeLanguage();
   }, []);
 
-  // Save language preference
+  // Save only after the stored preference has been read. Writing on the first
+  // "en" render would overwrite a saved Chinese choice on every refresh.
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("language", language);
-    }
-  }, [language]);
+    if (!hasRestoredLanguage) return;
+    localStorage.setItem("language", language);
+  }, [language, hasRestoredLanguage]);
 
   // Get translation value with fallback to previous translations during loading
   const getValue = (key: string): string => {

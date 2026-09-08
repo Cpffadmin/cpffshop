@@ -240,6 +240,70 @@ const storeSettingsSchema = new mongoose.Schema(
       },
     },
     privacyPolicy: privacyPolicySchema,
+    productPageIntro: {
+      enabled: {
+        type: Boolean,
+        default: true,
+      },
+      videoUrl: {
+        type: String,
+        default: "/videos/product-page-intro.mp4",
+      },
+      message: {
+        en: {
+          type: String,
+          default: "Welcome to our shop, choose the fresh foods",
+        },
+        "zh-TW": {
+          type: String,
+          default: "歡迎光臨，請選新鮮食材",
+        },
+      },
+    },
+    navIntros: {
+      home: {
+        enabled: { type: Boolean, default: true },
+        videoUrl: { type: String, default: "" },
+        message: multiLangSchema,
+      },
+      products: {
+        enabled: { type: Boolean, default: true },
+        videoUrl: {
+          type: String,
+          default: "/videos/product-page-intro.mp4",
+        },
+        message: {
+          en: {
+            type: String,
+            default: "Welcome to our shop, choose the fresh foods",
+          },
+          "zh-TW": {
+            type: String,
+            default: "歡迎光臨，請選新鮮食材",
+          },
+        },
+      },
+      quickOrder: {
+        enabled: { type: Boolean, default: true },
+        videoUrl: { type: String, default: "" },
+        message: multiLangSchema,
+      },
+      blog: {
+        enabled: { type: Boolean, default: true },
+        videoUrl: { type: String, default: "" },
+        message: multiLangSchema,
+      },
+      about: {
+        enabled: { type: Boolean, default: true },
+        videoUrl: { type: String, default: "" },
+        message: multiLangSchema,
+      },
+      contact: {
+        enabled: { type: Boolean, default: true },
+        videoUrl: { type: String, default: "" },
+        message: multiLangSchema,
+      },
+    },
     themeSettings: {
       light: {
         background: { type: String, default: "#ffffff" },

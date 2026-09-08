@@ -165,6 +165,21 @@
         "getCoordinates": "Get Coordinates",
         "delete": "Delete Location"
       }
+    },
+    "productIntro": {
+      "title": "Navbar intro videos",
+      "description": "Each navbar button can play its own short clip and message. Leave the video empty and the page opens immediately. A clip plays on the first click of that button, or when that page is refreshed.",
+      "enabled": "Play intro video",
+      "enabledHelp": "When off, or when no video is uploaded, the page opens immediately.",
+      "video": "Intro video",
+      "videoHelp": "Upload an MP4 or MOV when you are ready. You can leave this empty.",
+      "uploadVideo": "Upload video",
+      "changeVideo": "Change video",
+      "clearVideo": "Remove video",
+      "noVideo": "No video yet",
+      "useDefault": "Use default clip",
+      "message": "Message bubble",
+      "messageHelp": "Shown over the video. Leave empty to hide the bubble."
     }
   },
   "actions": {
