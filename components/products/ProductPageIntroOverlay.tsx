@@ -11,6 +11,7 @@ import {
   consumeDocumentLoadPlay,
   consumeNavIntroRequest,
   getNavKeyFromPath,
+  markNavIntroRequested,
   getPersistedIntroKey,
   getPersistedIntroVisible,
   markNavIntroPlayed,
@@ -48,6 +49,14 @@ export default function ProductPageIntroOverlay() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const reachedPageRef = useRef(false);
   const closeTimerRef = useRef<number | null>(null);
+  const fadingOutRef = useRef(false);
+  const fadeOutDuration = prefersReducedMotion() ? 0.2 : 2.4;
+  const fadeInDuration = prefersReducedMotion() ? 0 : 0.2;
+  const fadeLeadIn = prefersReducedMotion() ? 0 : 0.7;
+  const fadeOutTransition = {
+    duration: fadeOutDuration,
+    ease: [0.22, 0.08, 0.2, 1] as const,
+  };
   const activePath = activeKey
     ? activeKey === "home"
       ? "/"
@@ -62,9 +71,10 @@ export default function ProductPageIntroOverlay() {
     : null;
 
   const close = useCallback(() => {
+    if (fadingOutRef.current) return;
+    fadingOutRef.current = true;
     setPersistedIntroVisible(false);
     setVisible(false);
-    setActiveKey(null);
     if (closeTimerRef.current) {
       window.clearTimeout(closeTimerRef.current);
       closeTimerRef.current = null;
@@ -84,6 +94,7 @@ export default function ProductPageIntroOverlay() {
         contact: "/contact",
         home: "/",
       }[key]);
+      fadingOutRef.current = false;
       setActiveKey(key);
       setPersistedIntroVisible(true, key);
       setReplayKey((current) => current + 1);
@@ -93,18 +104,22 @@ export default function ProductPageIntroOverlay() {
   );
 
   useLayoutEffect(() => {
-    const pathKey = getNavKeyFromPath(pathname);
     const requested = consumeNavIntroRequest();
+    const pathKey = getNavKeyFromPath(pathname);
     const key = requested || pathKey;
     if (!key) return;
-    if (!navIntroHasVideo(navIntros[key]) || prefersReducedMotion()) return;
+    if (!navIntroHasVideo(navIntros[key]) || prefersReducedMotion()) {
+      if (requested) markNavIntroRequested(requested);
+      return;
+    }
     if (requested === key || consumeDocumentLoadPlay(key)) {
+      fadingOutRef.current = false;
       reachedPageRef.current = true;
       setActiveKey(key);
       setPersistedIntroVisible(true, key);
       setVisible(true);
     }
-  }, [pathname, navIntros]);
+  }, [pathname]);
 
   useEffect(() => {
     const handlePlay = (event: Event) => {
@@ -186,11 +201,16 @@ export default function ProductPageIntroOverlay() {
     };
   }, [visible, replayKey, close]);
 
-  if (!visible || !videoUrl) return null;
+  if (!videoUrl && !visible) return null;
 
   return (
-    <AnimatePresence>
-      {visible && (
+    <AnimatePresence
+      onExitComplete={() => {
+        fadingOutRef.current = false;
+        setActiveKey(null);
+      }}
+    >
+      {visible && videoUrl && (
         <motion.div
           key="nav-intro"
           role="dialog"
@@ -199,8 +219,8 @@ export default function ProductPageIntroOverlay() {
           className="fixed inset-0 z-[100] bg-black"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.35 }}
+          exit={{ opacity: 0, transition: fadeOutTransition }}
+          transition={{ duration: fadeInDuration, ease: "easeOut" }}
         >
           <button
             type="button"
@@ -218,10 +238,17 @@ export default function ProductPageIntroOverlay() {
             playsInline
             preload="auto"
             className="absolute inset-0 h-full w-full object-cover"
-            initial={{ opacity: 0, scale: 1.04 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: fadeOutTransition }}
+            transition={{ duration: fadeInDuration, ease: "easeOut" }}
+            onTimeUpdate={() => {
+              const video = videoRef.current;
+              if (!video || fadingOutRef.current || !video.duration) return;
+              if (video.duration - video.currentTime <= fadeLeadIn) {
+                close();
+              }
+            }}
             onEnded={close}
             onError={close}
           />

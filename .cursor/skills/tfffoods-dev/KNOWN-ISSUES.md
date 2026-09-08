@@ -4,6 +4,12 @@ Append a dated entry under "Fix log" whenever you resolve a root-cause issue. Ch
 
 ## Fix log
 
+### 2026-09-08 — Store settings saved nothing: one legacy string rejected the whole document
+- **Symptom:** On `/admin/settings` the General tab's Save toasted `StoreSettings validation failed: contactPage.supportChannels.title: Cast to Object failed for value "Our Support Channels" (type string) at path "contactPage.supportChannels.title"`. Nothing on the tab persisted, including the new navbar logo size.
+- **Root cause:** `saveSettings` posted the entire `settings` state, so fields no tab on screen had touched went along for the ride. One legacy document stored `contactPage.supportChannels.title` as a plain string where the schema declares the bilingual `{ en, "zh-TW" }` subdocument, and Mongoose rejects the save as a whole — the same trap the Navbar-intros save already worked around by posting a scoped payload.
+- **Fix:** `saveSettings` now posts only the fields the General tab edits (`storeName`, `slogan`, `copyright`, `logo`, `logoSize`, `businessHours`, `socialMedia`, `shippingInfo`, `returnPolicy`). `app/api/store-settings/route.ts` also runs `coerceBilingualStrings`, which walks the payload against `StoreSettings.schema` (following subdocument arrays) and widens a string into `{ en, "zh-TW" }` wherever the schema declares a bilingual field, so legacy values repair themselves on the next save instead of blocking it.
+- **Related:** navbar logo size is `logoSize` on `StoreSettings` (32–120, default 56), clamped by `lib/logoSize.ts`, applied through the `--navbar-logo-size` CSS variable set in `components/Navbar/Navbar.tsx`. As always after a schema change, **restart the dev server** or the new path is silently dropped.
+
 ### 2026-09-07 — `/api/wishlist` fetched once per product card (~100 identical requests)
 - **Symptom:** The dev server log was wall-to-wall `GET /api/wishlist 200 in ~120ms`, dozens in a row, on every product page load. Looked like a render loop; it was not.
 - **Root cause:** `lib/hooks/useWishlist` held its own `useState` + `useEffect` fetch, and `WishlistButton` calls it while `ProductCard` / `ProductTable` render **one button per product**. Each card therefore fetched the entire wishlist independently — 48 or 100 identical DB round trips per page, plus one toast each on failure. (`providers/wishlist/WishlistContext.tsx` looks like an abandoned attempt to share this; nothing uses it for the API.)

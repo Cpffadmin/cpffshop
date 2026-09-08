@@ -8,6 +8,7 @@ interface StoreSettings {
   slogan: MultiLangValue;
   copyright: MultiLangValue;
   logo: string;
+  logoSize?: number;
   contactInfo: {
     email: string;
     phone: string;

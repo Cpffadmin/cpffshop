@@ -32,6 +32,8 @@
       "slogan": "Store Slogan",
       "logo": "Store Logo",
       "changeLogo": "Change Logo",
+      "logoSize": "Logo Size",
+      "logoSizeHint": "Navbar logo height in pixels. Save to apply on the storefront.",
       "copyright": "Copyright"
     },
     "contact": {

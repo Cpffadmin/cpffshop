@@ -7,6 +7,7 @@ import {
   DEFAULT_PRODUCT_PAGE_INTRO,
   mergeNavIntros,
 } from "@/lib/productPageIntro";
+import { clampLogoSize, DEFAULT_LOGO_SIZE } from "@/lib/logoSize";
 
 interface StoreSettings {
   storeName: {
@@ -22,6 +23,7 @@ interface StoreSettings {
     "zh-TW": string;
   };
   logo: string;
+  logoSize: number;
   contactInfo: {
     email: string;
     phone: string;
@@ -262,6 +264,7 @@ const defaultSettings: StoreSettings = {
     "zh-TW": "© {{year}} 載入中...",
   },
   logo: "/images/placeholder-logo.png",
+  logoSize: DEFAULT_LOGO_SIZE,
   contactInfo: {
     email: "loading@example.com",
     phone: "(000) 000-0000",
@@ -444,6 +447,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       const mergedSettings = {
         ...defaultSettings,
         ...res.data,
+        logoSize: clampLogoSize(res.data.logoSize),
         storeName: {
           en: res.data.storeName?.en || defaultSettings.storeName.en,
           "zh-TW":
@@ -657,6 +661,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   const safeSettings = {
     ...settings,
     logo: settings.logo || defaultSettings.logo,
+    logoSize: clampLogoSize(settings.logoSize),
   };
 
   return (

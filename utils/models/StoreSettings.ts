@@ -47,6 +47,12 @@ const storeSettingsSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    logoSize: {
+      type: Number,
+      default: 56,
+      min: 32,
+      max: 120,
+    },
     contactInfo: {
       email: {
         type: String,

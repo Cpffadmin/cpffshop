@@ -27,6 +27,7 @@ import {
   DEFAULT_PRODUCT_PAGE_INTRO,
   mergeNavIntros,
 } from "@/lib/productPageIntro";
+import { clampLogoSize, DEFAULT_LOGO_SIZE } from "@/lib/logoSize";
 import type {
   MultiLangValue,
   StoreSettings,
@@ -78,6 +79,7 @@ export default function AdminSettingsPage() {
       "zh-TW": "© 2024 EcomWatch. 保留所有權利。",
     },
     logo: "/logo.png",
+    logoSize: 56,
     contactInfo: {
       email: "support@ecomwatch.com",
       phone: "(123) 456-7890",
@@ -339,6 +341,7 @@ export default function AdminSettingsPage() {
         const data = response.data;
         setSettings({
           ...data,
+          logoSize: clampLogoSize(data.logoSize ?? DEFAULT_LOGO_SIZE),
           newsletterSettings: {
             ...data.newsletterSettings,
             confirmationEmail:
@@ -690,7 +693,21 @@ export default function AdminSettingsPage() {
     }
   };
 
-  const saveSettings = () => saveSettingsWithSync("Store");
+  // Only the fields the General tab edits are sent. Posting the whole document
+  // makes an unrelated legacy field (e.g. a plain-string bilingual title) fail
+  // validation and reject the entire save.
+  const saveSettings = () =>
+    saveSettingsWithSync("Store", {
+      storeName: settings.storeName,
+      slogan: settings.slogan,
+      copyright: settings.copyright,
+      logo: settings.logo,
+      logoSize: clampLogoSize(settings.logoSize ?? DEFAULT_LOGO_SIZE),
+      businessHours: settings.businessHours,
+      socialMedia: settings.socialMedia,
+      shippingInfo: settings.shippingInfo,
+      returnPolicy: settings.returnPolicy,
+    });
   const saveNewsletterSettings = () => saveSettingsWithSync("Newsletter");
   const saveAboutPageSettings = () => saveSettingsWithSync("About page");
   const saveProductIntroSettings = () => {

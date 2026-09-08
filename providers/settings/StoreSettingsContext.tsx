@@ -9,6 +9,7 @@ interface StoreSettings {
     "zh-TW": string;
   };
   logo: string;
+  logoSize?: number;
   contactInfo: {
     email: string;
     phone: string;
@@ -248,6 +249,7 @@ const defaultSettings: StoreSettings = {
     "zh-TW": "EcomWatch",
   },
   logo: "/logo.png",
+  logoSize: 56,
   contactInfo: {
     email: "support@ecomwatch.com",
     phone: "(123) 456-7890",

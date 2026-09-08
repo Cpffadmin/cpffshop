@@ -22,6 +22,7 @@ import type { CustomSession, SearchResult } from "@/types";
 import { useStore } from "@/providers/store/StoreContext";
 import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
 import HamburgerIcon from "@/components/ui/HamburgerIcon";
+import { clampLogoSize } from "@/lib/logoSize";
 
 const Navbar = () => {
   const router = useRouter();
@@ -90,13 +91,24 @@ const Navbar = () => {
       observer.disconnect();
       window.removeEventListener("resize", syncNavbarHeight);
     };
-  }, [isLoading, settings.logo]);
+  }, [isLoading, settings.logo, settings.logoSize]);
+
+  const logoSize = clampLogoSize(settings.logoSize);
+  const mobileLogoSize = Math.max(32, Math.round(logoSize * 0.7));
 
   return (
     <>
       {/* Desktop Navbar - Hidden on Mobile */}
       <nav className="hidden md:block sticky top-0 z-50">
-        <div id="site-navbar" className="navbar app-global-container">
+        <div
+          id="site-navbar"
+          className="navbar app-global-container"
+          style={
+            {
+              "--navbar-logo-size": `${logoSize}px`,
+            } as React.CSSProperties
+          }
+        >
           <div className="navbar-content flex items-center justify-between">
             {/* Brand Container */}
             <div className="flex items-center">
@@ -113,8 +125,8 @@ const Navbar = () => {
                       }
                       onClick={() => router.push("/")}
                       src={settings.logo}
-                      width={160}
-                      height={96}
+                      width={logoSize}
+                      height={logoSize}
                       className="navbar-logo cursor-pointer"
                       priority
                     />
@@ -192,9 +204,10 @@ const Navbar = () => {
             }
             onClick={() => router.push("/")}
             src={settings.logo}
-            width={45}
-            height={30}
-            className="cursor-pointer"
+            width={mobileLogoSize}
+            height={mobileLogoSize}
+            className="cursor-pointer object-contain"
+            style={{ width: mobileLogoSize, height: mobileLogoSize }}
             priority
           />
         )}

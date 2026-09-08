@@ -33,6 +33,7 @@ export interface ConfirmationEmailSettings {
 export interface StoreSettings {
   storeName: MultiLangValue;
   logo: string | StaticImageData;
+  logoSize: number;
   contactInfo: ContactInfo;
   businessHours: {
     weekdays: MultiLangValue;

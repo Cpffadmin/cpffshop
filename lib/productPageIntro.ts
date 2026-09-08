@@ -83,7 +83,7 @@ export function mergeNavIntro(
   const fallback = DEFAULT_NAV_INTROS[key];
   return {
     enabled: value?.enabled ?? fallback.enabled,
-    videoUrl: value?.videoUrl ?? fallback.videoUrl,
+    videoUrl: value?.videoUrl || fallback.videoUrl,
     message: {
       en: value?.message?.en ?? fallback.message.en,
       "zh-TW": value?.message?.["zh-TW"] ?? fallback.message["zh-TW"],
@@ -215,7 +215,6 @@ export function consumeNavIntroRequest(): NavIntroKey | null {
 
 export function requestNavIntro(key: NavIntroKey) {
   if (typeof window === "undefined") return;
-  if (playedKeys.has(key)) return;
   markNavIntroRequested(key);
   markNavIntroPlayed(key);
   window.dispatchEvent(new CustomEvent(NAV_INTRO_EVENT, { detail: key }));

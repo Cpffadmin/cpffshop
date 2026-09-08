@@ -6,6 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { MultiLangInput } from "@/components/MultiLangInput/MultiLangInput";
 import { useTranslation } from "@/providers/language/LanguageContext";
+import {
+  clampLogoSize,
+  DEFAULT_LOGO_SIZE,
+  MAX_LOGO_SIZE,
+  MIN_LOGO_SIZE,
+} from "@/lib/logoSize";
 import type {
   StoreSettings,
   MultiLangValue,
@@ -32,6 +38,7 @@ export default function GeneralTab({
   isLoading,
 }: GeneralTabProps) {
   const { t } = useTranslation();
+  const logoSize = clampLogoSize(settings.logoSize ?? DEFAULT_LOGO_SIZE);
 
   return (
     <div className="bg-card rounded-lg shadow-lg ring-1 ring-gray-200 dark:ring-gray-700">
@@ -72,21 +79,24 @@ export default function GeneralTab({
                 {t("admin-settings.sections.store.logo")}
               </label>
               <div className="flex items-center space-x-4">
-                <div className="relative w-20 h-20 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+                <div
+                  className="relative flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 bg-background"
+                  style={{ width: logoSize + 16, height: logoSize + 16 }}
+                >
                   {settings.logo ? (
                     <Image
                       src={settings.logo}
                       alt={t("admin-settings.sections.store.logo")}
-                      fill
-                      sizes="80px"
+                      width={logoSize}
+                      height={logoSize}
                       className="object-contain"
                     />
                   ) : (
                     <Image
                       src="/images/placeholder-logo.png"
                       alt={t("admin-settings.sections.store.logo")}
-                      fill
-                      sizes="80px"
+                      width={logoSize}
+                      height={logoSize}
                       className="object-contain"
                     />
                   )}
@@ -99,6 +109,33 @@ export default function GeneralTab({
                 >
                   {t("admin-settings.sections.store.changeLogo")}
                 </CldUploadButton>
+              </div>
+              <div className="mt-4 max-w-md">
+                <label className="block text-sm font-medium mb-1">
+                  {t("admin-settings.sections.store.logoSize")}
+                </label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="range"
+                    min={MIN_LOGO_SIZE}
+                    max={MAX_LOGO_SIZE}
+                    step={2}
+                    value={logoSize}
+                    onChange={(event) =>
+                      setSettings((prev) => ({
+                        ...prev,
+                        logoSize: clampLogoSize(Number(event.target.value)),
+                      }))
+                    }
+                    className="flex-1"
+                  />
+                  <span className="w-12 text-right text-sm tabular-nums">
+                    {logoSize}px
+                  </span>
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {t("admin-settings.sections.store.logoSizeHint")}
+                </p>
               </div>
             </div>
           </div>

@@ -7,6 +7,38 @@ import mongoose from "mongoose";
 
 export const dynamic = "force-dynamic";
 
+// Older documents stored some bilingual fields as a plain string. Mongoose
+// rejects the whole save when it meets one, so widen them to { en, zh-TW }.
+function coerceBilingualStrings(
+  value: unknown,
+  schema: mongoose.Schema,
+  path: string
+): unknown {
+  const schemaPath = path ? schema.path(path) : null;
+
+  if (schemaPath && "schema" in schemaPath && schemaPath.schema) {
+    const subSchema = schemaPath.schema as mongoose.Schema;
+    return Array.isArray(value)
+      ? value.map((item) => coerceBilingualStrings(item, subSchema, ""))
+      : value;
+  }
+
+  if (typeof value === "string") {
+    return path && schema.path(`${path}.en`)
+      ? { en: value, "zh-TW": value }
+      : value;
+  }
+
+  if (!value || typeof value !== "object" || Array.isArray(value)) return value;
+
+  return Object.fromEntries(
+    Object.entries(value as Record<string, unknown>).map(([key, entry]) => [
+      key,
+      coerceBilingualStrings(entry, schema, path ? `${path}.${key}` : key),
+    ])
+  );
+}
+
 export async function GET() {
   let retries = 3;
 
@@ -93,7 +125,11 @@ export async function POST(request: Request) {
         throw new Error("Database connection timeout");
       }
 
-      const payload = { ...(settings as Record<string, unknown>) };
+      const payload = coerceBilingualStrings(
+        { ...(settings as Record<string, unknown>) },
+        StoreSettings.schema,
+        ""
+      ) as Record<string, unknown>;
       delete payload._id;
       delete payload.__v;
       delete payload.createdAt;

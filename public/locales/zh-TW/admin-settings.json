@@ -32,6 +32,8 @@
       "slogan": "商店標語",
       "logo": "商店標誌",
       "changeLogo": "更換標誌",
+      "logoSize": "標誌大小",
+      "logoSizeHint": "導航列標誌高度（像素）。儲存後套用到店面。",
       "copyright": "版權聲明"
     },
     "contact": {
